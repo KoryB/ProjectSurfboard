@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="UbuntuJGLSDL">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/UbuntuJGLSDL.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/UbuntuJGLSDL.jar!/" />
+    </SOURCES>
+  </library>
+</component>
