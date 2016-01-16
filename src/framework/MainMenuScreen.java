@@ -3,7 +3,7 @@ package framework;
 /**
  * Created by Michael on 1/15/2016.
  */
-public class MainMenuScreen implements ScreenInterface{
+public class MainMenuScreen implements Screen {
 
     //InputHandler mInput;
     boolean mPaused;
