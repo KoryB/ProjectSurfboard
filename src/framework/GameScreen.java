@@ -9,18 +9,17 @@ public class GameScreen implements Screen {
     //InputHandler mInput;
     boolean mPaused;
 
-
     public GameScreen(){
         mPaused = false;
     }
 
     @Override
-    public void update() {
+    public void update(float deltaTime) {
 
     }
 
     @Override
-    public void render() {
+    public void render(Program program) {
 
     }
 
@@ -30,7 +29,7 @@ public class GameScreen implements Screen {
     }
 
     @Override
-    public void hide() {
+    public void hide(Screen nextScreen) {
 
     }
 

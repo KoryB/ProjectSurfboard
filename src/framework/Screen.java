@@ -5,13 +5,13 @@ package framework;
  */
 public interface Screen {
 
-    public void update();
+    public void update(float deltaTime);
 
-    public void render();
+    public void render(Program program);
 
     public void show();
 
-    public void hide();
+    public void hide(Screen nextScreen);
 
     public void pause();
 }

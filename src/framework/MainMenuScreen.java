@@ -13,12 +13,12 @@ public class MainMenuScreen implements Screen {
     }
 
     @Override
-    public void update() {
+    public void update(float deltaTime) {
 
     }
 
     @Override
-    public void render() {
+    public void render(Program program) {
 
     }
 
@@ -28,7 +28,7 @@ public class MainMenuScreen implements Screen {
     }
 
     @Override
-    public void hide() {
+    public void hide(Screen nextScreen) {
 
     }
 
