@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="WinJGLSDL">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/WinJGLSDL.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/WinJGLSDL.jar!/" />
+    </SOURCES>
+  </library>
+</component>
