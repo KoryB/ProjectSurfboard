@@ -5,7 +5,7 @@ package framework;
  */
 public interface Screen {
 
-    public void update(float deltaTime);
+    public void update();
 
     public void render(Program program);
 

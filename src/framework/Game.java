@@ -6,6 +6,7 @@ package framework;
 public class Game {
 
     Screen mActiveScreen;
+    Program program;
 
     public Game(){
         //Starting with a game screen for now until we have the main menu implemented
@@ -16,13 +17,13 @@ public class Game {
         mActiveScreen.update();
     }
 
-    public void render(){
-        mActiveScreen.render();
+    public void render(Program program){
+        mActiveScreen.render(program);
     }
 
     public void run(){
         update();
-        render();
+        render(program);
     }
 
     public void setActiveScreen(Screen screen){
