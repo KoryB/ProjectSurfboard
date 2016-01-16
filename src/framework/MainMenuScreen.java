@@ -9,7 +9,7 @@ public class MainMenuScreen implements Screen {
     boolean mPaused;
 
     public MainMenuScreen(){
-
+        mPaused = false;
     }
 
     @Override
