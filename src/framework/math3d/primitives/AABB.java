@@ -3,10 +3,7 @@ package framework.math3d.primitives;
 import framework.exceptions.TypeMismatchError;
 import framework.math3d.vec4;
 
-/**
- * Created by kory on 1/18/16.
- */
-public class AABB
+public class AABB implements Primitive
 {
     private vec4 mMin;
     private vec4 mMax;
@@ -135,6 +132,41 @@ public class AABB
         vec4 halfExtents = mExtents.mul(0.5f);
         mMin = mCenter.sub(halfExtents);
         mMax = mCenter.add(halfExtents);
+    }
+
+    public void translate(vec4 amount)
+    {
+        setMin(mMin.add(amount));
+    }
+
+    public float getLeft()
+    {
+        return mMin.x;
+    }
+
+    public float getRight()
+    {
+        return mMax.x;
+    }
+
+    public float getBottom()
+    {
+        return mMin.y;
+    }
+
+    public float getTop()
+    {
+        return mMax.y;
+    }
+
+    public float getBack()
+    {
+        return mMin.z;
+    }
+
+    public float getFront()
+    {
+        return mMax.z;
     }
 
     public vec4 getExtents()

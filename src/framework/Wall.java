@@ -2,24 +2,24 @@ package framework;
 
 import framework.collisions.CollisionHandler;
 import framework.collisions.CollisionObject;
-import framework.math3d.*;
+import framework.collisions.CollisionType;
+import framework.math3d.vec4;
+import framework.math3d.math3d;
 import framework.math3d.primitives.AABB;
 import framework.math3d.primitives.AABBType;
 
-/**
- * Created by kory on 1/18/16.
- */
 public class Wall extends CollisionObject
 {
     private static Mesh MESH;
 
     private vec4 mExtents = new vec4(0.5f, 3.0f, 1.0f, 0.0f);
-    private AABB mAABB;
 
     public Wall(vec4 position)
     {
+        mCollisionType = CollisionType.AABB;
+        mCollisionPrimitive = new AABB(mExtents, mPosition.add(new vec4(0.0f, mExtents.y / 2.0f, 0.0f, 0.0f)), AABBType.EXTENTS, AABBType.CENTER);
+
         mPosition = position;
-        mAABB = new AABB(mExtents, mPosition.add(new vec4(0.0f, mExtents.y / 2.0f, 0.0f, 0.0f)), AABBType.EXTENTS, AABBType.CENTER);
 
         if (MESH == null)
         {
@@ -34,11 +34,12 @@ public class Wall extends CollisionObject
 
     public void draw(Program program)
     {
+        AABB aabb = (AABB) mCollisionPrimitive;
         System.out.println("Wall info:");
-        System.out.println("MIN: " + mAABB.getMin());
-        System.out.println("MAX: " + mAABB.getMax());
-        System.out.println("CENTER: " + mAABB.getCenter());
-        System.out.println("EXTENTS: " + mAABB.getExtents());
+        System.out.println("MIN: " + aabb.getMin());
+        System.out.println("MAX: " + aabb.getMax());
+        System.out.println("CENTER: " + aabb.getCenter());
+        System.out.println("EXTENTS: " + aabb.getExtents());
         System.out.println();
 
         program.setUniform("worldMatrix", math3d.translation(mPosition));
