@@ -1,9 +1,7 @@
 package framework.math3d.primitives;
 
-import framework.Exceptions.TypeMismatchError;
+import framework.exceptions.TypeMismatchError;
 import framework.math3d.vec4;
-
-import java.awt.*;
 
 /**
  * Created by kory on 1/18/16.

@@ -1,4 +1,4 @@
-package framework.Exceptions;
+package framework.exceptions;
 
 /**
  * Created by kory on 1/18/16.

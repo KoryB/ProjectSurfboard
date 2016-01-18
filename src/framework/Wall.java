@@ -1,5 +1,7 @@
 package framework;
 
+import framework.collisions.CollisionHandler;
+import framework.collisions.CollisionObject;
 import framework.math3d.*;
 import framework.math3d.primitives.AABB;
 import framework.math3d.primitives.AABBType;
@@ -7,11 +9,9 @@ import framework.math3d.primitives.AABBType;
 /**
  * Created by kory on 1/18/16.
  */
-public class Wall
+public class Wall extends CollisionObject
 {
     private static Mesh MESH;
-
-    private vec4 mPosition; // center of the bottom face of the wall
 
     private vec4 mExtents = new vec4(0.5f, 3.0f, 1.0f, 0.0f);
     private AABB mAABB;
@@ -27,19 +27,19 @@ public class Wall
         }
     }
 
-    public void update()
+    public void update(float elapsed)
     {
 
     }
 
     public void draw(Program program)
     {
-//        System.out.println("Wall info:");
-//        System.out.println("MIN: " + mAABB.getMin());
-//        System.out.println("MAX: " + mAABB.getMax());
-//        System.out.println("CENTER: " + mAABB.getCenter());
-//        System.out.println("EXTENTS: " + mAABB.getExtents());
-//        System.out.println();
+        System.out.println("Wall info:");
+        System.out.println("MIN: " + mAABB.getMin());
+        System.out.println("MAX: " + mAABB.getMax());
+        System.out.println("CENTER: " + mAABB.getCenter());
+        System.out.println("EXTENTS: " + mAABB.getExtents());
+        System.out.println();
 
         program.setUniform("worldMatrix", math3d.translation(mPosition));
         MESH.draw(program);

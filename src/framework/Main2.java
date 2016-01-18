@@ -122,6 +122,8 @@ public class Main2{
 
             //the fbo stuff is for later...
             //fbo1.bind();
+
+            wall.update(elapsed);
             
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             prog.use();
