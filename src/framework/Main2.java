@@ -59,13 +59,13 @@ public class Main2{
         Program prog;
         Program blurprog;
         float prev;
-        Mesh column;
         UnitSquare usq;
         Framebuffer fbo1;
         Framebuffer fbo2;
         Texture2D dummytex = new SolidTexture(GL_UNSIGNED_BYTE,0,0,0,0);
-        column = new Mesh("assets/testWall.obj.mesh");
         usq = new UnitSquare();
+
+        Wall wall = new Wall(new vec4(0, 0, 0, 0));
 
         fbo1 = new Framebuffer(512,512);
         fbo2 = new Framebuffer(512,512);
@@ -103,6 +103,7 @@ public class Main2{
 
             float now = (float)(System.nanoTime()*1E-9);
             float elapsed = now-prev;
+            elapsed *= 3;
 
             prev=now;
 
@@ -126,8 +127,7 @@ public class Main2{
             prog.use();
             prog.setUniform("lightPos",new vec3(50,50,50) );
             cam.draw(prog);
-            prog.setUniform("worldMatrix",mat4.identity());
-            column.draw(prog);
+            wall.draw(prog);
             
             //fbo1.unbind();
 
