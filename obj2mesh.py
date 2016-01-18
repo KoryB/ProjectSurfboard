@@ -4,10 +4,7 @@ import sys
 import array
 import itertools
 from math3d import *
-try:
-    import tkinter.filedialog
-except ImportError:
-    pass
+import tkinter.filedialog
 
 
 def main():

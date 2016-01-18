@@ -2,7 +2,8 @@
 
 uniform vec3 lightPos;
 uniform vec3 eyePos;
-uniform sampler2D diffuse_texture;
+uniform sampler2DArray diffuse_texture;
+uniform float framenumber;
 
 in vec2 v_texcoord;
 in vec3 v_normal;
@@ -11,7 +12,7 @@ in vec3 v_pw;
 out vec4 color;
 
 void main(){
-    vec4 tc = texture(diffuse_texture,v_texcoord);
+    vec4 tc = texture(diffuse_texture,vec3(v_texcoord,framenumber));
     vec3 N = normalize(v_normal);
     vec3 V = normalize(eyePos - v_pw);
     vec3 L = (lightPos - v_pw);

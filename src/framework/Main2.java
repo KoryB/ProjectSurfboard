@@ -6,8 +6,13 @@ import java.util.Set;
 import java.util.TreeSet;
 import static JGL.JGL.*;
 import static JSDL.JSDL.*;
+import static framework.math3d.math3d.mul;
+import static framework.math3d.math3d.sub;
+import static framework.math3d.math3d.translation;
+import framework.math3d.vec2;
+import framework.math3d.vec4;
 
-public class Main{
+public class Main2{
     
     
     public static void main(String[] args){
@@ -31,8 +36,8 @@ public class Main{
                     public void debugCallback(int source, int type, int id, int severity, String message, Object obj)
                     {
                         System.out.println("GL message: " + message);
-                        if (severity == GL_DEBUG_SEVERITY_HIGH)
-                            System.exit(1);
+                        //if( severity == GL_DEBUG_SEVERITY_HIGH )
+                        //    System.exit(1);
                     }
                 },
                 null);
@@ -56,28 +61,39 @@ public class Main{
         float prev;
         Mesh column;
         UnitSquare usq;
-        
+        Framebuffer fbo1;
+        Framebuffer fbo2;
+        Texture2D dummytex = new SolidTexture(GL_UNSIGNED_BYTE,0,0,0,0);
+        column = new Mesh("assets/testWall.obj.mesh");
         usq = new UnitSquare();
-        ImageTextureArray ita = new ImageTextureArray("assets/globe%02d.png",24);
+
+        fbo1 = new Framebuffer(512,512);
+        fbo2 = new Framebuffer(512,512);
+
         prog = new Program("vs.txt","fs.txt");
+        blurprog = new Program("blurvs.txt","blurfs.txt");
+
+
         cam = new Camera();
         cam.lookAt( new vec3(0,0,5), new vec3(0,0,0), new vec3(0,1,0) );
 
         prev = (float)(System.nanoTime()*1E-9);
 
-        float framenum = 0.0f;
         SDL_Event ev=new SDL_Event();
         while(true){
+
             while(true){
                 int rv = SDL_PollEvent(ev);
                 if( rv == 0 )
                     break;
+                //System.out.println("Event "+ev.type);
                 if( ev.type == SDL_QUIT )
                     System.exit(0);
                 if( ev.type == SDL_MOUSEMOTION ){
+                    //System.out.println("Mouse motion "+ev.motion.x+" "+ev.motion.y+" "+ev.motion.xrel+" "+ev.motion.yrel);
                 }
                 if( ev.type == SDL_KEYDOWN ){
-                    System.out.println(ev.key.keysym.sym);
+                    //System.out.println("Key press "+ev.key.keysym.sym+" "+ev.key.keysym.sym);
                     keys.add(ev.key.keysym.sym);
                 }
                 if( ev.type == SDL_KEYUP ){
@@ -88,12 +104,8 @@ public class Main{
             float now = (float)(System.nanoTime()*1E-9);
             float elapsed = now-prev;
 
-            framenum += 16.0f*elapsed;
-            while( framenum >= 24.0f )
-                framenum -= 24.0f;
-            
             prev=now;
-            
+
             if( keys.contains(SDLK_w ))
                 cam.walk(0.5f*elapsed);
             if( keys.contains(SDLK_s))
@@ -107,18 +119,30 @@ public class Main{
             if( keys.contains(SDLK_t))
                 cam.tilt(-0.4f*elapsed);
 
-
+            //the fbo stuff is for later...
+            //fbo1.bind();
+            
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             prog.use();
-            prog.setUniform("diffuse_texture",ita);
-            prog.setUniform("framenumber",framenum);
             prog.setUniform("lightPos",new vec3(50,50,50) );
             cam.draw(prog);
             prog.setUniform("worldMatrix",mat4.identity());
-            usq.draw(prog);
+            column.draw(prog);
             
-            
+            //fbo1.unbind();
+
+            //this is also for later...
+/*
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            blurprog.use();
+            blurprog.setUniform("diffuse_texture",fbo1.texture);
+            usq.draw(blurprog);
+            blurprog.setUniform("diffuse_texture",dummytex);
+*/
+
             SDL_GL_SwapWindow(win);
+
+
         }//endwhile
     }//end main
 }
