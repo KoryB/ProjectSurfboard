@@ -26,5 +26,9 @@ public abstract class CollisionObject
         return mCollisionPrimitive;
     }
 
-    public abstract void move(vec4 amount);
+    public void move(vec4 amount)
+    {
+        mPosition = mPosition.add(amount);
+        mCollisionPrimitive.translate(amount);
+    }
 }
