@@ -34,12 +34,12 @@ public class Wall
 
     public void draw(Program program)
     {
-        System.out.println("Wall info:");
-        System.out.println("MIN: " + mAABB.getMin());
-        System.out.println("MAX: " + mAABB.getMax());
-        System.out.println("CENTER: " + mAABB.getCenter());
-        System.out.println("EXTENTS: " + mAABB.getExtents());
-        System.out.println();
+//        System.out.println("Wall info:");
+//        System.out.println("MIN: " + mAABB.getMin());
+//        System.out.println("MAX: " + mAABB.getMax());
+//        System.out.println("CENTER: " + mAABB.getCenter());
+//        System.out.println("EXTENTS: " + mAABB.getExtents());
+//        System.out.println();
 
         program.setUniform("worldMatrix", math3d.translation(mPosition));
         MESH.draw(program);

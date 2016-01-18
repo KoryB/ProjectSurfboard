@@ -94,7 +94,6 @@ public class AABB
         else //since mMin and mMax are both null, mExtents and mCenter must be non-null
         {
             vec4 halfExtents = mExtents.mul(0.5f);
-
             mMin = mCenter.sub(halfExtents);
             mMax = mCenter.add(halfExtents);
         }
@@ -105,9 +104,12 @@ public class AABB
         return mMin;
     }
 
-    public void setMin(vec4 mMin)
+    public void setMin(vec4 min)
     {
-        this.mMin = mMin;
+        mMin = min;
+
+        mMax = mMin.add(mExtents);
+        mCenter = mMin.add(mMax).mul(0.5f);
     }
 
     public vec4 getMax()
@@ -115,9 +117,12 @@ public class AABB
         return mMax;
     }
 
-    public void setMax(vec4 mMax)
+    public void setMax(vec4 max)
     {
-        this.mMax = mMax;
+        mMax = max;
+
+        mMin = mMax.sub(mExtents);
+        mCenter = mMin.add(mMax).mul(0.5f);
     }
 
     public vec4 getCenter()
@@ -125,18 +130,17 @@ public class AABB
         return mCenter;
     }
 
-    public void setCenter(vec4 mCenter)
+    public void setCenter(vec4 center)
     {
-        this.mCenter = mCenter;
+        mCenter = center;
+
+        vec4 halfExtents = mExtents.mul(0.5f);
+        mMin = mCenter.sub(halfExtents);
+        mMax = mCenter.add(halfExtents);
     }
 
     public vec4 getExtents()
     {
         return mExtents;
-    }
-
-    public void setExtents(vec4 mExtents)
-    {
-        this.mExtents = mExtents;
     }
 }
