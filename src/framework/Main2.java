@@ -9,9 +9,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import static JGL.JGL.*;
 import static JSDL.JSDL.*;
-import static framework.math3d.math3d.mul;
-import static framework.math3d.math3d.sub;
-import static framework.math3d.math3d.translation;
+import static framework.math3d.math3d.*;
+
 import framework.math3d.vec2;
 import framework.math3d.vec4;
 
@@ -81,7 +80,7 @@ public class Main2{
 
 
         cam = new Camera();
-        cam.lookAt( new vec3(0,4,1), new vec3(0,4,0), new vec3(0,1,0) );
+        cam.lookAt( new vec3(-4.5, 3, -.5), new vec3(-3.5,0,-1.5), normalize(new vec3(1,0,-1)) );
 
         prev = (float)(System.nanoTime()*1E-9);
 
@@ -121,6 +120,10 @@ public class Main2{
                 cam.strafe(new vec3(-0.4f * elapsed, 0, 0));
             if( keys.contains(SDLK_d))
                 cam.strafe(new vec3(0.4f * elapsed, 0, 0));
+            if( keys.contains(SDLK_q))
+                cam.strafe(new vec3(0, -0.4f * elapsed, 0));
+            if( keys.contains(SDLK_e))
+                cam.strafe(new vec3(0, 0.4f * elapsed, 0));
             if( keys.contains(SDLK_r))
                 cam.tilt(0.4f*elapsed);
             if( keys.contains(SDLK_t))
@@ -129,6 +132,9 @@ public class Main2{
                 cam.pitch(0.4f*elapsed);
             if( keys.contains(SDLK_g))
                 cam.pitch(-0.4f*elapsed);
+
+            if (keys.contains(SDLK_SPACE))
+                cam.getCollisionPrimitive().printInfo();
 
             //the fbo stuff is for later...
             //fbo1.bind();
