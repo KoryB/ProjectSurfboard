@@ -78,7 +78,7 @@ public class Main2{
 
 
         cam = new Camera();
-        cam.lookAt( new vec3(0,0,5), new vec3(0,0,0), new vec3(0,1,0) );
+        cam.lookAt( new vec3(0,0,1), new vec3(0,0,0), new vec3(0,1,0) );
 
         prev = (float)(System.nanoTime()*1E-9);
 

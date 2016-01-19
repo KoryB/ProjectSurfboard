@@ -120,6 +120,7 @@ public class Camera extends CollisionObject
 
     public void lookAt(vec3 eye1, vec3 coi1, vec3 up1)
     {
+        vec3 delta = eye1.sub(this.eye.xyz());
         this.eye = new vec4(eye1, 1.0);
         vec4 coi = new vec4(coi1, 1.0);
         vec4 up = new vec4(up1, 0.0);
@@ -128,6 +129,8 @@ public class Camera extends CollisionObject
         U = cross(look, up);
         V = cross(U, look);
         compute_view_matrix();
+
+        mCollisionPrimitive.translate(new vec4(delta, 0.0));
     }
 }
     
