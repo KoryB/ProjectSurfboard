@@ -52,6 +52,7 @@ public class InputHandler {
                 System.exit(0);
             if( mEvent.type == SDL_MOUSEBUTTONDOWN){
                 mMousePressed.add(mEvent.button.button);
+                System.out.println(mEvent.button.button);
             }
             if( mEvent.type == SDL_MOUSEBUTTONUP){
                 mMouseReleased.add(mEvent.button.button);
@@ -73,8 +74,9 @@ public class InputHandler {
     }
 
     public boolean keyPressed(String key){
-        if(mKeysPressed.contains(Integer.parseInt(mBindings.getProperty(key))))
+        if(mKeysPressed.contains(Integer.parseInt(mBindings.getProperty(key)))) {
             return true;
+        }
         else
             return false;
     }
