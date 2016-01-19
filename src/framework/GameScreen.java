@@ -13,13 +13,11 @@ import static JSDL.JSDL.*;
 public class GameScreen implements Screen {
 
     //Player mPlayer;
-    InputHandler mInput;
-    boolean mPaused;
+    private InputHandler mInput;
+    private boolean mPaused;
     Camera cam;
-    Program mProgram;
     Program blurprog;
     float prev, framenum;
-    Mesh column;
     UnitSquare usq;
     ImageTextureArray ita;
 

@@ -8,10 +8,10 @@ import static JSDL.JSDL.*;
  */
 public class Game {
 
-    Screen mActiveScreen;
-    Program mProgram;
-    boolean mRunning;
-    long mWindow;
+    public Screen mActiveScreen;
+    public Program mProgram;
+    public boolean mRunning;
+    private long mWindow;
 
     public Game(){
         SDL_Init(SDL_INIT_VIDEO);
