@@ -5,8 +5,10 @@ import framework.math3d.primitives.AABB;
 import framework.math3d.primitives.IntersectionHandler;
 import framework.math3d.vec3;
 import framework.math3d.mat4;
+
 import java.util.Set;
 import java.util.TreeSet;
+
 import static JGL.JGL.*;
 import static JSDL.JSDL.*;
 import static framework.math3d.math3d.*;
@@ -14,22 +16,24 @@ import static framework.math3d.math3d.*;
 import framework.math3d.vec2;
 import framework.math3d.vec4;
 
-public class Main2{
+public class Main2
+{
+    static InputHandler INPUT = new InputHandler("config/cfg.properties");
 
-
-    public static void main(String[] args){
+    public static void main(String[] args)
+    {
 
         SDL_Init(SDL_INIT_VIDEO);
-        long win = SDL_CreateWindow("ETGG 2802",40,60, 512,512, SDL_WINDOW_OPENGL );
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_CORE);
-        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,24);
-        SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,8);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION,3);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,2);
+        long win = SDL_CreateWindow("ETGG 2802", 40, 60, 512, 512, SDL_WINDOW_OPENGL);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+        SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
         SDL_GL_CreateContext(win);
 
-        glDebugMessageControl(GL_DONT_CARE,GL_DONT_CARE,GL_DONT_CARE, 0,null, true );
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, null, true);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback(
                 new DebugMessageCallback()
@@ -45,11 +49,11 @@ public class Main2{
                 null);
 
         int[] tmp = new int[1];
-        glGenVertexArrays(1,tmp);
+        glGenVertexArrays(1, tmp);
         int vao = tmp[0];
         glBindVertexArray(vao);
 
-        glClearColor(0.2f,0.4f,0.6f,1.0f);
+        glClearColor(0.2f, 0.4f, 0.6f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
@@ -64,7 +68,8 @@ public class Main2{
         UnitSquare usq;
         Framebuffer fbo1;
         Framebuffer fbo2;
-        Texture2D dummytex = new SolidTexture(GL_UNSIGNED_BYTE,0,0,0,0);
+        Texture2D dummytex = new SolidTexture(GL_UNSIGNED_BYTE, 0, 0, 0, 0);
+        Player player = new Player(new vec4(-2.0, 1, -.5, 1));
         usq = new UnitSquare();
 
         Wall wall = new Wall(new vec4(0, 0, 0, 1));
@@ -72,91 +77,81 @@ public class Main2{
         Wall wall3 = new Wall(new vec4(0.5, 0, -1, 1));
 
 
-        fbo1 = new Framebuffer(512,512);
-        fbo2 = new Framebuffer(512,512);
+        fbo1 = new Framebuffer(512, 512);
+        fbo2 = new Framebuffer(512, 512);
 
-        prog = new Program("vs.txt","fs.txt");
-        blurprog = new Program("blurvs.txt","blurfs.txt");
+        prog = new Program("vs.txt", "fs.txt");
+        blurprog = new Program("blurvs.txt", "blurfs.txt");
 
 
         cam = new Camera();
-        cam.lookAt( new vec3(-4.5, 3, -.5), new vec3(-3.5,0,-1.5), normalize(new vec3(1,0,-1)) );
+        cam.lookAt(new vec3(-4.5, 3, -.5), new vec3(-3.5, 0, -1.5), normalize(new vec3(1, 0, -1)));
 
-        prev = (float)(System.nanoTime()*1E-9);
+        prev = (float) (System.nanoTime() * 1E-9);
+        while (true)
+        {
 
-        SDL_Event ev=new SDL_Event();
-        while(true){
+            INPUT.poll();
 
-            while(true){
-                int rv = SDL_PollEvent(ev);
-                if( rv == 0 )
-                    break;
-                //System.out.println("Event "+ev.type);
-                if( ev.type == SDL_QUIT )
-                    System.exit(0);
-                if( ev.type == SDL_MOUSEMOTION ){
-                    //System.out.println("Mouse motion "+ev.motion.x+" "+ev.motion.y+" "+ev.motion.xrel+" "+ev.motion.yrel);
-                }
-                if( ev.type == SDL_KEYDOWN ){
-                    //System.out.println("Key press "+ev.key.keysym.sym+" "+ev.key.keysym.sym);
-                    keys.add(ev.key.keysym.sym);
-                }
-                if( ev.type == SDL_KEYUP ){
-                    keys.remove(ev.key.keysym.sym);
-                }
-            }
+            float now = (float) (System.nanoTime() * 1E-9);
+            float elapsed = now - prev;
+            //            elapsed *= 3;
 
-            float now = (float)(System.nanoTime()*1E-9);
-            float elapsed = now-prev;
-//            elapsed *= 3;
+            prev = now;
 
-            prev=now;
-
-            if( keys.contains(SDLK_w ))
-                cam.walk(0.5f*elapsed);
-            if( keys.contains(SDLK_s))
-                cam.walk(-0.5f*elapsed);
-            if( keys.contains(SDLK_a))
+            if (INPUT.keyPressed(SDLK_w))
+                cam.walk(0.5f * elapsed);
+            if (INPUT.keyPressed(SDLK_s))
+                cam.walk(-0.5f * elapsed);
+            if (INPUT.keyPressed(SDLK_a))
                 cam.strafe(new vec3(-0.4f * elapsed, 0, 0));
-            if( keys.contains(SDLK_d))
+            if (INPUT.keyPressed(SDLK_d))
                 cam.strafe(new vec3(0.4f * elapsed, 0, 0));
-            if( keys.contains(SDLK_q))
+            if (INPUT.keyPressed(SDLK_q))
                 cam.strafe(new vec3(0, -0.4f * elapsed, 0));
-            if( keys.contains(SDLK_e))
+            if (INPUT.keyPressed(SDLK_e))
                 cam.strafe(new vec3(0, 0.4f * elapsed, 0));
-            if( keys.contains(SDLK_r))
-                cam.tilt(0.4f*elapsed);
-            if( keys.contains(SDLK_t))
-                cam.tilt(-0.4f*elapsed);
-            if( keys.contains(SDLK_f))
-                cam.pitch(0.4f*elapsed);
-            if( keys.contains(SDLK_g))
-                cam.pitch(-0.4f*elapsed);
+            if (INPUT.keyPressed(SDLK_r))
+                cam.tilt(0.4f * elapsed);
+            if (INPUT.keyPressed(SDLK_t))
+                cam.tilt(-0.4f * elapsed);
+            if (INPUT.keyPressed(SDLK_f))
+                cam.pitch(0.4f * elapsed);
+            if (INPUT.keyPressed(SDLK_g))
+                cam.pitch(-0.4f * elapsed);
 
-            if (keys.contains(SDLK_SPACE))
+            if (INPUT.keyPressed(SDLK_SPACE))
                 cam.getCollisionPrimitive().printInfo();
 
             //the fbo stuff is for later...
             //fbo1.bind();
 
             wall.update(elapsed);
-//            CollisionHandler.pushApartAABB(cam, wall);
-            if (IntersectionHandler.AABBAABBIntersection((AABB) cam.getCollisionPrimitive(), (AABB) wall.getCollisionPrimitive()))
+            player.update(elapsed);
+            //            CollisionHandler.pushApartAABB(cam, wall);
+            /*if (IntersectionHandler.AABBAABBIntersection((AABB) cam.getCollisionPrimitive(), (AABB) wall
+            .getCollisionPrimitive()))
             {
                 System.out.println("Colliding!");
                 cam.getCollisionPrimitive().printInfo();
                 wall.getCollisionPrimitive().printInfo();
 
                 CollisionHandler.pushApartAABB(wall, cam);
-            }
+            }*/
+
+            CollisionHandler.pushApartAABB(player, wall);
+            CollisionHandler.pushApartAABB(player, wall2);
+            CollisionHandler.pushApartAABB(player, wall3);
+
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             prog.use();
-            prog.setUniform("lightPos",new vec3(50,50,50) );
+            prog.setUniform("lightPos", new vec3(50, 50, 50));
             cam.draw(prog);
             wall.draw(prog);
             wall2.draw(prog);
             wall3.draw(prog);
+            player.draw(prog);
 
             //fbo1.unbind();
 
