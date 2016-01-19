@@ -18,8 +18,9 @@ public class Wall extends CollisionObject
     public Wall(vec4 position)
     {
         mPosition = (vec4) position.clone();
-
         mCollisionType = CollisionType.AABB;
+        mIsStatic = true;
+
         mCollisionPrimitive = new AABB(mExtents, mPosition.add(new vec4(0.0f, mExtents.y / 2.0f, 0.0f, 0.0f)), AABBType.EXTENTS, AABBType.CENTER);
 
         if (MESH == null)
@@ -36,7 +37,7 @@ public class Wall extends CollisionObject
     public void draw(Program program)
     {
 //        mCollisionPrimitive.printInfo();
-        program.setUniform("worldMatrix", mat4.identity());
+        program.setUniform("worldMatrix", math3d.translation(mPosition));
         MESH.draw(program);
     }
 }

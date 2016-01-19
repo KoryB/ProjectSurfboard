@@ -138,7 +138,7 @@ public class Main2{
                 cam.getCollisionPrimitive().printInfo();
                 wall.getCollisionPrimitive().printInfo();
 
-                CollisionHandler.pushApartAABB(cam, wall);
+                CollisionHandler.pushApartAABB(wall, cam);
             }
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

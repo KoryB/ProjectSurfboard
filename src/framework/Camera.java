@@ -22,18 +22,19 @@ public class Camera extends CollisionObject
     mat4 projMatrix;
     mat4 viewMatrix;
 
-    vec4 eye = new vec4(0, 0, 0, 1);
     vec4 U = new vec4(1, 0, 0, 0);
     vec4 V = new vec4(0, 1, 0, 0);
     vec4 W = new vec4(0, 0, 1, 0);
 
     public Camera()
     {
+        mPosition = new vec4(0, 0, 0, 1);
+
         compute_proj_matrix();
         compute_view_matrix();
 
         mCollisionType = CollisionType.AABB;
-        mCollisionPrimitive = new AABB(eye, new vec4(hither, hither, hither, 0.0f), AABBType.CENTER, AABBType.EXTENTS);
+        mCollisionPrimitive = new AABB(mPosition, new vec4(hither*2.5, hither*2.5, hither*2.5, 0.0f), AABBType.CENTER, AABBType.EXTENTS);
     }
 
     public void compute_proj_matrix()
@@ -48,7 +49,7 @@ public class Camera extends CollisionObject
     public void compute_view_matrix()
     {
         viewMatrix = mul(
-                translation(mul(-1.0f, eye)),
+                translation(mul(-1.0f, mPosition)),
                 new mat4(U.x, V.x, W.x, 0,
                         U.y, V.y, W.y, 0,
                         U.z, V.z, W.z, 0,
@@ -59,10 +60,10 @@ public class Camera extends CollisionObject
     @Override
     public void move(vec4 amount)
     {
-        eye = eye.add(amount);
+        super.move(amount);
+
         compute_view_matrix();
 
-        mCollisionPrimitive.translate(amount);
     }
 
     public void draw(Program prog)
@@ -72,7 +73,7 @@ public class Camera extends CollisionObject
         prog.setUniform("cameraU", this.U.xyz());
         prog.setUniform("cameraV", this.V.xyz());
         prog.setUniform("cameraW", this.W.xyz());
-        prog.setUniform("eyePos", this.eye.xyz());
+        prog.setUniform("eyePos", this.mPosition.xyz());
     }
 
     public void turn(float a)
@@ -120,11 +121,11 @@ public class Camera extends CollisionObject
 
     public void lookAt(vec3 eye1, vec3 coi1, vec3 up1)
     {
-        vec3 delta = eye1.sub(this.eye.xyz());
-        this.eye = new vec4(eye1, 1.0);
+        vec3 delta = eye1.sub(this.mPosition.xyz());
+        this.mPosition = new vec4(eye1, 1.0);
         vec4 coi = new vec4(coi1, 1.0);
         vec4 up = new vec4(up1, 0.0);
-        vec4 look = normalize(sub(coi, eye));
+        vec4 look = normalize(sub(coi, mPosition));
         W = mul(-1.0, look);
         U = cross(look, up);
         V = cross(U, look);
