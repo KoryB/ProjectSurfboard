@@ -69,6 +69,9 @@ public class Main2{
         usq = new UnitSquare();
 
         Wall wall = new Wall(new vec4(0, 0, 0, 1));
+        Wall wall2 = new Wall(new vec4(0.5, 0, 0, 1));
+        Wall wall3 = new Wall(new vec4(0.5, 0, -1, 1));
+
 
         fbo1 = new Framebuffer(512,512);
         fbo2 = new Framebuffer(512,512);
@@ -78,7 +81,7 @@ public class Main2{
 
 
         cam = new Camera();
-        cam.lookAt( new vec3(0,0,1), new vec3(0,0,0), new vec3(0,1,0) );
+        cam.lookAt( new vec3(0,4,1), new vec3(0,4,0), new vec3(0,1,0) );
 
         prev = (float)(System.nanoTime()*1E-9);
 
@@ -115,9 +118,9 @@ public class Main2{
             if( keys.contains(SDLK_s))
                 cam.walk(-0.5f*elapsed);
             if( keys.contains(SDLK_a))
-                cam.turn(0.4f*elapsed);
+                cam.strafe(new vec3(-0.4f * elapsed, 0, 0));
             if( keys.contains(SDLK_d))
-                cam.turn(-0.4f*elapsed);
+                cam.strafe(new vec3(0.4f * elapsed, 0, 0));
             if( keys.contains(SDLK_r))
                 cam.tilt(0.4f*elapsed);
             if( keys.contains(SDLK_t))
@@ -146,6 +149,8 @@ public class Main2{
             prog.setUniform("lightPos",new vec3(50,50,50) );
             cam.draw(prog);
             wall.draw(prog);
+            wall2.draw(prog);
+            wall3.draw(prog);
 
             //fbo1.unbind();
 
