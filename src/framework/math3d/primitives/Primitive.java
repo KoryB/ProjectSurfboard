@@ -8,4 +8,5 @@ import framework.math3d.vec4;
 public interface Primitive
 {
     void translate(vec4 amount);
+    void printInfo();
 }

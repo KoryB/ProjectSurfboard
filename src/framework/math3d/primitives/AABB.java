@@ -134,11 +134,6 @@ public class AABB implements Primitive
         mMax = mCenter.add(halfExtents);
     }
 
-    public void translate(vec4 amount)
-    {
-        setMin(mMin.add(amount));
-    }
-
     public float getLeft()
     {
         return mMin.x;
@@ -172,5 +167,21 @@ public class AABB implements Primitive
     public vec4 getExtents()
     {
         return mExtents;
+    }
+
+    //TODO: Add ability to print to any output stream
+    public void printInfo()
+    {
+        System.out.println("AABB info:");
+        System.out.println("MIN: " + mMin);
+        System.out.println("MAX: " + mMax);
+        System.out.println("CENTER: " + mCenter);
+        System.out.println("EXTENTS: " + mExtents);
+        System.out.println();
+    }
+
+    public void translate(vec4 amount)
+    {
+        setMin(mMin.add(amount));
     }
 }

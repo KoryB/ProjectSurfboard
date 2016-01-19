@@ -45,19 +45,19 @@ public class CollisionHandler
             }
             else if (topbottom <= rightleft && topbottom <= leftright && topbottom <= bottomtop && topbottom <= frontback && topbottom <= backfront)
             {
-                delta = new vec4(-topbottom, 0.0f, 0.0f, 0.0f);
+                delta = new vec4(0.0, -topbottom, 0.0f, 0.0f);
             }
             else if (bottomtop <= rightleft && bottomtop <= leftright && bottomtop <= topbottom && bottomtop <= frontback && bottomtop <= backfront)
             {
-                delta = new vec4(bottomtop, 0.0f, 0.0f, 0.0f);
+                delta = new vec4(0.0f, bottomtop, 0.0f, 0.0f);
             }
             else if (frontback <= rightleft && frontback <= leftright && frontback <= frontback && frontback <= backfront && frontback <= backfront)
             {
-                delta = new vec4(-frontback, 0.0f, 0.0f, 0.0f);
+                delta = new vec4(0.0f, 0.0f, -frontback, 0.0f);
             }
             else // backfront must be the smallest
             {
-                delta = new vec4(backfront, 0.0f, 0.0f, 0.0f);
+                delta = new vec4(0.0f, 0.0f, backfront, 0.0f);
             }
 
             if (objectA.mIsStatic)
