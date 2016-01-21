@@ -1,10 +1,7 @@
 package framework;
 
 import framework.collisions.CollisionHandler;
-import framework.math3d.primitives.AABB;
-import framework.math3d.primitives.IntersectionHandler;
 import framework.math3d.vec3;
-import framework.math3d.mat4;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -13,7 +10,6 @@ import static JGL.JGL.*;
 import static JSDL.JSDL.*;
 import static framework.math3d.math3d.*;
 
-import framework.math3d.vec2;
 import framework.math3d.vec4;
 
 public class Main2
@@ -99,28 +95,28 @@ public class Main2
 
             prev = now;
 
-            if (INPUT.keyPressed(SDLK_w))
+            if (INPUT.keyDown(SDLK_w))
                 cam.walk(0.5f * elapsed);
-            if (INPUT.keyPressed(SDLK_s))
+            if (INPUT.keyDown(SDLK_s))
                 cam.walk(-0.5f * elapsed);
-            if (INPUT.keyPressed(SDLK_a))
+            if (INPUT.keyDown(SDLK_a))
                 cam.strafe(new vec3(-0.4f * elapsed, 0, 0));
-            if (INPUT.keyPressed(SDLK_d))
+            if (INPUT.keyDown(SDLK_d))
                 cam.strafe(new vec3(0.4f * elapsed, 0, 0));
-            if (INPUT.keyPressed(SDLK_q))
+            if (INPUT.keyDown(SDLK_q))
                 cam.strafe(new vec3(0, -0.4f * elapsed, 0));
-            if (INPUT.keyPressed(SDLK_e))
+            if (INPUT.keyDown(SDLK_e))
                 cam.strafe(new vec3(0, 0.4f * elapsed, 0));
-            if (INPUT.keyPressed(SDLK_r))
+            if (INPUT.keyDown(SDLK_r))
                 cam.tilt(0.4f * elapsed);
-            if (INPUT.keyPressed(SDLK_t))
+            if (INPUT.keyDown(SDLK_t))
                 cam.tilt(-0.4f * elapsed);
-            if (INPUT.keyPressed(SDLK_f))
+            if (INPUT.keyDown(SDLK_f))
                 cam.pitch(0.4f * elapsed);
-            if (INPUT.keyPressed(SDLK_g))
+            if (INPUT.keyDown(SDLK_g))
                 cam.pitch(-0.4f * elapsed);
 
-            if (INPUT.keyPressed(SDLK_SPACE))
+            if (INPUT.keyDown(SDLK_SPACE))
                 cam.getCollisionPrimitive().printInfo();
 
             //the fbo stuff is for later...

@@ -26,20 +26,19 @@ public class Player extends CollisionObject
 
     public void update(float elapsed)
     {
-        if (Main2.INPUT.keyPressed("PLAYER_MOVE_UP"))
+        if (GameScreen.mInput.keyDown("PLAYER_MOVE_UP"))
         {
-            System.out.println("do i move?");
             move(new vec4(1.0*elapsed, 0, 0, 0));
         }
-        if (Main2.INPUT.keyPressed("PLAYER_MOVE_DOWN"))
+        if (GameScreen.mInput.keyDown("PLAYER_MOVE_DOWN"))
         {
             move(new vec4(-1.0*elapsed, 0, 0, 0));
         }
-        if (Main2.INPUT.keyPressed("PLAYER_MOVE_LEFT"))
+        if (GameScreen.mInput.keyDown("PLAYER_MOVE_LEFT"))
         {
             move(new vec4(0, 0, -1.0*elapsed, 0));
         }
-        if (Main2.INPUT.keyPressed("PLAYER_MOVE_RIGHT"))
+        if (GameScreen.mInput.keyDown("PLAYER_MOVE_RIGHT"))
         {
             move(new vec4(0, 0, 1.0*elapsed, 0));
         }

@@ -73,7 +73,7 @@ public class InputHandler {
         }
     }
 
-    public boolean keyPressed(String key){
+    public boolean keyDown(String key){
         if(mKeysPressed.contains(Integer.parseInt(mBindings.getProperty(key)))) {
             return true;
         }
@@ -81,7 +81,7 @@ public class InputHandler {
             return false;
     }
 
-    public boolean keyPressed(int key){
+    public boolean keyDown(int key){
         if(mKeysPressed.contains(key))
             return true;
         else
