@@ -22,6 +22,13 @@ public class Camera extends CollisionObject
     mat4 projMatrix;
     mat4 viewMatrix;
 
+    float mRight = 4.0f;
+    float mLeft = -1.0f;
+    float mTop = 4.0f;
+    float mBottom = -1.0f;
+    float mNear = 0.1f;
+    float mFar = 8.1f;
+
     vec4 U = new vec4(1, 0, 0, 0);
     vec4 V = new vec4(0, 1, 0, 0);
     vec4 W = new vec4(0, 0, 1, 0);
@@ -37,13 +44,23 @@ public class Camera extends CollisionObject
         mCollisionPrimitive = new AABB(mPosition, new vec4(hither*2.5, hither*2.5, hither*2.5, 0.0f), AABBType.CENTER, AABBType.EXTENTS);
     }
 
-    public void compute_proj_matrix()
+    public void compute_projp_matrix()
     {
         projMatrix = new mat4(
                 1 / tan(toRadians(fov_h)), 0, 0, 0,
                 0, 1 / tan(toRadians(fov_v)), 0, 0,
                 0, 0, 1 + 2.0 * yon / (hither - yon), -1,
                 0, 0, 2.0 * hither * yon / (hither - yon), 0);
+    }
+
+    public void compute_proj_matrix()
+    {
+        projMatrix = new mat4(
+                1 / mRight, 0, 0, 0,
+                0, 1 / mTop, 0, 0,
+                0, 0, -2 / (mFar - mNear), 0,
+                0, 0, -(mFar + mNear) / (mFar - mNear), 1
+        );
     }
 
     public void compute_view_matrix()

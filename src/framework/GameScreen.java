@@ -1,11 +1,13 @@
 package framework;
 
+import framework.collisions.CollisionHandler;
 import framework.math3d.vec3;
 import framework.math3d.mat4;
-import java.util.Set;
-import java.util.TreeSet;
+import framework.math3d.vec4;
+
 import static JGL.JGL.*;
 import static JSDL.JSDL.*;
+import static framework.math3d.math3d.normalize;
 
 /**
  * Created by Michael on 1/15/2016.
@@ -13,17 +15,18 @@ import static JSDL.JSDL.*;
 public class GameScreen implements Screen {
 
     //Player mPlayer;
-    private InputHandler mInput;
+    public static InputHandler mInput = new InputHandler("config/cfg.properties");;
     private boolean mPaused;
     Camera cam;
     Program blurprog;
     float prev, framenum;
     UnitSquare usq;
     ImageTextureArray ita;
+    Wall wall, wall2, wall3;
+    Player player;
 
     public GameScreen(){
         mPaused = false;
-        mInput = new InputHandler("config/cfg.properties");
 
         int[] tmp = new int[1];
         glGenVertexArrays(1,tmp);
@@ -40,11 +43,16 @@ public class GameScreen implements Screen {
         usq = new UnitSquare();
         ita = new ImageTextureArray("assets/globe%02d.png",24);
         cam = new Camera();
-        cam.lookAt( new vec3(0,0,5), new vec3(0,0,0), new vec3(0,1,0) );
+        cam.lookAt(new vec3(-4.5, 3, -.5), new vec3(-3.5, 0, -1.5), normalize(new vec3(1, 0, -1)));
 
         prev = (float)(System.nanoTime()*1E-9);
 
         framenum = 0.0f;
+
+        wall = new Wall(new vec4(0, 0, 0, 1));
+        wall2 = new Wall(new vec4(0.5, 0, 0, 1));
+        wall3 = new Wall(new vec4(0.5, 0, -1, 1));
+        player = new Player(new vec4(-2.0, 1, -.5, 1));
     }
 
     @Override
@@ -60,18 +68,38 @@ public class GameScreen implements Screen {
 
         prev=now;
 
-        if( mInput.keyPressed("CAMERA_MOVE_FORWARD"))
+        if( mInput.keyDown("CAMERA_MOVE_FORWARD"))
             cam.walk(2.0f * elapsed);
-        if( mInput.keyPressed("CAMERA_MOVE_BACKWARD"))
+        if( mInput.keyDown("CAMERA_MOVE_BACKWARD"))
             cam.walk(-0.5f*elapsed);
-        if( mInput.keyPressed("CAMERA_TURN_LEFT"))
-            cam.turn(0.4f*elapsed);
-        if( mInput.keyPressed("CAMERA_TURN_RIGHT"))
-            cam.turn(-0.4f*elapsed);
-        if( mInput.keyPressed("CAMERA_TILT_LEFT"))
+//        if( mInput.keyDown("CAMERA_TURN_LEFT"))
+//            cam.turn(0.4f*elapsed);
+//        if( mInput.keyDown("CAMERA_TURN_RIGHT"))
+//            cam.turn(-0.4f*elapsed);
+        if( mInput.keyDown("CAMERA_TILT_LEFT"))
             cam.tilt(0.4f*elapsed);
-        if( mInput.keyPressed("CAMERA_TILT_RIGHT"))
+        if( mInput.keyDown("CAMERA_TILT_RIGHT"))
             cam.tilt(-0.4f*elapsed);
+
+        if (mInput.keyDown(SDLK_r))
+            cam.tilt(0.4f * elapsed);
+        if (mInput.keyDown(SDLK_t))
+            cam.tilt(-0.4f * elapsed);
+        if (mInput.keyDown(SDLK_f))
+            cam.pitch(0.4f * elapsed);
+        if (mInput.keyDown(SDLK_g))
+            cam.pitch(-0.4f * elapsed);
+        if (mInput.keyDown(SDLK_a))
+            cam.strafe(new vec3(-0.4f * elapsed, 0, 0));
+        if (mInput.keyDown(SDLK_d))
+            cam.strafe(new vec3(0.4f * elapsed, 0, 0));
+
+
+        player.update(elapsed);
+
+        CollisionHandler.pushApartAABB(player, wall);
+        CollisionHandler.pushApartAABB(player, wall2);
+        CollisionHandler.pushApartAABB(player, wall3);
 
     }
 
@@ -81,8 +109,10 @@ public class GameScreen implements Screen {
         program.setUniform("framenumber", framenum);
         program.setUniform("lightPos", new vec3(50, 50, 50));
         cam.draw(program);
-        program.setUniform("worldMatrix", mat4.identity());
-        usq.draw(program);
+        wall.draw(program);
+        wall2.draw(program);
+        wall3.draw(program);
+        player.draw(program);
     }
 
     @Override
