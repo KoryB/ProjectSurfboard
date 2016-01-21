@@ -65,6 +65,7 @@ public class InputHandler {
                 mMouseDown.add(mEvent.button.button);
             }
 
+
             if( mEvent.type == SDL_MOUSEBUTTONUP){
                 mMouseDown.remove(mEvent.button.button);
                 mMouseReleased.add(mEvent.button.button);
