@@ -16,19 +16,25 @@ public class InputHandler {
     int mPendingEvents;
     vec2 mMousePos, mMouseOffset;
     SDL_Event mEvent;
-    Set<Integer> mKeysPressed, mKeysReleased, mMousePressed, mMouseReleased;
+    Set<Integer> mKeysDown, mKeysPressed, mKeysReleased, mMouseDown, mMousePressed, mMouseReleased;
     Properties mBindings;
 
     public InputHandler(String configFile){
         mPendingEvents = 0;
         mEvent = new SDL_Event();
+
+        mKeysDown = new TreeSet<>();
         mKeysPressed = new TreeSet<>();
         mKeysReleased = new TreeSet<>();
+
+        mMouseDown = new TreeSet<>();
         mMousePressed = new TreeSet<>();
         mMouseReleased = new TreeSet<>();
-        mBindings = new Properties();
         mMousePos = new vec2();
         mMouseOffset = new vec2();
+
+        mBindings = new Properties();
+
 
         try {
             loadBindings(configFile);
@@ -38,7 +44,9 @@ public class InputHandler {
     }
 
     public void poll(){
+        mKeysPressed.clear();
         mKeysReleased.clear();
+        mMousePressed.clear();
         mMouseReleased.clear();
         mMouseOffset.x = 0;
         mMouseOffset.y = 0;
@@ -50,27 +58,51 @@ public class InputHandler {
                 break;
             if( mEvent.type == SDL_QUIT )
                 System.exit(0);
+
             if( mEvent.type == SDL_MOUSEBUTTONDOWN){
-                mMousePressed.add(mEvent.button.button);
-                System.out.println(mEvent.button.button);
+                if(!mMouseDown.contains(mEvent.button.button))
+                    mMousePressed.add(mEvent.button.button);
+                mMouseDown.add(mEvent.button.button);
             }
+
             if( mEvent.type == SDL_MOUSEBUTTONUP){
+                mMouseDown.remove(mEvent.button.button);
                 mMouseReleased.add(mEvent.button.button);
             }
+
             if( mEvent.type == SDL_MOUSEMOTION){
                 mMousePos.x = mEvent.motion.x;
                 mMousePos.y = mEvent.motion.y;
                 mMouseOffset.x = mEvent.motion.xrel;
                 mMouseOffset.y = mEvent.motion.yrel;
             }
+
             if( mEvent.type == SDL_KEYDOWN ){
-                mKeysPressed.add(mEvent.key.keysym.sym);
+                if(!mKeysDown.contains(mEvent.key.keysym.sym))
+                    mKeysPressed.add(mEvent.key.keysym.sym);
+                mKeysDown.add(mEvent.key.keysym.sym);
             }
+
             if( mEvent.type == SDL_KEYUP ){
-                mKeysPressed.remove(mEvent.key.keysym.sym);
+                mKeysDown.remove(mEvent.key.keysym.sym);
                 mKeysReleased.add(mEvent.key.keysym.sym);
             }
         }
+    }
+
+    public boolean keyDown(String key){
+        if(mKeysDown.contains(Integer.parseInt(mBindings.getProperty(key)))) {
+            return true;
+        }
+        else
+            return false;
+    }
+
+    public boolean keyDown(int key){
+        if(mKeysDown.contains(key))
+            return true;
+        else
+            return false;
     }
 
     public boolean keyPressed(String key){
@@ -97,6 +129,13 @@ public class InputHandler {
 
     public boolean keyReleased(int key){
         if(mKeysReleased.contains(key))
+            return true;
+        else
+            return false;
+    }
+
+    public boolean mouseDown(int button){
+        if(mMousePressed.contains(button))
             return true;
         else
             return false;
