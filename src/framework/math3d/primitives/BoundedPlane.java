@@ -1,5 +1,6 @@
 package framework.math3d.primitives;
 
+import framework.Floor;
 import framework.math3d.vec2;
 import framework.math3d.vec4;
 
@@ -15,6 +16,13 @@ public class BoundedPlane extends Plane
     public BoundedPlane(float dValue, vec4 normal, vec4 center, vec2 extents)
     {
         super(dValue, normal);
+
+        // TODO: Fix this to make it use init() function perhaps?
+        if (dValue == Float.MIN_VALUE) // flag to calculate dValue from center and normal
+        {
+            mDValue = normal.dot(center);
+        }
+
         mCenter = (vec4) mCenter.clone();
         mExtents = (vec2) mExtents.clone();
         mHalfExtents = mExtents.mul(0.5f);
