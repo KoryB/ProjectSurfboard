@@ -18,6 +18,31 @@ public class Ray implements Primitive
         mDirection = (vec4) mDirection.clone();
     }
 
+    public vec4 getOrigin()
+    {
+        return mOrigin;
+    }
+
+    public void setOrigin(vec4 mOrigin)
+    {
+        this.mOrigin = mOrigin;
+    }
+
+    public vec4 getDirection()
+    {
+        return mDirection;
+    }
+
+    public void setDirection(vec4 mDirection)
+    {
+        this.mDirection = mDirection;
+    }
+
+    public vec4 getPoint(float t)
+    {
+        return mOrigin.add(mDirection.mul(t));
+    }
+
     @Override
     public void translate(vec4 amount)
     {

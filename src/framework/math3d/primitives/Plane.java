@@ -8,7 +8,7 @@ import framework.math3d.math3d;
  * Created by kory on 1/21/16.
  */
 
-//dot(P, mNormal) + mDValue = 0; for all points P on the plane.
+//dot(P, mNormal) = mDValue; for all points P on the plane.
 public class Plane implements Primitive
 {
     protected float mDValue;
@@ -18,6 +18,26 @@ public class Plane implements Primitive
     {
         mDValue = dValue;
         mNormal = math3d.normalize(normal);
+    }
+
+    public float getDValue()
+    {
+        return mDValue;
+    }
+
+    public void setDValue(float mDValue)
+    {
+        this.mDValue = mDValue;
+    }
+
+    public vec4 getNormal()
+    {
+        return mNormal;
+    }
+
+    public void setNormal(vec4 mNormal)
+    {
+        this.mNormal = mNormal;
     }
 
     @Override
