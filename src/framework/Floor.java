@@ -16,15 +16,14 @@ public class Floor extends CollisionObject
 {
     private static Mesh MESH;
 
-    private vec2 mExtents = new vec2(1.0f, 0.5f);
-
     public Floor(vec4 position)
     {
         mPosition = (vec4) position.clone();
         mCollisionType = CollisionType.PLANE;
         mIsStatic = true;
 
-        mCollisionPrimitive = new BoundedPlane(new vec4(0.0, 1.0, 0.0, 0.0), mPosition, mExtents);
+        mCollisionPrimitive = new BoundedPlane(new vec4(-0.25, 0.0, 0.5, 1.0), new vec4(-0.25, 0.0, -0.5, 1.0), new vec4(0.25, 0.0, -0.5, 1.0), new vec4(0.25, 0.0, 0.5, 1.0));
+        mCollisionPrimitive.translate(new vec4(mPosition.xyz(), 0.0f));
 
         if (MESH == null)
         {

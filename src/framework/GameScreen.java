@@ -48,8 +48,8 @@ public class GameScreen implements Screen {
         usq = new UnitSquare();
         ita = new ImageTextureArray("assets/globe%02d.png",24);
         cam = new Camera();
-//        cam.lookAt(new vec3(-4.5, 3, -.5), new vec3(-3.5, 0, -1.5), normalize(new vec3(1, 0, -1)));
-        cam.lookAt(new vec3(0, 4, 0), new vec3(), normalize(new vec3(0, 0, -1)));
+        cam.lookAt(new vec3(-4.5, 3, -.5), new vec3(-3.5, 0, -1.5), normalize(new vec3(1, 0, -1)));
+//        cam.lookAt(new vec3(0, 4, 0), new vec3(), normalize(new vec3(0, 0, -1)));
 
         prev = (float)(System.nanoTime()*1E-9);
 
@@ -109,11 +109,9 @@ public class GameScreen implements Screen {
             System.out.println();
             floor.getCollisionPrimitive().printInfo();
             System.out.println();
-            Float t = IntersectionHandler.RayPlaneIntersection(camRay, (Plane) floor.getCollisionPrimitive(), false);
+            Float t = IntersectionHandler.RayPlaneIntersection(camRay, (BoundedPlane) floor.getCollisionPrimitive(), false);
             if (t != null)
             {
-                System.out.println("Point: " + camRay.getPoint(t));
-                System.out.println("Moving along!");
                 player.setGotoPoint(camRay.getPoint(t));
             }
         }
@@ -123,10 +121,10 @@ public class GameScreen implements Screen {
         }
 
         player.update(elapsed);
-//
-//        CollisionHandler.pushApartAABB(player, wall);
-//        CollisionHandler.pushApartAABB(player, wall2);
-//        CollisionHandler.pushApartAABB(player, wall3);
+
+        CollisionHandler.pushApartAABB(player, wall);
+        CollisionHandler.pushApartAABB(player, wall2);
+        CollisionHandler.pushApartAABB(player, wall3);
 
     }
 

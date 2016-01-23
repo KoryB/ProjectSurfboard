@@ -1,5 +1,6 @@
 package framework.math3d.primitives;
 
+import framework.Util;
 import framework.math3d.math3d;
 import framework.math3d.vec2;
 import framework.math3d.vec4;
@@ -11,7 +12,6 @@ public class IntersectionHandler
      *   This needs to be done because ray intersections should return the t value of an intersection, null otherwise.
      */
 
-    public static float EPSILON = 0.0001f; // TODO: Ask about good value of EPSILON
     // Algorithm for intersection found here: https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_collision_detection
     //TODO: Find a better name for this
     public static boolean AABBAABBIntersection(AABB boxA, AABB boxB)
@@ -33,7 +33,7 @@ public class IntersectionHandler
     {
         float dotRayPlane = ray.getDirection().dot(plane.getNormal());
 
-        if (Math.abs(dotRayPlane) < EPSILON)    // if roughly parallel
+        if (Math.abs(dotRayPlane) < Util.EPSILON)    // if roughly parallel
         {
             return null;
         }
@@ -64,10 +64,16 @@ public class IntersectionHandler
         }
 
         vec4 point = ray.getPoint(t);
-        vec4 toPoint = point.sub(boundedPlane.getCenter());
-        vec2 halfExtents = boundedPlane.getHalfExtents();
+        vec4 toPoint = point.sub(boundedPlane.getOrigin());
+        float Pu = toPoint.dot(boundedPlane.mU);
+        float Pv = toPoint.dot(boundedPlane.mV);
 
-        if (Math.abs(toPoint.x) <= halfExtents.x && Math.abs(toPoint.y) <= halfExtents.y)
+        System.out.println("Checking point: " + point);
+        System.out.println("Pu: " + Pu);
+        System.out.println("Pv: " + Pv);
+
+
+        if (0.0f <= Pu && Pu <= boundedPlane.getExtents().x && 0.0f <= Pv && Pv <= boundedPlane.getExtents().y)
         {
             return t;
         }

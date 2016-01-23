@@ -167,9 +167,9 @@ public class Camera extends CollisionObject
         V = cross(U, look);
 
 //        mHalfViewHeight = Math.tan(Math.toRadians(fov_v)) * mNear;
-        mHalfViewHeight = mTop / 2.0;
+        mHalfViewHeight = mTop;
 //        mHalfViewWidth = mHalfViewHeight * Util.WINDOW_ASPECT_RATIO;
-        mHalfViewWidth = mRight / 2.0;
+        mHalfViewWidth = mRight;
         mVirtualHeightRatio = mHalfViewHeight / Util.WINDOW_HALF_HEIGHT;
         mVirtualWidthRatio = mHalfViewWidth / Util.WINDOW_HALF_WIDTH;
 
