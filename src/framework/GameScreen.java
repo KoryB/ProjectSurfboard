@@ -1,9 +1,13 @@
 package framework;
 
 import framework.collisions.CollisionHandler;
+import framework.math3d.primitives.BoundedPlane;
+import framework.math3d.primitives.IntersectionHandler;
+import framework.math3d.primitives.Plane;
 import framework.math3d.vec3;
 import framework.math3d.mat4;
 import framework.math3d.vec4;
+import framework.math3d.primitives.Ray;
 
 import static JGL.JGL.*;
 import static JSDL.JSDL.*;
@@ -24,6 +28,7 @@ public class GameScreen implements Screen {
     ImageTextureArray ita;
     Wall wall, wall2, wall3;
     Player player;
+    Floor floor;
 
     public GameScreen(){
         mPaused = false;
@@ -43,7 +48,8 @@ public class GameScreen implements Screen {
         usq = new UnitSquare();
         ita = new ImageTextureArray("assets/globe%02d.png",24);
         cam = new Camera();
-        cam.lookAt(new vec3(-4.5, 3, -.5), new vec3(-3.5, 0, -1.5), normalize(new vec3(1, 0, -1)));
+//        cam.lookAt(new vec3(-4.5, 3, -.5), new vec3(-3.5, 0, -1.5), normalize(new vec3(1, 0, -1)));
+        cam.lookAt(new vec3(0, 4, 0), new vec3(), normalize(new vec3(0, 0, -1)));
 
         prev = (float)(System.nanoTime()*1E-9);
 
@@ -53,6 +59,7 @@ public class GameScreen implements Screen {
         wall2 = new Wall(new vec4(0.5, 0, 0, 1));
         wall3 = new Wall(new vec4(0.5, 0, -1, 1));
         player = new Player(new vec4(-2.0, 1, -.5, 1));
+        floor = new Floor(new vec4(-2.0, 0, -2.0, 1));
     }
 
     @Override
@@ -94,12 +101,32 @@ public class GameScreen implements Screen {
         if (mInput.keyDown(SDLK_d))
             cam.strafe(new vec3(0.4f * elapsed, 0, 0));
 
+//        TODO: make mouse buttons constants
+        if (mInput.mousePressed(1))
+        {
+            Ray camRay = cam.getRay(mInput.getMousePos());
+            camRay.printInfo();
+            System.out.println();
+            floor.getCollisionPrimitive().printInfo();
+            System.out.println();
+            Float t = IntersectionHandler.RayPlaneIntersection(camRay, (Plane) floor.getCollisionPrimitive(), false);
+            if (t != null)
+            {
+                System.out.println("Point: " + camRay.getPoint(t));
+                System.out.println("Moving along!");
+                player.setGotoPoint(camRay.getPoint(t));
+            }
+        }
+        else if (mInput.mousePressed(3))
+        {
+            player.clearGotoPoint();
+        }
 
         player.update(elapsed);
-
-        CollisionHandler.pushApartAABB(player, wall);
-        CollisionHandler.pushApartAABB(player, wall2);
-        CollisionHandler.pushApartAABB(player, wall3);
+//
+//        CollisionHandler.pushApartAABB(player, wall);
+//        CollisionHandler.pushApartAABB(player, wall2);
+//        CollisionHandler.pushApartAABB(player, wall3);
 
     }
 
@@ -109,6 +136,7 @@ public class GameScreen implements Screen {
         program.setUniform("framenumber", framenum);
         program.setUniform("lightPos", new vec3(50, 50, 50));
         cam.draw(program);
+        floor.draw(program);
         wall.draw(program);
         wall2.draw(program);
         wall3.draw(program);

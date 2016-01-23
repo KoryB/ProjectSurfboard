@@ -16,6 +16,16 @@ public abstract class CollisionObject
 
     }
 
+    public vec4 getPosition()
+    {
+        return mPosition;
+    }
+
+    public void setPosition(vec4 position)
+    {
+        this.mPosition = position;
+    }
+
     public CollisionType getCollisionType()
     {
         return mCollisionType;

@@ -24,7 +24,7 @@ public class Floor extends CollisionObject
         mCollisionType = CollisionType.PLANE;
         mIsStatic = true;
 
-        mCollisionPrimitive = new BoundedPlane(Float.MIN_VALUE, new vec4(0.0, 1.0, 0.0, 0.0), mPosition, mExtents);
+        mCollisionPrimitive = new BoundedPlane(new vec4(0.0, 1.0, 0.0, 0.0), mPosition, mExtents);
 
         if (MESH == null)
         {

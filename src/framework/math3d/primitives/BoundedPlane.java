@@ -13,19 +13,22 @@ public class BoundedPlane extends Plane
     private vec2 mExtents;
     private vec2 mHalfExtents;
 
-    public BoundedPlane(float dValue, vec4 normal, vec4 center, vec2 extents)
+    public BoundedPlane(vec4 normal, vec4 center, vec2 extents)
     {
-        super(dValue, normal);
+        super(Float.MIN_VALUE, normal);
 
-        // TODO: Fix this to make it use init() function perhaps?
-        if (dValue == Float.MIN_VALUE) // flag to calculate dValue from center and normal
-        {
-            mDValue = normal.dot(center);
-        }
+        mDValue = mNormal.dot(center);
 
-        mCenter = (vec4) mCenter.clone();
-        mExtents = (vec2) mExtents.clone();
+        mCenter = (vec4) center.clone();
+        mExtents = (vec2) extents.clone();
         mHalfExtents = mExtents.mul(0.5f);
+    }
+
+    @Override
+    public void setDValue(float dValue)
+    {
+        //This is unsupported for boundedPlanes
+        throw new RuntimeException("Direct DValue setting is not supported for BoundingPlanes");
     }
 
     public vec4 getCenter()
@@ -36,6 +39,7 @@ public class BoundedPlane extends Plane
     public void setCenter(vec4 mCenter)
     {
         this.mCenter = mCenter;
+        this.mDValue = mNormal.dot(mCenter);
     }
 
     public vec2 getExtents()

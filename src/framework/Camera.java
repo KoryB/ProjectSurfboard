@@ -5,12 +5,16 @@ import framework.collisions.CollisionObject;
 import framework.collisions.CollisionType;
 import framework.math3d.primitives.AABB;
 import framework.math3d.primitives.AABBType;
+import framework.math3d.primitives.Ray;
 import framework.math3d.vec3;
 import framework.math3d.mat4;
 import framework.math3d.vec4;
+import framework.math3d.vec2;
 
 import static java.lang.Math.*;
 import static framework.math3d.math3d.*;
+
+//TODO: Remove collisionObject as parent object
 
 public class Camera extends CollisionObject
 {
@@ -18,20 +22,27 @@ public class Camera extends CollisionObject
     float hither = 0.1f;
     float yon = 1000;
     float aspect_ratio = 1.0f;
-    float fov_v = fov_h*aspect_ratio;
+    float fov_v = fov_h * aspect_ratio;
     mat4 projMatrix;
     mat4 viewMatrix;
 
     float mRight = 4.0f;
-    float mLeft = -1.0f;
+    //    float mLeft = -1.0f;
     float mTop = 4.0f;
-    float mBottom = -1.0f;
+    //    float mBottom = -1.0f;
     float mNear = 0.1f;
     float mFar = 8.1f;
 
     vec4 U = new vec4(1, 0, 0, 0);
     vec4 V = new vec4(0, 1, 0, 0);
     vec4 W = new vec4(0, 0, 1, 0);
+
+    vec4 mViewOrigin;
+    //TODO: Give these better defaults
+    double mHalfViewHeight = 0.0;
+    double mHalfViewWidth = 0.0;
+    double mVirtualHeightRatio = 0.0;
+    double mVirtualWidthRatio = 0.0;
 
     public Camera()
     {
@@ -41,7 +52,7 @@ public class Camera extends CollisionObject
         compute_view_matrix();
 
         mCollisionType = CollisionType.AABB;
-        mCollisionPrimitive = new AABB(mPosition, new vec4(hither*2.5, hither*2.5, hither*2.5, 0.0f), AABBType.CENTER, AABBType.EXTENTS);
+        mCollisionPrimitive = new AABB(mPosition, new vec4(hither * 2.5, hither * 2.5, hither * 2.5, 0.0f), AABBType.CENTER, AABBType.EXTENTS);
     }
 
     public void compute_projp_matrix()
@@ -72,6 +83,14 @@ public class Camera extends CollisionObject
                         U.z, V.z, W.z, 0,
                         0, 0, 0, 1)
         );
+
+        compute_view_origin();
+    }
+
+    private void compute_view_origin()
+    {
+        mViewOrigin = add(mPosition, W.mul(-mNear), V.mul((float) mHalfViewHeight), U.mul((float) -mHalfViewWidth));
+        System.out.println("View Origin: " + mViewOrigin);
     }
 
     @Override
@@ -146,9 +165,27 @@ public class Camera extends CollisionObject
         W = mul(-1.0, look);
         U = cross(look, up);
         V = cross(U, look);
+
+//        mHalfViewHeight = Math.tan(Math.toRadians(fov_v)) * mNear;
+        mHalfViewHeight = mTop / 2.0;
+//        mHalfViewWidth = mHalfViewHeight * Util.WINDOW_ASPECT_RATIO;
+        mHalfViewWidth = mRight / 2.0;
+        mVirtualHeightRatio = mHalfViewHeight / Util.WINDOW_HALF_HEIGHT;
+        mVirtualWidthRatio = mHalfViewWidth / Util.WINDOW_HALF_WIDTH;
+
         compute_view_matrix();
 
         mCollisionPrimitive.translate(new vec4(delta, 0.0));
+    }
+
+    public vec4 calculatePixelPosition(vec2 pixel)
+    {
+        return add(mViewOrigin, U.mul(pixel.x*(float)mVirtualWidthRatio), V.mul(-(float)mVirtualHeightRatio*pixel.y));
+    }
+
+    public Ray getRay(vec2 screenCoord)
+    {
+        return new Ray(calculatePixelPosition(screenCoord), W.neg());
     }
 }
     

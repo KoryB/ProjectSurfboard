@@ -26,7 +26,7 @@ public class IntersectionHandler
      *
      * @param ray
      * @param plane
-     * @param frontOnly     boolean value if the ray should only intersect the front of the plane (the direction of the ray is opposite the normal.)
+     * @param frontOnly     boolean value if the ray should only intersect the front of the plane (the direction of the ray is opposite the normal.
      * @return              the t value of the ray, if there is no intersection returns -1.0f
      */
     public static Float RayPlaneIntersection(Ray ray, Plane plane, boolean frontOnly)
@@ -51,7 +51,7 @@ public class IntersectionHandler
      *
      * @param ray
      * @param boundedPlane
-     * @param frontOnly     boolean value if the ray should only intersect the front of the plane (the direction of the ray is opposite the normal.)
+     * @param frontOnly     boolean value if the ray should only intersect the front of the plane (the direction of the ray is opposite the normal.
      * @return      the t value of the ray, if there is no intersection returns -1.0f
      */
     public static Float RayPlaneIntersection(Ray ray, BoundedPlane boundedPlane, boolean frontOnly)

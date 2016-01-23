@@ -1,5 +1,6 @@
 package framework.math3d.primitives;
 
+import framework.math3d.math3d;
 import framework.math3d.vec4;
 
 /**
@@ -14,8 +15,8 @@ public class Ray implements Primitive
 
     public Ray(vec4 origin, vec4 direction)
     {
-        mOrigin = (vec4) mOrigin.clone();
-        mDirection = (vec4) mDirection.clone();
+        mOrigin = (vec4) origin.clone();
+        mDirection = math3d.normalize(direction);
     }
 
     public vec4 getOrigin()
