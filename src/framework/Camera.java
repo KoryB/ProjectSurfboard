@@ -1,22 +1,15 @@
 package framework;
 
 
-import framework.collisions.CollisionObject;
-import framework.collisions.CollisionType;
-import framework.math3d.primitives.AABB;
-import framework.math3d.primitives.AABBType;
+import framework.math3d.*;
 import framework.math3d.primitives.Ray;
-import framework.math3d.vec3;
-import framework.math3d.mat4;
-import framework.math3d.vec4;
-import framework.math3d.vec2;
 
 import static java.lang.Math.*;
 import static framework.math3d.math3d.*;
 
 //TODO: Remove collisionObject as parent object
 
-public class Camera extends CollisionObject
+public class Camera
 {
     float fov_h = 45;
     float hither = 0.1f;
@@ -33,26 +26,25 @@ public class Camera extends CollisionObject
     float mNear = 0.1f;
     float mFar = 8.1f;
 
+    vec4 mEye;
+
     vec4 U = new vec4(1, 0, 0, 0);
     vec4 V = new vec4(0, 1, 0, 0);
     vec4 W = new vec4(0, 0, 1, 0);
 
     vec4 mViewOrigin;
     //TODO: Give these better defaults
-    double mHalfViewHeight = 0.0;
-    double mHalfViewWidth = 0.0;
-    double mVirtualHeightRatio = 0.0;
-    double mVirtualWidthRatio = 0.0;
+    float mHalfViewHeight = 0.0f;
+    float mHalfViewWidth = 0.0f;
+    float mVirtualHeightRatio = 0.0f;
+    float mVirtualWidthRatio = 0.0f;
 
     public Camera()
     {
-        mPosition = new vec4(0, 0, 0, 1);
+        mEye = new vec4(0, 0, 0, 1);
 
         compute_proj_matrix();
         compute_view_matrix();
-
-        mCollisionType = CollisionType.AABB;
-        mCollisionPrimitive = new AABB(mPosition, new vec4(hither * 2.5, hither * 2.5, hither * 2.5, 0.0f), AABBType.CENTER, AABBType.EXTENTS);
     }
 
     public void compute_projp_matrix()
@@ -77,7 +69,7 @@ public class Camera extends CollisionObject
     public void compute_view_matrix()
     {
         viewMatrix = mul(
-                translation(mul(-1.0f, mPosition)),
+                translation(mul(-1.0f, mEye)),
                 new mat4(U.x, V.x, W.x, 0,
                         U.y, V.y, W.y, 0,
                         U.z, V.z, W.z, 0,
@@ -89,17 +81,16 @@ public class Camera extends CollisionObject
 
     private void compute_view_origin()
     {
-        mViewOrigin = add(mPosition, W.mul(-mNear), V.mul((float) mHalfViewHeight), U.mul((float) -mHalfViewWidth));
+        mViewOrigin = add(mEye, W.mul(-mNear), V.mul(mHalfViewHeight), U.mul(-mHalfViewWidth));
         System.out.println("View Origin: " + mViewOrigin);
-    }
+        System.out.println("U: " + U);
+        System.out.println("V: " + V);
+        System.out.println("W: " + W);
+        System.out.println("Eye: " + mEye);
 
-    @Override
-    public void move(vec4 amount)
-    {
-        super.move(amount);
-
-        compute_view_matrix();
-
+        vec4 topleft = calculatePixelPosition(new vec2());
+        vec4 bottomleft = calculatePixelPosition(new vec2(0, Util.WINDOW_HEIGHT));
+        System.out.println("Topleft - bottomleft: " + math3d.length(topleft.sub(bottomleft)));
     }
 
     public void draw(Program prog)
@@ -109,7 +100,7 @@ public class Camera extends CollisionObject
         prog.setUniform("cameraU", this.U.xyz());
         prog.setUniform("cameraV", this.V.xyz());
         prog.setUniform("cameraW", this.W.xyz());
-        prog.setUniform("eyePos", this.mPosition.xyz());
+        prog.setUniform("eyePos", this.mEye.xyz());
     }
 
     public void turn(float a)
@@ -147,40 +138,44 @@ public class Camera extends CollisionObject
 
     public void walk(float a)
     {
-        move(mul(-a, W));
+        mEye = mEye.add(mul(-a, W));
+
+        compute_view_matrix();
     }
 
     public void strafe(vec3 v)
     {
-        move(add(mul(v.x, U), mul(v.y, V), mul(-v.z, W)));
+        mEye = add(mEye, mul(v.x, U), mul(v.y, V), mul(-v.z, W));
+
+        compute_view_matrix();
     }
 
     public void lookAt(vec3 eye1, vec3 coi1, vec3 up1)
     {
-        vec3 delta = eye1.sub(this.mPosition.xyz());
-        this.mPosition = new vec4(eye1, 1.0);
+        vec3 delta = eye1.sub(this.mEye.xyz());
+        this.mEye = new vec4(eye1, 1.0);
         vec4 coi = new vec4(coi1, 1.0);
         vec4 up = new vec4(up1, 0.0);
-        vec4 look = normalize(sub(coi, mPosition));
+        vec4 look = normalize(sub(coi, mEye));
         W = mul(-1.0, look);
-        U = cross(look, up);
-        V = cross(U, look);
+        U = normalize(cross(look, up));
+        V = normalize(cross(U, look));
 
-//        mHalfViewHeight = Math.tan(Math.toRadians(fov_v)) * mNear;
+        System.out.println("Length of U: " + math3d.length(U));
+        System.out.println("Length of V: " + math3d.length(V));
+        System.out.println("Length of W: " + math3d.length(W));
+
         mHalfViewHeight = mTop;
-//        mHalfViewWidth = mHalfViewHeight * Util.WINDOW_ASPECT_RATIO;
         mHalfViewWidth = mRight;
         mVirtualHeightRatio = mHalfViewHeight / Util.WINDOW_HALF_HEIGHT;
         mVirtualWidthRatio = mHalfViewWidth / Util.WINDOW_HALF_WIDTH;
 
         compute_view_matrix();
-
-        mCollisionPrimitive.translate(new vec4(delta, 0.0));
     }
 
     public vec4 calculatePixelPosition(vec2 pixel)
     {
-        return add(mViewOrigin, U.mul(pixel.x*(float)mVirtualWidthRatio), V.mul(-(float)mVirtualHeightRatio*pixel.y));
+        return add(mViewOrigin, U.mul(pixel.x*mVirtualWidthRatio), V.mul(-mVirtualHeightRatio*pixel.y));
     }
 
     public Ray getRay(vec2 screenCoord)
