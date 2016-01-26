@@ -46,6 +46,7 @@ public class IntersectionHandler
         return (plane.getDValue() - math3d.dot(ray.getOrigin(), plane.getNormal())) / dotRayPlane;  // see page 724 in our 1803 book for details
     }
 
+
     // TODO: Should this have a different name?
     /**
      *
