@@ -14,5 +14,5 @@ public class Util
     public static int WINDOW_HALF_HEIGHT = WINDOW_HEIGHT / 2;
     public static int WINDOW_HALF_WIDTH = WINDOW_WIDTH / 2;
 
-    public static float EPSILON;
+    public static float EPSILON = 0.0001f;
 }

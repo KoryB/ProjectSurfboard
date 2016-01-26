@@ -68,11 +68,6 @@ public class IntersectionHandler
         float Pu = toPoint.dot(boundedPlane.mU);
         float Pv = toPoint.dot(boundedPlane.mV);
 
-        System.out.println("Checking point: " + point);
-        System.out.println("Pu: " + Pu);
-        System.out.println("Pv: " + Pv);
-
-
         if (0.0f <= Pu && Pu <= boundedPlane.getExtents().x && 0.0f <= Pv && Pv <= boundedPlane.getExtents().y)
         {
             return t;

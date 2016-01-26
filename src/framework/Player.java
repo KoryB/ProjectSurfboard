@@ -66,6 +66,12 @@ public class Player extends CollisionObject
             gotoVector = math3d.normalize(gotoVector);
 
             move(gotoVector.mul(elapsed));
+
+            vec4 deltaGoto = mGotoPoint.sub(mPosition);
+            if (deltaGoto.x*deltaGoto.x + deltaGoto.z*deltaGoto.z <= Util.EPSILON)
+            {
+                mGotoPoint = null;
+            }
         }
     }
 

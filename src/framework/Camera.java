@@ -82,15 +82,9 @@ public class Camera
     private void compute_view_origin()
     {
         mViewOrigin = add(mEye, W.mul(-mNear), V.mul(mHalfViewHeight), U.mul(-mHalfViewWidth));
-        System.out.println("View Origin: " + mViewOrigin);
-        System.out.println("U: " + U);
-        System.out.println("V: " + V);
-        System.out.println("W: " + W);
-        System.out.println("Eye: " + mEye);
 
         vec4 topleft = calculatePixelPosition(new vec2());
         vec4 bottomleft = calculatePixelPosition(new vec2(0, Util.WINDOW_HEIGHT));
-        System.out.println("Topleft - bottomleft: " + math3d.length(topleft.sub(bottomleft)));
     }
 
     public void draw(Program prog)
@@ -160,10 +154,6 @@ public class Camera
         W = mul(-1.0, look);
         U = normalize(cross(look, up));
         V = normalize(cross(U, look));
-
-        System.out.println("Length of U: " + math3d.length(U));
-        System.out.println("Length of V: " + math3d.length(V));
-        System.out.println("Length of W: " + math3d.length(W));
 
         mHalfViewHeight = mTop;
         mHalfViewWidth = mRight;

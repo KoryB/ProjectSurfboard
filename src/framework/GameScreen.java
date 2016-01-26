@@ -103,10 +103,6 @@ public class GameScreen implements Screen {
         if (mInput.mousePressed(1))
         {
             Ray camRay = cam.getRay(mInput.getMousePos());
-            camRay.printInfo();
-            System.out.println();
-            floor.getCollisionPrimitive().printInfo();
-            System.out.println();
             Float t = IntersectionHandler.RayPlaneIntersection(camRay, (BoundedPlane) floor.getCollisionPrimitive(), false);
             if (t != null)
             {
