@@ -1,5 +1,7 @@
 package framework;
 
+import framework.math3d.vec2;
+
 import static JGL.JGL.*;
 import static JSDL.JSDL.*;
 
@@ -15,7 +17,7 @@ public class Game {
 
     public Game(){
         SDL_Init(SDL_INIT_VIDEO);
-        mWindow = SDL_CreateWindow("ETGG 2802",40,60, 512,512, SDL_WINDOW_OPENGL );
+        mWindow = SDL_CreateWindow("ETGG 2802",40,60, Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT, SDL_WINDOW_OPENGL );
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_CORE);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,24);
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,8);

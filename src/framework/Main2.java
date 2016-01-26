@@ -116,9 +116,6 @@ public class Main2
             if (INPUT.keyDown(SDLK_g))
                 cam.pitch(-0.4f * elapsed);
 
-            if (INPUT.keyDown(SDLK_SPACE))
-                cam.getCollisionPrimitive().printInfo();
-
             //the fbo stuff is for later...
             //fbo1.bind();
 
