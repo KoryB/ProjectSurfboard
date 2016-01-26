@@ -87,6 +87,7 @@ public class Camera
         vec4 bottomleft = calculatePixelPosition(new vec2(0, Util.WINDOW_HEIGHT));
     }
 
+
     public void draw(Program prog)
     {
         prog.setUniform("projMatrix", projMatrix);
