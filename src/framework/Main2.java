@@ -69,11 +69,6 @@ public class Main2
         Player player = new Player(new vec4(-2.0, 1, -.5, 1));
         usq = new UnitSquare();
 
-        Wall wall = new Wall(new vec4(0, 0, 0, 1), new vec2(1.0, 1.0));
-        Wall wall2 = new Wall(new vec4(0.5, 0, 0, 1), new vec2(1.0, 0.5));
-        Wall wall3 = new Wall(new vec4(0.5, 0, -1, 1), new vec2(0.5, 1.0));
-
-
         fbo1 = new Framebuffer(512, 512);
         fbo2 = new Framebuffer(512, 512);
 
@@ -120,7 +115,6 @@ public class Main2
             //the fbo stuff is for later...
             //fbo1.bind();
 
-            wall.update(elapsed);
             player.update(elapsed);
             //            CollisionHandler.pushApartAABB(cam, wall);
             /*if (IntersectionHandler.AABBAABBIntersection((AABB) cam.getCollisionPrimitive(), (AABB) wall
@@ -133,18 +127,10 @@ public class Main2
                 CollisionHandler.pushApartAABB(wall, cam);
             }*/
 
-            CollisionHandler.pushApartAABB(player, wall);
-            CollisionHandler.pushApartAABB(player, wall2);
-            CollisionHandler.pushApartAABB(player, wall3);
-
-
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             prog.use();
             prog.setUniform("lightPos", new vec3(50, 50, 50));
             cam.draw(prog);
-            wall.draw(prog);
-            wall2.draw(prog);
-            wall3.draw(prog);
             player.draw(prog);
 
             //fbo1.unbind();

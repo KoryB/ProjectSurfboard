@@ -136,7 +136,7 @@ public class InputHandler {
     }
 
     public boolean mouseDown(int button){
-        if(mMousePressed.contains(button))
+        if(mMouseDown.contains(button))
             return true;
         else
             return false;

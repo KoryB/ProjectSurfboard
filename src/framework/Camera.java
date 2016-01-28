@@ -11,7 +11,7 @@ import static framework.math3d.math3d.*;
 
 public class Camera
 {
-    public vec4 mPlayerOffset = new vec4(-1.06, 2.2, 0.83, 0.0);
+    public vec4 mPlayerOffset = new vec4(-3.6622553, 10.00666, 3.4322047, 0.0);
     public vec4 mCOIOffset = new vec4(1.0, -3.0, -1.0, 0.0);
     public vec4 mUP = new vec4(1.0, 0.0, -1.0, 0.0);
     float fov_h = 45;
@@ -27,7 +27,7 @@ public class Camera
     float mTop = 4.0f;
     //    float mBottom = -1.0f;
     float mNear = 0.1f;
-    float mFar = 8.1f;
+    float mFar = 16.1f;
 
     vec4 mEye;
 

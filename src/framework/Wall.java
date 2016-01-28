@@ -14,16 +14,15 @@ public class Wall extends CollisionObject
 {
     private static Mesh MESH;
 
-    private vec4 mExtents = new vec4(1.0f, 3.0f, 1.0f, 0.0f);
+    private vec4 mExtents;
 
-    public Wall(vec4 position, vec2 size)
+    public Wall(vec4 position, vec4 extents)
     {
         mPosition = (vec4) position.clone();
         mCollisionType = CollisionType.AABB;
         mIsStatic = true;
 
-        mExtents.x *= size.x;
-        mExtents.z *= size.y;
+        mExtents = extents;
 
         mCollisionPrimitive = new AABB(mExtents, mPosition.add(new vec4(0.0f, mExtents.y / 2.0f, 0.0f, 0.0f)), AABBType.EXTENTS, AABBType.CENTER);
 
@@ -41,7 +40,7 @@ public class Wall extends CollisionObject
     public void draw(Program program)
     {
 //        mCollisionPrimitive.printInfo();
-        program.setUniform("worldMatrix", math3d.scaling(mExtents.x, 1.0f, mExtents.z).mul(math3d.translation(mPosition)));
+        program.setUniform("worldMatrix", math3d.scaling(mExtents).mul(math3d.translation(mPosition)));
         MESH.draw(program);
     }
 }

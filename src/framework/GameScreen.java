@@ -55,10 +55,10 @@ public class GameScreen implements Screen {
 
         framenum = 0.0f;
 
-        wall = new Wall(new vec4(0, 0, 0, 1), new vec2(1.0, 1.0));
-        wall2 = new Wall(new vec4(1.0, 0, 0, 1), new vec2(1.0, 0.5));
-        wall3 = new Wall(new vec4(1.0, 0, -1, 1), new vec2(0.5, 1.0));
-        floor = new Floor(new vec4(-2.0, 0, -2.0, 1));
+        wall = new Wall(new vec4(0, 0, 0, 1), new vec4(1.0, 1.0, 1.0, 0.0));
+        wall2 = new Wall(new vec4(1.0, 0, 0, 1), new vec4(1.0, 2.0, 0.5, 0.0));
+        wall3 = new Wall(new vec4(1.0, 0, -1, 1), new vec4(0.5, 3.0, 1.0, 0.0));
+        floor = new Floor(new vec4(-2.0, 0, -2.0, 1), new vec2(10.0, 10.0));
     }
 
     @Override
@@ -101,9 +101,9 @@ public class GameScreen implements Screen {
             cam.strafe(new vec3(0, 0.4f * elapsed, 0));
 
         cam.lookAtPlayer(player);
-
+//        System.out.println("To Camera from Player: " + cam.mEye.sub(player.getPosition()));
 //        TODO: make mouse buttons constants
-        if (mInput.mousePressed(1))
+        if (mInput.mouseDown(Integer.parseInt(mInput.mBindings.getProperty("MOUSE_LEFT"))))
         {
             Ray camRay = cam.getRay(mInput.getMousePos());
             Float t = IntersectionHandler.RayPlaneIntersection(camRay, (BoundedPlane) floor.getCollisionPrimitive(), false);
