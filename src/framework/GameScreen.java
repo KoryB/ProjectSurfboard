@@ -58,7 +58,7 @@ public class GameScreen implements Screen {
         wall = new Wall(new vec4(0, 0, 0, 1), new vec4(1.0, 1.0, 1.0, 0.0));
         wall2 = new Wall(new vec4(1.0, 0, 0, 1), new vec4(1.0, 2.0, 0.5, 0.0));
         wall3 = new Wall(new vec4(1.0, 0, -1, 1), new vec4(0.5, 3.0, 1.0, 0.0));
-        floor = new Floor(new vec4(-2.0, 0, -2.0, 1), new vec2(10.0, 10.0));
+        floor = new Floor(new vec4(-2.0, 0, -2.0, 1), new vec2(2.0, 2.0));
     }
 
     @Override

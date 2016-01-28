@@ -27,7 +27,7 @@ public class Camera
     float mTop = 4.0f;
     //    float mBottom = -1.0f;
     float mNear = 0.1f;
-    float mFar = 16.1f;
+    float mFar = 30.1f;
 
     vec4 mEye;
 
@@ -85,9 +85,6 @@ public class Camera
     private void compute_view_origin()
     {
         mViewOrigin = add(mEye, W.mul(-mNear), V.mul(mHalfViewHeight), U.mul(-mHalfViewWidth));
-
-        vec4 topleft = calculatePixelPosition(new vec2());
-        vec4 bottomleft = calculatePixelPosition(new vec2(0, Util.WINDOW_HEIGHT));
     }
 
 

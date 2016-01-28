@@ -32,7 +32,7 @@ public class Floor extends CollisionObject
 
         if (MESH == null)
         {
-            MESH = new Mesh("assets/testWall.obj.mesh");
+            MESH = new Mesh("assets/floor.obj.mesh");
         }
     }
 
@@ -44,7 +44,7 @@ public class Floor extends CollisionObject
     public void draw(Program program)
     {
         // For now just draw a test wall below the actual tile
-        program.setUniform("worldMatrix", math3d.scaling(mSize.x, 1.0f, mSize.y).mul(math3d.translation(mPosition.sub(new vec4(0.0f, 3.0f, 0.0f, 0.0f)))));
+        program.setUniform("worldMatrix", math3d.scaling(mSize.x, 1.0f, mSize.y).mul(math3d.translation(mPosition)));
         MESH.draw(program);
     }
 }
