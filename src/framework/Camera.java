@@ -150,7 +150,6 @@ public class Camera
 
     public void lookAt(vec3 eye1, vec3 coi1, vec3 up1)
     {
-        System.out.println("Delta: " + coi1.sub(eye1));
         vec3 delta = eye1.sub(this.mEye.xyz());
         this.mEye = new vec4(eye1, 1.0);
         vec4 coi = new vec4(coi1, 1.0);

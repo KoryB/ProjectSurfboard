@@ -55,9 +55,9 @@ public class GameScreen implements Screen {
 
         framenum = 0.0f;
 
-        wall = new Wall(new vec4(0, 0, 0, 1));
-        wall2 = new Wall(new vec4(0.5, 0, 0, 1));
-        wall3 = new Wall(new vec4(0.5, 0, -1, 1));
+        wall = new Wall(new vec4(0, 0, 0, 1), new vec2(1.0, 1.0));
+        wall2 = new Wall(new vec4(1.0, 0, 0, 1), new vec2(1.0, 0.5));
+        wall3 = new Wall(new vec4(1.0, 0, -1, 1), new vec2(0.5, 1.0));
         floor = new Floor(new vec4(-2.0, 0, -2.0, 1));
     }
 
