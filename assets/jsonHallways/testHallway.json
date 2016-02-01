@@ -1,0 +1,18 @@
+{
+  "walls" : {
+    "wall0" : {
+      "position" : [0, 0, 2, 1],
+      "scale" : [10, 3, 1]
+    },
+
+    "wall1" : {
+      "position" : [0, 0, -2, 1],
+      "scale" : [10, 3, 1]
+    }
+  },
+
+  "floor" : {
+    "position" : [0, 0, 0, 1],
+    "scale" : [10, 1, 4]
+  }
+}

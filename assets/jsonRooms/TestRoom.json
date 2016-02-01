@@ -1,27 +1,27 @@
 {
   "walls" : {
-    "wall1" : {
+    "wall0" : {
       "position" : [0, 0, 5, 1],
       "scale" : [10, 3, 1]
     },
 
-    "wall2" : {
+    "wall1" : {
       "position" : [0, 0, -5, 1],
       "scale" : [10, 3, 1]
     },
 
-    "wall3" : {
+    "wall2" : {
       "position" : [5, 0, 0, 1],
       "scale" : [1, 3, 10]
     },
 
-    "wall4" : {
+    "wall3" : {
       "position" : [-5, 0, 0, 1],
       "scale" : [1, 3, 10]
     }
   },
 
-  "Floor" : {
+  "floor" : {
     "position" : [0, 0, 0, 1],
     "scale" : [10, 1, 10]
   }
