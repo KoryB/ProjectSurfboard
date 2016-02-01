@@ -9,45 +9,76 @@ import org.json.simple.parser.ParseException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import static java.lang.Math.*;
 
 /**
  * Created by Michael on 1/26/2016.
  */
 public class Hallway {
 
-    public Wall[] mWalls;
-    public Floor mFloor;
-    public vec4 mCenter;
+    public ArrayList<Wall> mWalls;
+    public ArrayList<Floor> mFloors;
     
-    public Hallway(vec4 centerPoint, String hallFile) throws IOException, ParseException {
-        mCenter = centerPoint;
-        genHall(hallFile, centerPoint);
+    public Hallway(Room start, Room end){
+        genHorHall(start, end);
+        genVertHall(start, end);
     }
 
-    public void genHall(String hallFile, vec4 centerPoint) throws IOException, ParseException {
-        FileReader reader = new FileReader(hallFile);
-        JSONParser jsonParser = new JSONParser();
-        JSONObject jsonRoom = (JSONObject) jsonParser.parse(reader);
-        JSONObject jRooms = (JSONObject) jsonRoom.get("walls");
-        JSONObject jFloor = (JSONObject) jsonRoom.get("floor");
+    private void genHorHall(Room start, Room end){
+        int distance = abs((int) (start.mCenter.x - end.mCenter.x - ((start.mWidth / 2) + (end.mWidth / 2))));
+        vec4 curPos;
+        if(end.mCenter.x > start.mCenter.x) {
+            curPos = new vec4(start.mWidth, 0, 0, 0);
+            curPos.add(start.mCenter);
 
-        //Make walls
-        for(int i = 0; i < jRooms.size(); i++){
-            JSONObject wall = (JSONObject) jRooms.get("wall" + i);
-            JSONArray position = (JSONArray) wall.get("position");
-            JSONArray scale = (JSONArray) wall.get("scale");
-
-            vec4 wallPos = new vec4(position.get(0), position.get(1), position.get(2), position.get(3));
-            wallPos.add(centerPoint);
-            vec3 wallScale = new vec3(scale.get(0), scale.get(1), scale.get(2));
-
-            //Make instance of a wall here and add to mWalls.
+            for(int i = 0; i < distance; i++){
+                curPos.add(new vec4(1, 0, 0, 0));
+                //create floor tile here and add to mFloors
+                System.out.println(curPos);
+            }
         }
+        else if(end.mCenter.x < start.mCenter.x) {
+            curPos = new vec4(-start.mWidth, 0, 0, 0);
+            curPos.add(start.mCenter);
 
-        //Make floor
-        JSONArray floorPos = (JSONArray) jFloor.get("position");
-        floorPos.add(centerPoint);
-        JSONArray floorScale = (JSONArray) jFloor.get("scale");
-        //Make instance of floor and reference with mFloor.
+            for(int i = 0; i < distance; i++){
+                curPos.add(new vec4(-1, 0, 0, 0));
+                //create floor tile here and add to mFloors
+                System.out.println(curPos);
+            }
+        }
+        else{
+            return;
+        }
+    }
+
+    private void genVertHall(Room start, Room end){
+        int distance = abs((int) (start.mCenter.z - end.mCenter.z - ((start.mLength / 2) + (end.mLength / 2))));
+        vec4 curPos;
+        if(end.mCenter.z > start.mCenter.z) {
+            curPos = new vec4(start.mLength, 0, 0, 0);
+            curPos.add(start.mCenter);
+
+            for(int i = 0; i < distance; i++){
+                curPos.add(new vec4(0, 0, 1, 0));
+                //create floor tile here and add to mFloors
+                System.out.println(curPos);
+            }
+        }
+        else if(end.mCenter.z < start.mCenter.z) {
+            curPos = new vec4(-start.mLength, 0, 0, 0);
+            curPos.add(start.mCenter);
+
+            for(int i = 0; i < distance; i++){
+                curPos.add(new vec4(0, 0, -1, 0));
+                //create floor tile here and add to mFloors
+                System.out.println(curPos);
+            }
+        }
+        else{
+            return;
+        }
     }
 }
