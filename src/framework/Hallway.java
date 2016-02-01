@@ -9,8 +9,13 @@ public class Hallway {
 
     public Wall[] mWalls;
     public Floor mFloor;
+    public vec4 mCenter;
     
-    public Hallway(){
+    public Hallway(vec4 position, String hallFile){
+        mCenter = position;
+    }
+
+    public void genHall(String roomFile){
 
     }
 }

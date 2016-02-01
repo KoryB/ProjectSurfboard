@@ -18,11 +18,11 @@ public class Level {
 
     }
 
-    public void generateRoom(){
+    public void generateRoom(vec4 position){
 
     }
 
-    public void generateHallway(){
+    public void generateHallway(vec4 position){
 
     }
 }
