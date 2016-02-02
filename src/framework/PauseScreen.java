@@ -1,5 +1,7 @@
 package framework;
 
+import framework.drawing.Program;
+
 /**
  * Created by Michael on 1/16/2016.
  */
@@ -17,7 +19,7 @@ public class PauseScreen implements Screen {
     }
 
     @Override
-    public void render(Program program) {
+    public void draw(Program program) {
 
     }
 

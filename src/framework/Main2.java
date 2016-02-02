@@ -1,7 +1,10 @@
 package framework;
 
-import framework.collisions.CollisionHandler;
-import framework.math3d.vec2;
+import framework.drawing.Framebuffer;
+import framework.drawing.Program;
+import framework.drawing.UnitSquare;
+import framework.drawing.textures.SolidTexture;
+import framework.drawing.textures.Texture2D;
 import framework.math3d.vec3;
 
 import java.util.Set;

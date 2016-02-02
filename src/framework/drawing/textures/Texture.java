@@ -1,6 +1,6 @@
 /*
  */
-package framework;
+package framework.drawing.textures;
 
 import java.util.TreeSet;
 import static JGL.JGL.*;
@@ -14,11 +14,11 @@ public class Texture {
     private int tex;      //GL texture name
     //active_textures[i] tells which texture is used on texture unit i.
     //we impose a limit of 128 units
-    static Texture[] active_textures = new Texture[128];   
+    public static Texture[] active_textures = new Texture[128];
     private int gltype;  //GL_TEXTURE_2D or similar
     
     //tells which texture units this texture is on
-    TreeSet<Integer> on_units = new TreeSet<>();
+    public TreeSet<Integer> on_units = new TreeSet<>();
     
     protected Texture(int textype){
         gltype = textype;
@@ -50,7 +50,7 @@ public class Texture {
     
     //don't use this for bind/unbind operations; it will mess up the internal 
     //bookkeeping
-    protected int getId(){
+    public int getId(){
         return tex;
     }
     

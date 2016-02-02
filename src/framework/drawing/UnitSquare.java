@@ -1,10 +1,5 @@
-package framework;
+package framework.drawing;
 
-
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
 
 /*
  */
@@ -12,7 +7,8 @@ import java.nio.ShortBuffer;
  *
  * @author jhudson
  */
-public class UnitSquare {
+public class UnitSquare implements Drawable
+{
     Mesh m;
     
     public UnitSquare(){

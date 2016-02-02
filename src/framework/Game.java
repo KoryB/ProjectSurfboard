@@ -1,6 +1,7 @@
 package framework;
 
-import framework.math3d.vec2;
+import framework.drawing.Drawable;
+import framework.drawing.Program;
 
 import static JGL.JGL.*;
 import static JSDL.JSDL.*;
@@ -8,7 +9,7 @@ import static JSDL.JSDL.*;
 /**
  * Created by Michael on 1/15/2016.
  */
-public class Game {
+public class Game implements Drawable{
 
     public Screen mActiveScreen;
     public Program mProgram;
@@ -51,17 +52,17 @@ public class Game {
         mActiveScreen.update();
     }
 
-    public void render(Program program){
+    public void draw(Program program){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         mProgram.use();
-        mActiveScreen.render(program);
+        mActiveScreen.draw(program);
         SDL_GL_SwapWindow(mWindow);
     }
 
     public void run(){
         while (mRunning) {
             update();
-            render(mProgram);
+            draw(mProgram);
         }
     }
 

@@ -1,13 +1,16 @@
 /*
  */
-package framework;
+package framework.drawing.textures;
+import framework.drawing.textures.Texture2D;
+
 import static JGL.JGL.*;
 
 /**
  *
  * @author jhudson
  */
-public class ColorTexture extends Texture2D {
+public class ColorTexture extends Texture2D
+{
     int fmt;
     int w,h;
     

@@ -1,4 +1,4 @@
-package framework;
+package framework.drawing.textures;
 
 import static JGL.JGL.*;
 

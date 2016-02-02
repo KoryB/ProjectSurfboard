@@ -1,6 +1,9 @@
 /*
  */
-package framework;
+package framework.drawing;
+import framework.drawing.textures.Texture;
+import framework.drawing.textures.Texture2D;
+
 import static JGL.JGL.*;
 
 /**

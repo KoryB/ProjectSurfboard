@@ -3,7 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package framework;
+package framework.drawing.textures;
+
+import framework.drawing.textures.Texture2D;
 
 import static JGL.JGL.*;
 import java.awt.image.BufferedImage;
@@ -16,7 +18,8 @@ import javax.imageio.ImageIO;
  *
  * @author jhudson
  */
-public class ImageTextureArray extends Texture2D{
+public class ImageTextureArray extends Texture2D
+{
     int w,h;
     
     public ImageTextureArray(String filename_pattern, int last){

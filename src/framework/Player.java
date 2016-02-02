@@ -2,12 +2,15 @@ package framework;
 
 import framework.collisions.CollisionObject;
 import framework.collisions.CollisionType;
+import framework.drawing.Drawable;
+import framework.drawing.Mesh;
+import framework.drawing.Program;
 import framework.math3d.math3d;
 import framework.math3d.primitives.AABB;
 import framework.math3d.primitives.AABBType;
 import framework.math3d.vec4;
 
-public class Player extends CollisionObject
+public class Player extends CollisionObject implements Drawable
 {
     private static Mesh MESH;
     private vec4 mGotoPoint;

@@ -1,15 +1,17 @@
 package framework;
 
 
+import framework.drawing.Drawable;
+import framework.drawing.Program;
 import framework.math3d.*;
 import framework.math3d.primitives.Ray;
 
 import static java.lang.Math.*;
 import static framework.math3d.math3d.*;
 
-//TODO: Remove collisionObject as parent object
+//TODO: Camera might not need to be a Drawable
 
-public class Camera
+public class Camera implements Drawable
 {
     public vec4 mPlayerOffset = new vec4(-3.6622553, 10.00666, 3.4322047, 0.0);
     public vec4 mCOIOffset = new vec4(1.0, -3.0, -1.0, 0.0);

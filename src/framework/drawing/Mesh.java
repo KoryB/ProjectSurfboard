@@ -1,4 +1,4 @@
-package framework;
+package framework.drawing;
 
 import static JGL.JGL.*;
 import java.io.DataInputStream;
@@ -11,12 +11,17 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import static framework.math3d.math3d.add;
 import static framework.math3d.math3d.mul;
+
+import framework.drawing.Drawable;
+import framework.drawing.Program;
+import framework.drawing.textures.ImageTexture;
+import framework.drawing.textures.Texture;
 import framework.math3d.vec3;
 
 
 
 
-class Mesh {
+public class Mesh implements Drawable{
     Texture texture;
     Texture spec_texture;
     Texture emit_texture;
@@ -190,7 +195,7 @@ class Mesh {
         
     }
     
-    void draw(Program prog){
+    public void draw(Program prog){
         if(this.texture != null )
             prog.setUniform("diffuse_texture",this.texture);
         if(this.emit_texture != null )

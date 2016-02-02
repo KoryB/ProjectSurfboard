@@ -1,13 +1,13 @@
 package framework;
 
+import framework.drawing.Drawable;
+
 /**
  * Created by Michael on 1/15/2016.
  */
-public interface Screen {
+public interface Screen extends Drawable{
 
     public void update();
-
-    public void render(Program program);
 
     public void show();
 

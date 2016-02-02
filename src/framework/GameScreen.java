@@ -1,10 +1,12 @@
 package framework;
 
 import framework.collisions.CollisionHandler;
+import framework.drawing.Program;
+import framework.drawing.UnitSquare;
+import framework.drawing.textures.ImageTextureArray;
 import framework.math3d.*;
 import framework.math3d.primitives.BoundedPlane;
 import framework.math3d.primitives.IntersectionHandler;
-import framework.math3d.primitives.Plane;
 import framework.math3d.primitives.Ray;
 
 import static JGL.JGL.*;
@@ -58,7 +60,7 @@ public class GameScreen implements Screen {
         wall = new Wall(new vec4(0, 0, 0, 1), new vec4(1.0, 1.0, 1.0, 0.0));
         wall2 = new Wall(new vec4(1.0, 0, 0, 1), new vec4(1.0, 2.0, 0.5, 0.0));
         wall3 = new Wall(new vec4(1.0, 0, -1, 1), new vec4(0.5, 3.0, 1.0, 0.0));
-        floor = new Floor(new vec4(-2.0, 0, -2.0, 1), new vec2(2.0, 2.0));
+        floor = new Floor(new vec4(-2.0, 0, -2.0, 1), new vec2(20.0, 20.0));
     }
 
     @Override
@@ -126,7 +128,7 @@ public class GameScreen implements Screen {
     }
 
     @Override
-    public void render(Program program) {
+    public void draw(Program program) {
         program.setUniform("diffuse_texture", ita);
         program.setUniform("framenumber", framenum);
         program.setUniform("lightPos", new vec3(50, 50, 50));

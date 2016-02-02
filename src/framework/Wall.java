@@ -1,16 +1,16 @@
 package framework;
 
-import framework.collisions.CollisionHandler;
 import framework.collisions.CollisionObject;
 import framework.collisions.CollisionType;
-import framework.math3d.mat4;
-import framework.math3d.vec2;
+import framework.drawing.Drawable;
+import framework.drawing.Mesh;
+import framework.drawing.Program;
 import framework.math3d.vec4;
 import framework.math3d.math3d;
 import framework.math3d.primitives.AABB;
 import framework.math3d.primitives.AABBType;
 
-public class Wall extends CollisionObject
+public class Wall extends CollisionObject implements Drawable
 {
     private static Mesh MESH;
 

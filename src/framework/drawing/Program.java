@@ -1,5 +1,6 @@
-package framework;
+package framework.drawing;
 
+import framework.drawing.textures.Texture2D;
 import framework.math3d.vec3;
 import framework.math3d.mat4;
 import framework.math3d.vec4;
@@ -115,7 +116,7 @@ public class Program{
         }
     }
         
-    void use(){
+    public void use(){
         glUseProgram(prog);
         active=this;
         for(String s : currentuniforms.keySet() ){
@@ -124,7 +125,7 @@ public class Program{
     }
         
 
-    void setUniform(String name, Object value){
+    public void setUniform(String name, Object value){
         //System.out.println("Set "+name+" to\n"+value);
         
         if(active != this)
@@ -135,7 +136,7 @@ public class Program{
 
     }
 
-    int make_shader(String filename, int shadertype){
+    public int make_shader(String filename, int shadertype){
         String sdata = read_file(filename);
         int s = glCreateShader(shadertype);
         glShaderSource( 
@@ -166,7 +167,7 @@ public class Program{
         return s;
     }
     
-    String read_file(String filename){
+    public String read_file(String filename){
         try{
             //http://stackoverflow.com/questions/326390/how-to-create-a-java-string-from-the-contents-of-a-file
             return new String( Files.readAllBytes(Paths.get(filename)) );

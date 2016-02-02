@@ -1,6 +1,8 @@
 /*
  */
-package framework;
+package framework.drawing.textures;
+
+import framework.drawing.textures.Texture2D;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -9,7 +11,8 @@ import javax.imageio.ImageIO;
 import static JGL.JGL.*;
 
 
-public class ImageTexture  extends Texture2D{
+public class ImageTexture  extends Texture2D
+{
     int w,h;
     
     public ImageTexture(String filename){
