@@ -75,28 +75,34 @@ public class Level {
                     currentZ -= 1;
                     pos.x = currentX;
                     pos.z = currentZ;
-                    mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
-                    numFloors++;
+                    if(!(mTiles[currentX][currentZ] instanceof Floor)){
+                        mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
+                        numFloors++;
+                    }
                 }
             }
             //East
             else if(direction == 1){
-                if(currentX < mDimensions.x - 1){
+                if(currentX < mDimensions.x - 2){
                     currentX += 1;
                     pos.x = currentX;
                     pos.z = currentZ;
-                    mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
-                    numFloors++;
+                    if(!(mTiles[currentX][currentZ] instanceof Floor)){
+                        mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
+                        numFloors++;
+                    }
                 }
             }
             //South
             else if(direction == 2){
-                if(currentZ < mDimensions.y - 1){
+                if(currentZ < mDimensions.y - 2){
                     currentZ += 1;
                     pos.x = currentX;
                     pos.z = currentZ;
-                    mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
-                    numFloors++;
+                    if(!(mTiles[currentX][currentZ] instanceof Floor)){
+                        mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
+                        numFloors++;
+                    }
                 }
             }
             //West
@@ -105,8 +111,10 @@ public class Level {
                     currentX -= 1;
                     pos.x = currentX;
                     pos.z = currentZ;
-                    mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
-                    numFloors++;
+                    if(!(mTiles[currentX][currentZ] instanceof Floor)){
+                        mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
+                        numFloors++;
+                    }
                 }
             }
         }
