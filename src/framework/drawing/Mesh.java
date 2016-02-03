@@ -22,7 +22,7 @@ import framework.math3d.vec3;
 
 
 public class Mesh implements Drawable{
-    Texture texture;
+    public Texture texture;
     Texture spec_texture;
     Texture emit_texture;
     String filename="(none)";

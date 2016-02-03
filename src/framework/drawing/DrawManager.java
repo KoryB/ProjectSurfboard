@@ -1,5 +1,6 @@
 package framework.drawing;
 
+import framework.Floor;
 import framework.Util;
 import framework.drawing.textures.SolidTexture;
 import framework.drawing.textures.Texture;
@@ -33,7 +34,7 @@ public class DrawManager
         return mInstance;
     }
 
-    public void drawBlur(Drawable toDraw, Program originalProgram, Framebuffer renderTarget, int numTimes, int size)
+    public void drawBlur(Drawable toDraw, Program originalProgram, Framebuffer renderTarget, int numTimes, int size, boolean singleObject)
     {
         originalProgram.use();
         tFBO1.bind();
@@ -42,6 +43,10 @@ public class DrawManager
         tFBO1.unbind();
         mBlurProgram.use();
         mBlurProgram.setUniform("boxWidth", size);
+
+        tFBO2.bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        tFBO2.unbind();
 
         for (int i = 0; i < numTimes; i++)
         {
@@ -53,7 +58,7 @@ public class DrawManager
 
             tFBO2.unbind();
             mBlurProgram.setUniform("toBlur", tFBO2.texture);
-            if (i != numTimes - 1)
+            if (i != numTimes - 1 || singleObject)
             {
                 tFBO1.bind();
             }
@@ -68,7 +73,7 @@ public class DrawManager
             mBlurProgram.setUniform("blurDelta", new vec2(1.0, 0.0));
             mUnitSquare.draw(mBlurProgram);
 
-            if (i != numTimes - 1)
+            if (i != numTimes - 1 || singleObject)
             {
                 tFBO1.unbind();
             }
@@ -82,6 +87,13 @@ public class DrawManager
             mBlurProgram.setUniform("toBlur", mDummyTexture);
         }
 
-        originalProgram.use();
+        if (singleObject)
+        {
+            originalProgram.use();
+            Texture tTex = Floor.MESH.texture;
+            Floor.MESH.texture = tFBO1.texture;
+            toDraw.draw(originalProgram);
+            Floor.MESH.texture = tTex;
+        }
     }
 }

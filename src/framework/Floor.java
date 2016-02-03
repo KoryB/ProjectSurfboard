@@ -15,7 +15,7 @@ import framework.math3d.vec4;
  */
 public class Floor extends CollisionObject implements Drawable
 {
-    private static Mesh MESH;
+    public static Mesh MESH;
     private vec2 mSize;
     private vec2 mHalfSize;
 

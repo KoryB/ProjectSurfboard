@@ -43,6 +43,10 @@ public class Game implements Drawable{
                 },
                 null);
 
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glBlendEquation(GL_FUNC_ADD);
+
         //Starting with a game screen for now until we have the main menu implemented
         mProgram = new Program("shaders/vs.txt","shaders/fs.txt");
         mActiveScreen = new GameScreen();
