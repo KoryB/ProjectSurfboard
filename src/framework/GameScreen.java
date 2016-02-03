@@ -134,6 +134,7 @@ public class GameScreen implements Screen {
         program.setUniform("framenumber", framenum);
         program.setUniform("lightPos", new vec3(50, 50, 50));
         cam.draw(program);
+        floor.draw(program);
 //        DrawManager.getInstance().drawBlurScreen(floor, program, null, 4, 50);
 //        glClear(GL_DEPTH_BUFFER_BIT);
         wall.draw(program);
