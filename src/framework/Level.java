@@ -1,43 +1,118 @@
 package framework;
 
+import framework.collisions.CollisionObject;
 import framework.math3d.*;
 
-import java.util.ArrayList;
 import java.util.Random;
+
 
 /**
  * Created by Michael on 1/26/2016.
  */
 public class Level {
 
-    public ArrayList<Room> mRooms;
-    public ArrayList<Hallway> mHallways;
-    public vec2 mDimensions;
+    public vec2 mDimensions, mXRange, mZRange;
+    public int mNumTiles;
+    public float mPercentFloor;
+    public vec4 mStartingCorner;
+    public CollisionObject[][] mTiles;
 
-    public Level(vec2 dimensions,int numRooms){
-        mRooms = new ArrayList<>();
-        mHallways = new ArrayList<>();
+    public Level(vec2 dimensions, float percentFloor) {
         mDimensions = dimensions;
-    }
+        mNumTiles = (int) (dimensions.x * dimensions.y);
 
-    public void generate(int numRooms){
-        //Create all rooms, make sure none overlap
-        for(int i = 0; i < numRooms; i++){
+        mXRange = new vec2(-((int) dimensions.x / 2), ((int) dimensions.x / 2));
+        mZRange = new vec2(-((int) dimensions.y / 2), ((int) dimensions.y / 2));
 
+        mPercentFloor = percentFloor;
+        mTiles = new CollisionObject[(int) dimensions.x][(int) dimensions.y];
+        mStartingCorner = new vec4((int) mXRange.x, 0, (int) mZRange.x, 1);
+
+        genEmptyLevel();
+        genFloors();
+        System.out.println();
+
+        for(int i = 0; i < mTiles.length; i++){
+            for(int j = 0; j < mTiles[0].length; j++){
+                if(mTiles[i][j] instanceof Floor)
+                    System.out.print("_");
+                else
+                    System.out.print("#");
+            }
+            System.out.println();
         }
+    }
 
-        //Create hallways between each room and the next
-        for(int i = 0; i < mRooms.size(); i++){
-
+    private void genEmptyLevel(){
+        //Stick a Wall in every Empty Spot
+        for(int i = 0; i < mTiles.length; i++){
+            for(int j = 0; j < mTiles[0].length; j++){
+                vec4 pos = new vec4(i, 0, j, 0);
+                mTiles[i][j] = new Wall(pos.add(mStartingCorner));
+            }
         }
-
     }
 
-    public void generateRoom(vec4 position){
+    private void genFloors(){
+        //Find Starting Tile & place floor
+        Random rand = new Random();
+        int currentX = Math.max(rand.nextInt((int) mDimensions.x - 1), 1);
+        int currentZ = Math.max(rand.nextInt((int) mDimensions.y - 1), 1);
 
+        vec4 pos = new vec4(currentX, 0, currentZ, 0);
+        mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
+
+        int numFloors = 1;
+
+        //Do random walk algorithm until corrent percent of tiles are floors
+        while (numFloors < (int) (mNumTiles * mPercentFloor)){
+            int direction = rand.nextInt(4);
+
+            //Walk in random direction and make floor as long as not walking onto edge tile
+            //North
+            if(direction == 0){
+                if(currentZ > 1){
+                    currentZ -= 1;
+                    pos.x = currentX;
+                    pos.z = currentZ;
+                    mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
+                    numFloors++;
+                }
+            }
+            //East
+            else if(direction == 1){
+                if(currentX < mDimensions.x - 1){
+                    currentX += 1;
+                    pos.x = currentX;
+                    pos.z = currentZ;
+                    mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
+                    numFloors++;
+                }
+            }
+            //South
+            else if(direction == 2){
+                if(currentZ < mDimensions.y - 1){
+                    currentZ += 1;
+                    pos.x = currentX;
+                    pos.z = currentZ;
+                    mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
+                    numFloors++;
+                }
+            }
+            //West
+            else {
+                if(currentX > 1){
+                    currentX -= 1;
+                    pos.x = currentX;
+                    pos.z = currentZ;
+                    mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
+                    numFloors++;
+                }
+            }
+        }
     }
 
-    public void generateHallway(vec4 start, vec4 end){
+    public void genNewLevel(){
 
     }
 }
