@@ -7,6 +7,8 @@ import framework.drawing.textures.Texture;
 import framework.drawing.textures.Texture2D;
 import framework.math3d.vec2;
 
+import java.awt.*;
+
 import static JGL.JGL.*;
 
 /**
@@ -34,8 +36,12 @@ public class DrawManager
         return mInstance;
     }
 
-    public void drawBlur(Drawable toDraw, Program originalProgram, Framebuffer renderTarget, int numTimes, int size, boolean singleObject)
+    public void drawBlurScreen(Drawable toDraw, Program originalProgram, Framebuffer renderTarget, int numTimes, int size)
     {
+        System.out.println("Active: " + Framebuffer.active_fbo);
+        System.out.println("FBO1: " + tFBO1);
+        System.out.println("FBO2: " + tFBO2);
+
         originalProgram.use();
         tFBO1.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -58,13 +64,11 @@ public class DrawManager
 
             tFBO2.unbind();
             mBlurProgram.setUniform("toBlur", tFBO2.texture);
-            if (i != numTimes - 1 || singleObject)
+            if (i != numTimes - 1)
             {
                 tFBO1.bind();
-            }
-            else
+            } else
             {
-//                glClear(GL_DEPTH_BUFFER_BIT);
                 if (renderTarget != null)
                 {
                     renderTarget.bind();
@@ -73,11 +77,10 @@ public class DrawManager
             mBlurProgram.setUniform("blurDelta", new vec2(1.0, 0.0));
             mUnitSquare.draw(mBlurProgram);
 
-            if (i != numTimes - 1 || singleObject)
+            if (i != numTimes - 1)
             {
                 tFBO1.unbind();
-            }
-            else
+            } else
             {
                 if (renderTarget != null)
                 {
@@ -87,13 +90,8 @@ public class DrawManager
             mBlurProgram.setUniform("toBlur", mDummyTexture);
         }
 
-        if (singleObject)
-        {
-            originalProgram.use();
-            Texture tTex = Floor.MESH.texture;
-            Floor.MESH.texture = tFBO1.texture;
-            toDraw.draw(originalProgram);
-            Floor.MESH.texture = tTex;
-        }
+        System.out.println("Active3: " + Framebuffer.active_fbo);
+        originalProgram.use();
     }
 }
+

@@ -16,7 +16,7 @@ public class Framebuffer {
     Texture2D texture;      //alias for textures[0]
     Texture2D depthtexture;         //depth texture (z buffer) + stencil
     int fbo;                //GL identifier
-    static Framebuffer active_fbo;  //tells which FBO is currently active, or null if none
+    public static Framebuffer active_fbo;  //tells which FBO is currently active, or null if none
     static int[] viewport = new int[4];     //viewport that was active before 
     
     
