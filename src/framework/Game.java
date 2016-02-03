@@ -1,5 +1,6 @@
 package framework;
 
+import framework.drawing.DrawManager;
 import framework.drawing.Drawable;
 import framework.drawing.Program;
 
@@ -43,7 +44,7 @@ public class Game implements Drawable{
                 null);
 
         //Starting with a game screen for now until we have the main menu implemented
-        mProgram = new Program("vs.txt","fs.txt");
+        mProgram = new Program("shaders/vs.txt","shaders/fs.txt");
         mActiveScreen = new GameScreen();
         mRunning = true;
     }
@@ -55,6 +56,7 @@ public class Game implements Drawable{
     public void draw(Program program){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         mProgram.use();
+//        DrawManager.getInstance().drawBlur(mActiveScreen, program, null, 4, 20);
         mActiveScreen.draw(program);
         SDL_GL_SwapWindow(mWindow);
     }

@@ -1,0 +1,18 @@
+#version 150
+uniform sampler2D toBlur;
+uniform vec2 blurDelta;
+uniform float boxWidth;
+in vec2 v_texcoord;
+out vec4 color;
+void main()
+{
+    vec2 texsize = 1.0 / textureSize(toBlur, 0);
+    vec4 total = vec4(0, 0, 0, 0);
+    for (float q = -boxWidth; q <= boxWidth; q++)
+    {
+        total += texture(toBlur, v_texcoord + q*blurDelta*texsize);
+    }
+
+    color = total / (boxWidth + boxWidth + 1.0);
+    color.a = 1.0;
+}

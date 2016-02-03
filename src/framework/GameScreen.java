@@ -1,6 +1,7 @@
 package framework;
 
 import framework.collisions.CollisionHandler;
+import framework.drawing.DrawManager;
 import framework.drawing.Program;
 import framework.drawing.UnitSquare;
 import framework.drawing.textures.ImageTextureArray;
@@ -137,7 +138,8 @@ public class GameScreen implements Screen {
         wall.draw(program);
         wall2.draw(program);
         wall3.draw(program);
-        player.draw(program);
+//        player.draw(program);
+        DrawManager.getInstance().drawBlur(player, program, null, 4, 20);
     }
 
     @Override

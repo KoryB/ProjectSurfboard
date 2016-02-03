@@ -1,6 +1,7 @@
 package framework.drawing;
 
 import framework.drawing.textures.Texture2D;
+import framework.math3d.vec2;
 import framework.math3d.vec3;
 import framework.math3d.mat4;
 import framework.math3d.vec4;
@@ -93,6 +94,8 @@ public class Program{
                 setter = new Vec4Setter(nm_,uloc);
             else if(ty[0] == GL_FLOAT_VEC3 && sz[0] == 1 )
                 setter = new Vec3Setter(nm_,uloc);
+            else if(ty[0] == GL_FLOAT_VEC2 && sz[0] == 1 )
+                setter = new Vec2Setter(nm_,uloc);
             else if(ty[0] == GL_FLOAT && sz[0] == 1 )
                 setter = new FloatSetter(nm_,uloc);
             else if( ty[0] == GL_SAMPLER_2D && sz[0] == 1 ){
@@ -257,6 +260,22 @@ public class Program{
         }
         protected Object makecopy(Object o){
             return ((vec3)o).clone();
+        }
+    }
+
+    class Vec2Setter extends UniformSetter{
+        public Vec2Setter(String name, int idx){
+            super(name,idx);
+        }
+        @Override
+        public void do_set(Object o){
+            if( ! (o instanceof vec2) )
+                throw new RuntimeException("Not a vec2: "+o);
+            vec2 v = (vec2) o;
+            glUniform2f(i, v.x, v.y);
+        }
+        protected Object makecopy(Object o){
+            return ((vec2)o).clone();
         }
     }
       
