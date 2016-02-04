@@ -27,16 +27,18 @@ public class GameScreen implements Screen {
     Wall wall, wall2, wall3;
     Player player;
     Floor floor;
+    Level level;
 
     public GameScreen(){
         mPaused = false;
+        level = new Level(new vec2(50, 50), .12f);
 
         int[] tmp = new int[1];
         glGenVertexArrays(1,tmp);
         int vao = tmp[0];
         glBindVertexArray(vao);
 
-        glClearColor(0.2f,0.4f,0.6f,1.0f);
+        glClearColor(0.2f, 0.4f, 0.6f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
@@ -106,10 +108,16 @@ public class GameScreen implements Screen {
         if (mInput.mousePressed(1))
         {
             Ray camRay = cam.getRay(mInput.getMousePos());
-            Float t = IntersectionHandler.RayPlaneIntersection(camRay, (BoundedPlane) floor.getCollisionPrimitive(), false);
-            if (t != null)
-            {
-                player.setGotoPoint(camRay.getPoint(t));
+            for(int i = 0; i < level.mTiles.length; i++){
+                for(int j = 0; j < level.mTiles[i].length; j++){
+                    if(level.mTiles[i][j] instanceof Floor){
+                        Float t = IntersectionHandler.RayPlaneIntersection(camRay, (BoundedPlane) level.mTiles[i][j].getCollisionPrimitive(), false);
+                        if (t != null)
+                        {
+                            player.setGotoPoint(camRay.getPoint(t));
+                        }
+                    }
+                }
             }
         }
         else if (mInput.mousePressed(3))
@@ -131,11 +139,12 @@ public class GameScreen implements Screen {
         program.setUniform("framenumber", framenum);
         program.setUniform("lightPos", new vec3(50, 50, 50));
         cam.draw(program);
-        floor.draw(program);
-        wall.draw(program);
-        wall2.draw(program);
-        wall3.draw(program);
+//        floor.draw(program);
+//        wall.draw(program);
+//        wall2.draw(program);
+//        wall3.draw(program);
         player.draw(program);
+        level.draw(program);
     }
 
     @Override

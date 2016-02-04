@@ -49,7 +49,7 @@ public class Level {
         for(int i = 0; i < mTiles.length; i++){
             for(int j = 0; j < mTiles[0].length; j++){
                 vec4 pos = new vec4(i, 0, j, 0);
-                mTiles[i][j] = new Wall(pos.add(mStartingCorner));
+                mTiles[i][j] = new Wall(pos.add(mStartingCorner), new vec2(1, 1));
             }
         }
     }
