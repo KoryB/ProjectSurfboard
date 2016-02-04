@@ -130,6 +130,7 @@ public class GameScreen implements Screen {
         CollisionHandler.pushApartAABB(player, wall2);
         CollisionHandler.pushApartAABB(player, wall3);
 
+
     }
 
 //    @Override
