@@ -1,7 +1,9 @@
 package framework;
 
 import framework.collisions.CollisionHandler;
+import framework.collisions.CollisionObject;
 import framework.drawing.DrawManager;
+import framework.drawing.Drawable;
 import framework.drawing.Program;
 import framework.drawing.UnitSquare;
 import framework.drawing.textures.ImageTextureArray;
@@ -9,6 +11,8 @@ import framework.math3d.*;
 import framework.math3d.primitives.BoundedPlane;
 import framework.math3d.primitives.IntersectionHandler;
 import framework.math3d.primitives.Ray;
+
+import java.util.ArrayList;
 
 import static JGL.JGL.*;
 import static JSDL.JSDL.*;
@@ -134,8 +138,8 @@ public class GameScreen implements Screen {
         program.setUniform("framenumber", framenum);
         program.setUniform("lightPos", new vec3(50, 50, 50));
         cam.draw(program);
-        floor.draw(program);
-//        DrawManager.getInstance().drawBlurScreen(floor, program, null, 4, 50);
+//        floor.draw(program);
+//        DrawManager.getInstance().drawBlurScreen(floor, program, null, 4, 20);
 //        glClear(GL_DEPTH_BUFFER_BIT);
         wall.draw(program);
         wall2.draw(program);
@@ -155,6 +159,5 @@ public class GameScreen implements Screen {
 
     @Override
     public void pause() {
-
     }
 }

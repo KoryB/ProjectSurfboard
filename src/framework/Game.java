@@ -60,8 +60,8 @@ public class Game implements Drawable{
     public void draw(Program program){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         mProgram.use();
-        DrawManager.getInstance().drawBlurScreen(mActiveScreen, program, null, 4, 20);
-//        mActiveScreen.draw(program);
+//        DrawManager.getInstance().drawBlurScreen(mActiveScreen, program, null, 4, 20);
+        mActiveScreen.draw(program);
         SDL_GL_SwapWindow(mWindow);
     }
 

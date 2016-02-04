@@ -38,10 +38,6 @@ public class DrawManager
 
     public void drawBlurScreen(Drawable toDraw, Program originalProgram, Framebuffer renderTarget, int numTimes, int size)
     {
-        System.out.println("Active: " + Framebuffer.active_fbo);
-        System.out.println("FBO1: " + tFBO1);
-        System.out.println("FBO2: " + tFBO2);
-
         originalProgram.use();
         tFBO1.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -89,8 +85,6 @@ public class DrawManager
             }
             mBlurProgram.setUniform("toBlur", mDummyTexture);
         }
-
-        System.out.println("Active3: " + Framebuffer.active_fbo);
         originalProgram.use();
     }
 }
