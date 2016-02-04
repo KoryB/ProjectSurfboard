@@ -1,6 +1,8 @@
 package framework;
 
 import framework.collisions.CollisionObject;
+import framework.drawing.Drawable;
+import framework.drawing.Program;
 import framework.math3d.*;
 
 import java.util.Random;
@@ -9,7 +11,7 @@ import java.util.Random;
 /**
  * Created by Michael on 1/26/2016.
  */
-public class Level {
+public class Level implements Drawable{
 
     public vec2 mDimensions, mXRange, mZRange;
     public int mNumTiles;
@@ -49,7 +51,7 @@ public class Level {
         for(int i = 0; i < mTiles.length; i++){
             for(int j = 0; j < mTiles[0].length; j++){
                 vec4 pos = new vec4(i, 0, j, 0);
-                mTiles[i][j] = new Wall(pos.add(mStartingCorner), new vec2(1, 1));
+                mTiles[i][j] = new Wall(pos.add(mStartingCorner), new vec4(1, 3, 1, 0));
             }
         }
     }
@@ -61,7 +63,7 @@ public class Level {
         int currentZ = (int) (mDimensions.y / 2);
 
         vec4 pos = new vec4(currentX, 0, currentZ, 0);
-        mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
+        mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner), new vec2(1, 1));
 
         int numFloors = 1;
         int direction;
@@ -85,7 +87,7 @@ public class Level {
                     pos.z = currentZ;
                     oppositeDirection = 2;
                     if(!(mTiles[currentX][currentZ] instanceof Floor)){
-                        mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
+                        mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner), new vec2(1, 1));
                         numFloors++;
                     }
                 }
@@ -98,7 +100,7 @@ public class Level {
                     pos.z = currentZ;
                     oppositeDirection = 3;
                     if(!(mTiles[currentX][currentZ] instanceof Floor)){
-                        mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
+                        mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner), new vec2(1, 1));
                         numFloors++;
                     }
                 }
@@ -111,7 +113,7 @@ public class Level {
                     pos.z = currentZ;
                     oppositeDirection = 0;
                     if(!(mTiles[currentX][currentZ] instanceof Floor)){
-                        mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
+                        mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner), new vec2(1, 1));
                         numFloors++;
                     }
                 }
@@ -124,7 +126,7 @@ public class Level {
                     pos.z = currentZ;
                     oppositeDirection = 1;
                     if(!(mTiles[currentX][currentZ] instanceof Floor)){
-                        mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner));
+                        mTiles[currentX][currentZ] = new Floor(pos.add(mStartingCorner), new vec2(1, 1));
                         numFloors++;
                     }
                 }

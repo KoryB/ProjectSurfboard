@@ -1,6 +1,7 @@
 package framework;
 
 import framework.collisions.CollisionHandler;
+import framework.drawing.Program;
 import framework.math3d.*;
 import framework.math3d.primitives.BoundedPlane;
 import framework.math3d.primitives.IntersectionHandler;
@@ -22,8 +23,8 @@ public class GameScreen implements Screen {
     Camera cam;
     Program blurprog;
     float prev, framenum;
-    UnitSquare usq;
-    ImageTextureArray ita;
+//    UnitSquare usq;
+//    ImageTextureArray ita;
     Wall wall, wall2, wall3;
     Player player;
     Floor floor;
@@ -45,8 +46,8 @@ public class GameScreen implements Screen {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        usq = new UnitSquare();
-        ita = new ImageTextureArray("assets/globe%02d.png",24);
+//        usq = new UnitSquare();
+//        ita = new ImageTextureArray("assets/globe%02d.png",24);
         cam = new Camera();
         player = new Player(new vec4(-2.0, 1, -.5, 1));
         cam.lookAtPlayer(player);
@@ -56,11 +57,6 @@ public class GameScreen implements Screen {
         prev = (float)(System.nanoTime()*1E-9);
 
         framenum = 0.0f;
-
-        wall = new Wall(new vec4(0, 0, 0, 1), new vec2(1.0, 1.0));
-        wall2 = new Wall(new vec4(1.0, 0, 0, 1), new vec2(1.0, 0.5));
-        wall3 = new Wall(new vec4(1.0, 0, -1, 1), new vec2(0.5, 1.0));
-        floor = new Floor(new vec4(-2.0, 0, -2.0, 1));
     }
 
     @Override
@@ -127,16 +123,12 @@ public class GameScreen implements Screen {
 
         player.update(elapsed);
 
-        CollisionHandler.pushApartAABB(player, wall);
-        CollisionHandler.pushApartAABB(player, wall2);
-        CollisionHandler.pushApartAABB(player, wall3);
-
     }
 
     @Override
-    public void render(Program program) {
-        program.setUniform("diffuse_texture", ita);
-        program.setUniform("framenumber", framenum);
+    public void draw(Program program) {
+//        program.setUniform("diffuse_texture", ita);
+//        program.setUniform("framenumber", framenum);
         program.setUniform("lightPos", new vec3(50, 50, 50));
         cam.draw(program);
 //        floor.draw(program);
