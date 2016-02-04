@@ -24,9 +24,9 @@ public class Camera implements Drawable
     mat4 projMatrix;
     mat4 viewMatrix;
 
-    float mRight = 4.0f;
+    float mRight = 2.0f;
     //    float mLeft = -1.0f;
-    float mTop = 4.0f;
+    float mTop = 2.0f;
     //    float mBottom = -1.0f;
     float mNear = 0.1f;
     float mFar = 30.1f;

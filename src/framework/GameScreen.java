@@ -1,6 +1,7 @@
 package framework;
 
 import framework.collisions.CollisionHandler;
+import framework.collisions.CollisionObject;
 import framework.drawing.Program;
 import framework.math3d.*;
 import framework.math3d.primitives.BoundedPlane;
@@ -49,7 +50,7 @@ public class GameScreen implements Screen {
 //        usq = new UnitSquare();
 //        ita = new ImageTextureArray("assets/globe%02d.png",24);
         cam = new Camera();
-        player = new Player(new vec4(-2.0, 1, -.5, 1));
+        player = new Player(new vec4(0, 1, 0, 1));
         cam.lookAtPlayer(player);
 //        cam.lookAtPlayer(player);
 //        cam.lookAt(new vec3(0, 4, 0), new vec3(), normalize(new vec3(0, 0, -1)));
@@ -119,6 +120,14 @@ public class GameScreen implements Screen {
         else if (mInput.mousePressed(3))
         {
             player.clearGotoPoint();
+        }
+
+        for(int i = 0; i < level.mTiles.length; i++){
+            for(int j = 0; j < level.mTiles[i].length; j++){
+                if(level.mTiles[i][j] instanceof Wall){
+                    CollisionHandler.pushApartAABB(level.mTiles[i][j], player);
+                }
+            }
         }
 
         player.update(elapsed);
