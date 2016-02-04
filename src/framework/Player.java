@@ -81,7 +81,7 @@ public class Player extends CollisionObject implements Drawable
     public void draw(Program program)
     {
         //TODO: Fix floating
-        program.setUniform("worldMatrix", math3d.scaling(.5f, .5f, .5f).mul(math3d.translation(mPosition)));
+        program.setUniform("worldMatrix", math3d.scaling(.5f, 1.0f, .5f).mul(math3d.translation(mPosition)));
         MESH.draw(program);
     }
 }

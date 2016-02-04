@@ -33,7 +33,7 @@ public class GameScreen implements Screen {
 
     public GameScreen(){
         mPaused = false;
-        level = new Level(new vec2(50, 50), .12f);
+        level = new Level(new vec2(50, 50), 0.25f);
 
         int[] tmp = new int[1];
         glGenVertexArrays(1,tmp);
@@ -102,7 +102,7 @@ public class GameScreen implements Screen {
         cam.lookAtPlayer(player);
 
 //        TODO: make mouse buttons constants
-        if (mInput.mousePressed(1))
+        if (mInput.mouseDown(1))
         {
             Ray camRay = cam.getRay(mInput.getMousePos());
             for(int i = 0; i < level.mTiles.length; i++){
