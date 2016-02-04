@@ -46,17 +46,18 @@ public class GameScreen implements Screen {
         usq = new UnitSquare();
         ita = new ImageTextureArray("assets/globe%02d.png",24);
         cam = new Camera();
-        cam.lookAt(new vec3(-4.5, 3, -0.5), new vec3(-3.5, 0, -1.5), normalize(new vec3(1, 0, -1)));
+        player = new Player(new vec4(-2.0, 1, -.5, 1));
+        cam.lookAtPlayer(player);
+//        cam.lookAtPlayer(player);
 //        cam.lookAt(new vec3(0, 4, 0), new vec3(), normalize(new vec3(0, 0, -1)));
 
         prev = (float)(System.nanoTime()*1E-9);
 
         framenum = 0.0f;
 
-        wall = new Wall(new vec4(0, 0, 0, 1));
-        wall2 = new Wall(new vec4(0.5, 0, 0, 1));
-        wall3 = new Wall(new vec4(0.5, 0, -1, 1));
-        player = new Player(new vec4(-2.0, 1, -.5, 1));
+        wall = new Wall(new vec4(0, 0, 0, 1), new vec2(1.0, 1.0));
+        wall2 = new Wall(new vec4(1.0, 0, 0, 1), new vec2(1.0, 0.5));
+        wall3 = new Wall(new vec4(1.0, 0, -1, 1), new vec2(0.5, 1.0));
         floor = new Floor(new vec4(-2.0, 0, -2.0, 1));
     }
 
@@ -98,6 +99,8 @@ public class GameScreen implements Screen {
             cam.strafe(new vec3(0, -0.4f * elapsed, 0));
         if (mInput.keyDown(SDLK_e))
             cam.strafe(new vec3(0, 0.4f * elapsed, 0));
+
+        cam.lookAtPlayer(player);
 
 //        TODO: make mouse buttons constants
         if (mInput.mousePressed(1))

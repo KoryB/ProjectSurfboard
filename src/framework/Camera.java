@@ -11,6 +11,9 @@ import static framework.math3d.math3d.*;
 
 public class Camera
 {
+    public vec4 mPlayerOffset = new vec4(-1.06, 2.2, 0.83, 0.0);
+    public vec4 mCOIOffset = new vec4(1.0, -3.0, -1.0, 0.0);
+    public vec4 mUP = new vec4(1.0, 0.0, -1.0, 0.0);
     float fov_h = 45;
     float hither = 0.1f;
     float yon = 1000;
@@ -162,6 +165,14 @@ public class Camera
         mVirtualWidthRatio = mHalfViewWidth / Util.WINDOW_HALF_WIDTH;
 
         compute_view_matrix();
+    }
+
+    // TODO: Make a vec4 version of lookAt
+    public void lookAtPlayer(Player player)
+    {
+        vec4 newPos = player.getPosition().add(mPlayerOffset);
+
+        lookAt(newPos.xyz(), newPos.add(mCOIOffset).xyz(), mUP.xyz());
     }
 
     public vec4 calculatePixelPosition(vec2 pixel)

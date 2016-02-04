@@ -1,6 +1,7 @@
 package framework;
 
 import framework.collisions.CollisionHandler;
+import framework.math3d.vec2;
 import framework.math3d.vec3;
 
 import java.util.Set;
@@ -68,9 +69,9 @@ public class Main2
         Player player = new Player(new vec4(-2.0, 1, -.5, 1));
         usq = new UnitSquare();
 
-        Wall wall = new Wall(new vec4(0, 0, 0, 1));
-        Wall wall2 = new Wall(new vec4(0.5, 0, 0, 1));
-        Wall wall3 = new Wall(new vec4(0.5, 0, -1, 1));
+        Wall wall = new Wall(new vec4(0, 0, 0, 1), new vec2(1.0, 1.0));
+        Wall wall2 = new Wall(new vec4(0.5, 0, 0, 1), new vec2(1.0, 0.5));
+        Wall wall3 = new Wall(new vec4(0.5, 0, -1, 1), new vec2(0.5, 1.0));
 
 
         fbo1 = new Framebuffer(512, 512);
