@@ -20,6 +20,7 @@ public class Game implements Drawable{
     public Game(){
         SDL_Init(SDL_INIT_VIDEO);
         mWindow = SDL_CreateWindow("ETGG 2802",40,60, Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT, SDL_WINDOW_OPENGL );
+//        SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_CORE);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,24);
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,8);
