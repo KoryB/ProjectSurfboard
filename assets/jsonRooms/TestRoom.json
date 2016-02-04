@@ -1,0 +1,33 @@
+{
+  "walls" : {
+    "wall0" : {
+      "position" : [0, 0, 4, 1],
+      "scale" : [9, 3, 1]
+    },
+
+    "wall1" : {
+      "position" : [0, 0, -4, 1],
+      "scale" : [9, 3, 1]
+    },
+
+    "wall2" : {
+      "position" : [4, 0, 0, 1],
+      "scale" : [1, 3, 9]
+    },
+
+    "wall3" : {
+      "position" : [-4, 0, 0, 1],
+      "scale" : [1, 3, 9]
+    }
+  },
+
+  "floor" : {
+    "position" : [0, -0.5, 0, 1],
+    "scale" : [9, 1, 9]
+  },
+
+  "dimensions" : {
+    "width" : 9,
+    "height" : 9
+  }
+}

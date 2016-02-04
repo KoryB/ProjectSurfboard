@@ -1,18 +1,11 @@
 package framework;
 
 import framework.collisions.CollisionHandler;
-import framework.collisions.CollisionObject;
-import framework.drawing.DrawManager;
-import framework.drawing.Drawable;
-import framework.drawing.Program;
-import framework.drawing.UnitSquare;
-import framework.drawing.textures.ImageTextureArray;
 import framework.math3d.*;
 import framework.math3d.primitives.BoundedPlane;
 import framework.math3d.primitives.IntersectionHandler;
+import framework.math3d.primitives.Plane;
 import framework.math3d.primitives.Ray;
-
-import java.util.ArrayList;
 
 import static JGL.JGL.*;
 import static JSDL.JSDL.*;
@@ -34,16 +27,18 @@ public class GameScreen implements Screen {
     Wall wall, wall2, wall3;
     Player player;
     Floor floor;
+    Level level;
 
     public GameScreen(){
         mPaused = false;
+        level = new Level(new vec2(50, 50), .12f);
 
         int[] tmp = new int[1];
         glGenVertexArrays(1,tmp);
         int vao = tmp[0];
         glBindVertexArray(vao);
 
-        glClearColor(0.2f,0.4f,0.6f,1.0f);
+        glClearColor(0.2f, 0.4f, 0.6f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
@@ -62,10 +57,10 @@ public class GameScreen implements Screen {
 
         framenum = 0.0f;
 
-        wall = new Wall(new vec4(0, 0, 0, 1), new vec4(1.0, 1.0, 1.0, 0.0));
-        wall2 = new Wall(new vec4(1.0, 0, 0, 1), new vec4(1.0, 2.0, 0.5, 0.0));
-        wall3 = new Wall(new vec4(1.0, 0, -1, 1), new vec4(0.5, 3.0, 1.0, 0.0));
-        floor = new Floor(new vec4(-2.0, 0, -2.0, 1), new vec2(20.0, 20.0));
+        wall = new Wall(new vec4(0, 0, 0, 1), new vec2(1.0, 1.0));
+        wall2 = new Wall(new vec4(1.0, 0, 0, 1), new vec2(1.0, 0.5));
+        wall3 = new Wall(new vec4(1.0, 0, -1, 1), new vec2(0.5, 1.0));
+        floor = new Floor(new vec4(-2.0, 0, -2.0, 1));
     }
 
     @Override
@@ -108,15 +103,21 @@ public class GameScreen implements Screen {
             cam.strafe(new vec3(0, 0.4f * elapsed, 0));
 
         cam.lookAtPlayer(player);
-//        System.out.println("To Camera from Player: " + cam.mEye.sub(player.getPosition()));
+
 //        TODO: make mouse buttons constants
-        if (mInput.mouseDown(Integer.parseInt(mInput.mBindings.getProperty("MOUSE_LEFT"))))
+        if (mInput.mousePressed(1))
         {
             Ray camRay = cam.getRay(mInput.getMousePos());
-            Float t = IntersectionHandler.RayPlaneIntersection(camRay, (BoundedPlane) floor.getCollisionPrimitive(), false);
-            if (t != null)
-            {
-                player.setGotoPoint(camRay.getPoint(t));
+            for(int i = 0; i < level.mTiles.length; i++){
+                for(int j = 0; j < level.mTiles[i].length; j++){
+                    if(level.mTiles[i][j] instanceof Floor){
+                        Float t = IntersectionHandler.RayPlaneIntersection(camRay, (BoundedPlane) level.mTiles[i][j].getCollisionPrimitive(), false);
+                        if (t != null)
+                        {
+                            player.setGotoPoint(camRay.getPoint(t));
+                        }
+                    }
+                }
             }
         }
         else if (mInput.mousePressed(3))
@@ -130,22 +131,20 @@ public class GameScreen implements Screen {
         CollisionHandler.pushApartAABB(player, wall2);
         CollisionHandler.pushApartAABB(player, wall3);
 
-
     }
 
-//    @Override
-    public void draw(Program program) {
+    @Override
+    public void render(Program program) {
         program.setUniform("diffuse_texture", ita);
         program.setUniform("framenumber", framenum);
         program.setUniform("lightPos", new vec3(50, 50, 50));
         cam.draw(program);
 //        floor.draw(program);
-//        DrawManager.getInstance().drawBlurScreen(floor, program, null, 4, 20);
-//        glClear(GL_DEPTH_BUFFER_BIT);
-        wall.draw(program);
-        wall2.draw(program);
-        wall3.draw(program);
+//        wall.draw(program);
+//        wall2.draw(program);
+//        wall3.draw(program);
         player.draw(program);
+        level.draw(program);
     }
 
     @Override
@@ -160,5 +159,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void pause() {
+
     }
 }
