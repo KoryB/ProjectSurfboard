@@ -7,18 +7,16 @@ import framework.drawing.textures.Texture;
 import framework.drawing.textures.Texture2D;
 import framework.math3d.vec2;
 
-import java.awt.*;
-
 import static JGL.JGL.*;
 
-/**
- * Created by kory on 2/2/16.
- */
 public class DrawManager
 {
     private static DrawManager mInstance = new DrawManager();
-    private Program mBlurProgram;
-    private Framebuffer tFBO1, tFBO2;
+    private static final float[] LAPLACIAN_WEIGHTINGS = new float[]{0, -1, 0, -1, 4, -1, 0, -1, 0};
+    private static int NEXT_AVAILABLE_FBO = 0;
+
+    private Program mBlurProgram, mEdgeProgram;
+//    private Framebuffer tFBO1, tFBO2;
     private Framebuffer[] tFBOArray;
     private UnitSquare mUnitSquare = new UnitSquare();
     private Texture2D mDummyTexture = new SolidTexture(GL_FLOAT, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -26,9 +24,16 @@ public class DrawManager
     private DrawManager()
     {
         mBlurProgram = new Program("shaders/blurvs.txt", "shaders/blurfs.txt");
-        tFBO1 = new Framebuffer(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
-        tFBO2 = new Framebuffer(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
-        tFBOArray = new Framebuffer[]{tFBO1, tFBO2};
+        mEdgeProgram = new Program("shaders/blurvs.txt", "shaders/edgefs.txt");
+//        tFBO1 = new Framebuffer(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
+//        tFBO2 = new Framebuffer(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
+        tFBOArray = new Framebuffer[10];
+        for (int i = 0; i < tFBOArray.length; i++)
+        {
+            tFBOArray[i] = new Framebuffer(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
+        }
+//        tFBOArray = new Framebuffer[]{tFBO1, tFBO2};
+        
     }
 
     public static DrawManager getInstance()
@@ -38,31 +43,34 @@ public class DrawManager
 
     public void drawBlurScreen(Drawable toDraw, Program originalProgram, Framebuffer renderTarget, int numTimes, int size)
     {
+        int myAvailableFBO = NEXT_AVAILABLE_FBO;
+        NEXT_AVAILABLE_FBO += 2;
+
         originalProgram.use();
-        tFBO1.bind();
+        tFBOArray[myAvailableFBO].bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         toDraw.draw(originalProgram);
-        tFBO1.unbind();
+        tFBOArray[myAvailableFBO].unbind();
         mBlurProgram.use();
         mBlurProgram.setUniform("boxWidth", size);
 
-        tFBO2.bind();
+        tFBOArray[myAvailableFBO+1].bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        tFBO2.unbind();
+        tFBOArray[myAvailableFBO+1].unbind();
 
         for (int i = 0; i < numTimes; i++)
         {
-            tFBO2.bind();
+            tFBOArray[myAvailableFBO+1].bind();
 
-            mBlurProgram.setUniform("toBlur", tFBO1.texture);
+            mBlurProgram.setUniform("toBlur", tFBOArray[myAvailableFBO].texture);
             mBlurProgram.setUniform("blurDelta", new vec2(0.0, 1.0));
             mUnitSquare.draw(mBlurProgram);
 
-            tFBO2.unbind();
-            mBlurProgram.setUniform("toBlur", tFBO2.texture);
+            tFBOArray[myAvailableFBO+1].unbind();
+            mBlurProgram.setUniform("toBlur", tFBOArray[myAvailableFBO+1].texture);
             if (i != numTimes - 1)
             {
-                tFBO1.bind();
+                tFBOArray[myAvailableFBO].bind();
             } else
             {
                 if (renderTarget != null)
@@ -75,7 +83,7 @@ public class DrawManager
 
             if (i != numTimes - 1)
             {
-                tFBO1.unbind();
+                tFBOArray[myAvailableFBO].unbind();
             } else
             {
                 if (renderTarget != null)
@@ -86,6 +94,40 @@ public class DrawManager
             mBlurProgram.setUniform("toBlur", mDummyTexture);
         }
         originalProgram.use();
+
+        NEXT_AVAILABLE_FBO -=2;
+    }
+
+    public void drawLaplacian(Drawable toDraw, Program originalProgram, Framebuffer renderTarget)
+    {
+        int myAvailableFBO = NEXT_AVAILABLE_FBO;
+        NEXT_AVAILABLE_FBO += 1;
+
+        originalProgram.use();
+        tFBOArray[myAvailableFBO].bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        toDraw.draw(originalProgram);
+        tFBOArray[myAvailableFBO].unbind();
+
+        if (renderTarget != null)
+        {
+            renderTarget.bind();
+        }
+
+        mEdgeProgram.use();
+        mEdgeProgram.setUniform("weightings[0]", LAPLACIAN_WEIGHTINGS);
+        mEdgeProgram.setUniform("toEdge", tFBOArray[myAvailableFBO].texture);
+
+        mUnitSquare.draw(mEdgeProgram);
+
+        if (renderTarget != null)
+        {
+            renderTarget.unbind();
+        }
+
+        mEdgeProgram.setUniform("toEdge", mDummyTexture);
+
+        NEXT_AVAILABLE_FBO -= 1;
     }
 }
 

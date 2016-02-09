@@ -98,6 +98,8 @@ public class Program{
                 setter = new Vec2Setter(nm_,uloc);
             else if(ty[0] == GL_FLOAT && sz[0] == 1 )
                 setter = new FloatSetter(nm_,uloc);
+            else if(ty[0] == GL_FLOAT && sz[0] > 1 )
+                setter = new FloatArraySetter(nm_,uloc, sz[0]);
             else if( ty[0] == GL_SAMPLER_2D && sz[0] == 1 ){
                 setter = new Sampler2DSetter(nm_,uloc,texcount);
                 texcount++;
@@ -109,6 +111,7 @@ public class Program{
             else
                 throw new RuntimeException("Don't know about type for uniform "+nm_);
 
+            System.out.println(nm_);
             uniforms.put(nm_,setter);
         }
 
@@ -135,7 +138,9 @@ public class Program{
             throw new RuntimeException("This program is not active");
         
         if( uniforms.keySet().contains(name))
+        {
             uniforms.get(name).set(value);
+        }
 
     }
 
@@ -289,6 +294,25 @@ public class Program{
                 throw new RuntimeException("Not a float/double/int/other number");
             Number n = (Number) o;
             glUniform1f( i, n.floatValue() );
+        }
+        protected Object makecopy(Object o){
+            return o;
+        }
+    }
+
+    class FloatArraySetter extends UniformSetter{
+        protected int size;
+        public FloatArraySetter(String name,int idx, int size)
+        {
+            super(name,idx);
+            this.size = size;
+        }
+        @Override
+        public void do_set(Object o){
+            if( ! (o instanceof float[] && ((float[])o).length == size))
+                throw new RuntimeException("Not a float[], and/or size doesn't match");
+            float[] n = (float[]) o;
+            glUniform1fv(i, size, n);
         }
         protected Object makecopy(Object o){
             return o;
