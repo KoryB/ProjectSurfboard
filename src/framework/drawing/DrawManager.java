@@ -12,7 +12,8 @@ import static JGL.JGL.*;
 public class DrawManager
 {
     private static DrawManager mInstance = new DrawManager();
-    private static final float[] LAPLACIAN_WEIGHTINGS = new float[]{0, -1, 0, -1, 4, -1, 0, -1, 0};
+    private static final float[] LAPLACIAN_WEIGHTINGS = new float[]{-1, -1, -1, -1, 8.2f, -1, -1, -1, -1};
+//    private static final float[] LAPLACIAN_WEIGHTINGS = new float[]{0, -1, 0, -1, 4, -1, 0, -1, 0};
     private static int NEXT_AVAILABLE_FBO = 0;
 
     private Program mBlurProgram, mEdgeProgram;
@@ -105,7 +106,7 @@ public class DrawManager
 
         originalProgram.use();
         tFBOArray[myAvailableFBO].bind();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         toDraw.draw(originalProgram);
         tFBOArray[myAvailableFBO].unbind();
 

@@ -45,6 +45,7 @@ public class Game implements Drawable{
                 null);
 
         glEnable(GL_BLEND);
+        glEnable(GL_STENCIL_TEST);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glBlendEquation(GL_FUNC_ADD);
 
@@ -59,11 +60,11 @@ public class Game implements Drawable{
     }
 
     public void draw(Program program){
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         mProgram.use();
 //        DrawManager.getInstance().drawBlurScreen(mActiveScreen, program, null, 1, 2);
-//        mActiveScreen.draw(program);
-        DrawManager.getInstance().drawLaplacian(mActiveScreen, program, null);
+        mActiveScreen.draw(program);
+//        DrawManager.getInstance().drawLaplacian(mActiveScreen, program, null);
         SDL_GL_SwapWindow(mWindow);
     }
 

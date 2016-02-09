@@ -8,6 +8,7 @@ void main()
     vec2 texsize = 1.0 / textureSize(toEdge, 0);
     vec4 total = vec4(0, 0, 0, 0);
     vec2 blurDelta = vec2(0, 0);
+
     for (int r = -1; r <= 1; r++)
     {
         blurDelta.y = r;
@@ -17,11 +18,17 @@ void main()
             blurDelta.x = c;
             total += texture(toEdge, v_texcoord + blurDelta*texsize) * weightings[3*r + c];
         }
+
+
     }
-    color = total;//texture(toEdge, v_texcoord);//total;
-    color.a = 1.0;
-    if (color.a < .05)
+    color = total;
+
+    if ((total.r + total.g + total.b) > 0.001)
     {
-        discard;
+        color = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+    else
+    {
+        color = vec4(0.0, 0.0, 0.0, 0.0);
     }
 }

@@ -5,6 +5,8 @@ import framework.collisions.CollisionType;
 import framework.drawing.Drawable;
 import framework.drawing.Mesh;
 import framework.drawing.Program;
+import framework.drawing.textures.ImageTexture;
+import framework.drawing.textures.Texture2D;
 import framework.math3d.math3d;
 import framework.math3d.primitives.BoundedPlane;
 import framework.math3d.vec2;
@@ -34,6 +36,7 @@ public class Floor extends CollisionObject implements Drawable
         if (MESH == null)
         {
             MESH = new Mesh("assets/floor.obj.mesh");
+            MESH.texture = new ImageTexture("assets/globe00.png");
         }
     }
 

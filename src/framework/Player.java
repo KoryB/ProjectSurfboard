@@ -5,6 +5,7 @@ import framework.collisions.CollisionType;
 import framework.drawing.Drawable;
 import framework.drawing.Mesh;
 import framework.drawing.Program;
+import framework.drawing.textures.ImageTexture;
 import framework.math3d.math3d;
 import framework.math3d.primitives.AABB;
 import framework.math3d.primitives.AABBType;
@@ -25,6 +26,7 @@ public class Player extends CollisionObject implements Drawable
         if (MESH == null)
         {
             MESH = new Mesh("assets/testPlayer.obj.mesh");
+//            MESH.texture = new ImageTexture("assets/globe00.png");
         }
     }
 
