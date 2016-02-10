@@ -109,7 +109,7 @@ public class GameScreen implements Screen
         cam.lookAtPlayer(player);
 
         //        TODO: make mouse buttons constants
-        if (mInput.mousePressed(1))
+        if (mInput.mouseDown(1))
         {
             Ray camRay = cam.getRay(mInput.getMousePos());
             for (int i = 0; i < level.mTiles.length; i++)
@@ -194,7 +194,8 @@ public class GameScreen implements Screen
         glStencilFunc(GL_EQUAL, 2, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
         glClear(GL_DEPTH_BUFFER_BIT);
-        DrawManager.getInstance().drawLaplacian(player, program, null);
+//        player.draw(program); This works as expected
+//        DrawManager.getInstance().drawLaplacian(player, program, null); this produces white.
 
         glStencilFunc(GL_ALWAYS, 1, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);

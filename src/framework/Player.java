@@ -26,7 +26,7 @@ public class Player extends CollisionObject implements Drawable
         if (MESH == null)
         {
             MESH = new Mesh("assets/testPlayer.obj.mesh");
-//            MESH.texture = new ImageTexture("assets/globe00.png");
+            MESH.texture = new ImageTexture("assets/globe00.png");
         }
     }
 
