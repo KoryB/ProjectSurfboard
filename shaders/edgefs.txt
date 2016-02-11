@@ -1,6 +1,8 @@
 #version 150
 uniform sampler2D toEdge;
 uniform float[9] weightings;
+uniform vec4 onColor;
+uniform vec4 offColor;
 in vec2 v_texcoord;
 out vec4 color;
 void main()
@@ -25,10 +27,10 @@ void main()
 
     if ((total.r + total.g + total.b) > 0.001)
     {
-        color = vec4(0.5, 1.0, 0.5, 0.5);
+        color = onColor;
     }
     else
     {
-        discard;
+        color = offColor;
     }
 }

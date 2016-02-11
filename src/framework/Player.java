@@ -20,7 +20,7 @@ public class Player extends CollisionObject implements Drawable
     {
         mPosition = (vec4) position.clone();
 
-        mCollisionPrimitive = new AABB((vec4) mPosition.clone(), new vec4(.2, 2, .2, 0), AABBType.CENTER, AABBType.EXTENTS);
+        mCollisionPrimitive = new AABB((vec4) mPosition.clone(), new vec4(.5, 2, .5, 0), AABBType.CENTER, AABBType.EXTENTS);
         mCollisionType = CollisionType.AABB;
 
         if (MESH == null)
@@ -83,7 +83,7 @@ public class Player extends CollisionObject implements Drawable
     public void draw(Program program)
     {
         //TODO: Fix floating
-        program.setUniform("worldMatrix", math3d.scaling(.5f, .5f, .5f).mul(math3d.translation(mPosition)));
+        program.setUniform("worldMatrix", math3d.scaling(.5f, 1f, .5f).mul(math3d.translation(mPosition)));
         MESH.draw(program);
     }
 }

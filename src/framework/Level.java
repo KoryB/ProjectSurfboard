@@ -51,7 +51,7 @@ public class Level implements Drawable{
         for(int i = 0; i < mTiles.length; i++){
             for(int j = 0; j < mTiles[0].length; j++){
                 vec4 pos = new vec4(i, 0, j, 0);
-                mTiles[i][j] = new Wall(pos.add(mStartingCorner), new vec4(1, 3, 1, 0));
+                mTiles[i][j] = new Wall(pos.add(mStartingCorner), new vec4(1, 2, 1, 0));
             }
         }
     }

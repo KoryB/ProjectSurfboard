@@ -6,6 +6,7 @@ import framework.drawing.textures.SolidTexture;
 import framework.drawing.textures.Texture;
 import framework.drawing.textures.Texture2D;
 import framework.math3d.vec2;
+import framework.math3d.vec4;
 
 import static JGL.JGL.*;
 
@@ -54,6 +55,7 @@ public class DrawManager
         tFBOArray[myAvailableFBO].unbind();
         mBlurProgram.use();
         mBlurProgram.setUniform("boxWidth", size);
+        mBlurProgram.setUniform("depth_texture", tFBOArray[myAvailableFBO].depthtexture);
 
         tFBOArray[myAvailableFBO+1].bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -64,11 +66,13 @@ public class DrawManager
             tFBOArray[myAvailableFBO+1].bind();
 
             mBlurProgram.setUniform("toBlur", tFBOArray[myAvailableFBO].texture);
+            mBlurProgram.setUniform("depth_texture", tFBOArray[myAvailableFBO].depthtexture);
             mBlurProgram.setUniform("blurDelta", new vec2(0.0, 1.0));
             mUnitSquare.draw(mBlurProgram);
 
             tFBOArray[myAvailableFBO+1].unbind();
             mBlurProgram.setUniform("toBlur", tFBOArray[myAvailableFBO+1].texture);
+            mBlurProgram.setUniform("depth_texture", tFBOArray[myAvailableFBO+1].depthtexture);
             if (i != numTimes - 1)
             {
                 tFBOArray[myAvailableFBO].bind();
@@ -93,13 +97,14 @@ public class DrawManager
                 }
             }
             mBlurProgram.setUniform("toBlur", mDummyTexture);
+            mBlurProgram.setUniform("depth_texture", mDummyTexture);
         }
         originalProgram.use();
 
         NEXT_AVAILABLE_FBO -=2;
     }
 
-    public void drawLaplacian(Drawable toDraw, Program originalProgram, Framebuffer renderTarget)
+    public void drawLaplacian(Drawable toDraw, Program originalProgram, Framebuffer renderTarget, vec4 onColor, vec4 offColor)
     {
         int myAvailableFBO = NEXT_AVAILABLE_FBO;
         NEXT_AVAILABLE_FBO += 1;
@@ -124,8 +129,11 @@ public class DrawManager
         }
 
         mEdgeProgram.use();
+        mEdgeProgram.setUniform("onColor", onColor);
+        mEdgeProgram.setUniform("offColor", offColor);
         mEdgeProgram.setUniform("weightings[0]", LAPLACIAN_WEIGHTINGS);
         mEdgeProgram.setUniform("toEdge", tFBOArray[myAvailableFBO].texture);
+        mEdgeProgram.setUniform("depth_texture", tFBOArray[myAvailableFBO].depthtexture);
 
         glStencilFunc(GL_LEQUAL, 2, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
@@ -138,6 +146,7 @@ public class DrawManager
         }
 
         mEdgeProgram.setUniform("toEdge", mDummyTexture);
+        mEdgeProgram.setUniform("depth_texture", mDummyTexture);
 
         originalProgram.use();
 

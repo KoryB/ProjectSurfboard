@@ -188,7 +188,8 @@ public class GameScreen implements Screen
                 }
             }
         }
-//        glClear(GL_DEPTH_BUFFER_BIT);
+
+        //        glClear(GL_DEPTH_BUFFER_BIT);
 //        DrawManager.getInstance().drawLaplacian(player, program, null); //this produces white.
         glStencilFunc(GL_EQUAL, 1, 0xff);
         glStencilOp(GL_KEEP, GL_INCR, GL_KEEP);
@@ -199,7 +200,7 @@ public class GameScreen implements Screen
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        DrawManager.getInstance().drawLaplacian(player, program, null); //this produces white.
+        DrawManager.getInstance().drawLaplacian(player, program, null, new vec4(0.5, 1.0, 0.5, 0.5), new vec4(0.5, 0.1, 0.1, 0.5));
 
         glStencilFunc(GL_ALWAYS, 0, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
