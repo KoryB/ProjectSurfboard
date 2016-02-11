@@ -25,7 +25,7 @@ void main()
 
     if ((total.r + total.g + total.b) > 0.001)
     {
-        color = vec4(1.0, 1.0, 1.0, 1.0);
+        color = vec4(1.0, 1.0, 1.0, 0.5);
     }
     else
     {

@@ -44,7 +44,7 @@ public class GameScreen implements Screen
         int vao = tmp[0];
         glBindVertexArray(vao);
 
-        glClearColor(0.2f, 0.4f, 0.6f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
 
@@ -186,18 +186,26 @@ public class GameScreen implements Screen
                 }
             }
         }
-
+//        glClear(GL_DEPTH_BUFFER_BIT);
+//        DrawManager.getInstance().drawLaplacian(player, program, null); //this produces white.
         glStencilFunc(GL_EQUAL, 1, 0xff);
         glStencilOp(GL_KEEP, GL_INCR, GL_KEEP);
         player.draw(program);
+//        DrawManager.getInstance().drawBlurScreen(player, program, null, 10, 10);
 
-        glStencilFunc(GL_EQUAL, 2, 0xff);
+        glStencilFunc(GL_GREATER, 0x7f, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
         glClear(GL_DEPTH_BUFFER_BIT);
+        if (mInput.keyDown(SDLK_v))
+        {
+            glStencilFunc(GL_GEQUAL, 2, 0xff);
+            glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+//            glClear(/*GL_COLOR_BUFFER_BIT | */GL_STENCIL_BUFFER_BIT);
+        }
 //        player.draw(program); This works as expected
-//        DrawManager.getInstance().drawLaplacian(player, program, null); this produces white.
+        DrawManager.getInstance().drawLaplacian(player, program, null); //this produces white.
 
-        glStencilFunc(GL_ALWAYS, 1, 0xff);
+        glStencilFunc(GL_ALWAYS, 0, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
     }
 

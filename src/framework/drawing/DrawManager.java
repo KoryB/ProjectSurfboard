@@ -128,6 +128,8 @@ public class DrawManager
 
         mEdgeProgram.setUniform("toEdge", mDummyTexture);
 
+        originalProgram.use();
+
         NEXT_AVAILABLE_FBO -= 1;
     }
 }
