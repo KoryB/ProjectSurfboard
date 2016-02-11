@@ -104,9 +104,17 @@ public class DrawManager
         int myAvailableFBO = NEXT_AVAILABLE_FBO;
         NEXT_AVAILABLE_FBO += 1;
 
+        /*TODO: The problem is that the depth buffer in the FBO is all 0's, but the current reference value is 2. 2<=0 is false!
+        **TODO: glGetIntegerV(GL_STENCIL_OP, byte[])
+        **TODO: int val = b[0] + b[1]*256 + b[2]*65536 + b[3]*16777216
+        **TODO: this will get the current stencil func, etc. Could be used. might not be worth so just leaving it here.
+        */
+
         originalProgram.use();
         tFBOArray[myAvailableFBO].bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glStencilFunc(GL_ALWAYS, 0, 0xff);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
         toDraw.draw(originalProgram);
         tFBOArray[myAvailableFBO].unbind();
 
@@ -118,6 +126,9 @@ public class DrawManager
         mEdgeProgram.use();
         mEdgeProgram.setUniform("weightings[0]", LAPLACIAN_WEIGHTINGS);
         mEdgeProgram.setUniform("toEdge", tFBOArray[myAvailableFBO].texture);
+
+        glStencilFunc(GL_LEQUAL, 2, 0xff);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
         mUnitSquare.draw(mEdgeProgram);
 

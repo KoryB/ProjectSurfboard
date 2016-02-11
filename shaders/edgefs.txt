@@ -25,10 +25,10 @@ void main()
 
     if ((total.r + total.g + total.b) > 0.001)
     {
-        color = vec4(1.0, 1.0, 1.0, 0.5);
+        color = vec4(0.5, 1.0, 0.5, 0.5);
     }
     else
     {
-        color = vec4(0.0, 0.0, 0.0, 0.0);
+        discard;
     }
 }

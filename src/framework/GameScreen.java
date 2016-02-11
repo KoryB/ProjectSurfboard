@@ -10,6 +10,8 @@ import framework.math3d.primitives.IntersectionHandler;
 import framework.math3d.primitives.Plane;
 import framework.math3d.primitives.Ray;
 
+import java.util.Arrays;
+
 import static JGL.JGL.*;
 import static JSDL.JSDL.*;
 import static framework.math3d.math3d.normalize;
@@ -193,16 +195,10 @@ public class GameScreen implements Screen
         player.draw(program);
 //        DrawManager.getInstance().drawBlurScreen(player, program, null, 10, 10);
 
-        glStencilFunc(GL_GREATER, 0x7f, 0xff);
+        glStencilFunc(GL_LEQUAL, 2, 0xff); // Reference less than or equal to buffer. 2 <= 2 so works! 2 <= 3 works!
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
         glClear(GL_DEPTH_BUFFER_BIT);
-        if (mInput.keyDown(SDLK_v))
-        {
-            glStencilFunc(GL_GEQUAL, 2, 0xff);
-            glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-//            glClear(/*GL_COLOR_BUFFER_BIT | */GL_STENCIL_BUFFER_BIT);
-        }
-//        player.draw(program); This works as expected
+
         DrawManager.getInstance().drawLaplacian(player, program, null); //this produces white.
 
         glStencilFunc(GL_ALWAYS, 0, 0xff);
