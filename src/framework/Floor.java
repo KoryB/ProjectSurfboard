@@ -48,4 +48,19 @@ public class Floor extends CollisionObject implements Drawable
         program.setUniform("worldMatrix", math3d.scaling(mSize.x, 1.0f, mSize.y).mul(math3d.translation(mPosition)));
         MESH.draw(program);
     }
+
+    public Float[] getVData(){
+        Float[] data = {-0.5f + mPosition.x, mPosition.y, -0.5f + mPosition.z, 0f, 0f, 0f, 0f, 1f,
+                         0.5f + mPosition.x, mPosition.y, -0.5f + mPosition.z, 1f, 0f, 0f, 0f, 1f,
+                         0.5f + mPosition.x, mPosition.y,  0.5f + mPosition.z, 1f, 1f, 0f, 0f, 1f,
+                        -0.5f + mPosition.x, mPosition.y,  0.5f + mPosition.z, 0f, 1f, 0f, 0f, 1f};
+
+        return data;
+    }
+
+    public int[] getIData(){
+        int[] data = {2, 1, 0, 3, 2, 0};
+
+        return data;
+    }
 }
