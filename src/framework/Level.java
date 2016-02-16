@@ -33,6 +33,7 @@ public class Level implements Drawable{
         genNewLevel();
         System.out.println();
 
+
         for(int i = 0; i < mTiles.length; i++){
             for(int j = 0; j < mTiles[0].length; j++){
                 if(mTiles[i][j] instanceof Floor)
