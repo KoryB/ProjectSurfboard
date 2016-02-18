@@ -5,6 +5,7 @@ import framework.drawing.Drawable;
 import framework.drawing.Program;
 import framework.math3d.*;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 
@@ -18,6 +19,10 @@ public class Level implements Drawable{
     public float mPercentFloor;
     public vec4 mStartingCorner;
     public CollisionObject[][] mTiles;
+    public ArrayList<Floor> mFloors;
+    public ArrayList<Wall> mWalls;
+    public GiantFloor mGiantFloor;
+    public GiantWall mGiantWall;
 
     public Level(vec2 dimensions, float percentFloor) {
         mDimensions = dimensions;
@@ -27,8 +32,11 @@ public class Level implements Drawable{
         mZRange = new vec2(-((int) dimensions.y / 2), ((int) dimensions.y / 2));
 
         mPercentFloor = percentFloor;
-        mTiles = new CollisionObject[(int) dimensions.x][(int) dimensions.y];
         mStartingCorner = new vec4((int) mXRange.x, 0, (int) mZRange.x, 1);
+
+        mTiles = new CollisionObject[(int) dimensions.x][(int) dimensions.y];
+        mFloors = new ArrayList<>();
+        mWalls = new ArrayList<>();
 
         genNewLevel();
         System.out.println();
@@ -45,6 +53,9 @@ public class Level implements Drawable{
             }
             System.out.println();
         }
+
+        mGiantFloor = new GiantFloor(mFloors.toArray(new Floor[mFloors.size()]));
+        mGiantWall = new GiantWall(mWalls.toArray(new Wall[mWalls.size()]));
     }
 
     private void genEmptyLevel(){
@@ -207,18 +218,22 @@ public class Level implements Drawable{
         genEmptyLevel();
         genFloors();
         clearOutsideWalls();
-    }
 
-    public void draw(Program program){
+        //Add the walls and floors to an individual arrayList
         for(int i = 0; i < mTiles.length; i++){
             for(int j = 0; j < mTiles[0].length; j++){
                 if(mTiles[i][j] instanceof Wall){
-                    ((Wall) mTiles[i][j]).draw(program);
+                    mWalls.add((Wall) mTiles[i][j]);
                 }
                 else if(mTiles[i][j] instanceof Floor){
-                    ((Floor) mTiles[i][j]).draw(program);
+                    mFloors.add((Floor) mTiles[i][j]);
                 }
             }
         }
+    }
+
+    public void draw(Program program){
+        mGiantFloor.draw(program);
+        mGiantWall.draw(program);
     }
 }
