@@ -22,6 +22,7 @@ public class Level implements Drawable{
     public ArrayList<Floor> mFloors;
     public ArrayList<Wall> mWalls;
     public GiantFloor mGiantFloor;
+    public GiantWall mGiantWall;
 
     public Level(vec2 dimensions, float percentFloor) {
         mDimensions = dimensions;
@@ -53,6 +54,7 @@ public class Level implements Drawable{
         }
 
         mGiantFloor = new GiantFloor(mFloors.toArray(new Floor[mFloors.size()]));
+        mGiantWall = new GiantWall(mWalls.toArray(new Wall[mWalls.size()]));
     }
 
     private void genEmptyLevel(){
@@ -230,16 +232,7 @@ public class Level implements Drawable{
     }
 
     public void draw(Program program){
-        for(int i = 0; i < mTiles.length; i++){
-            for(int j = 0; j < mTiles[0].length; j++){
-                if(mTiles[i][j] instanceof Wall){
-                    ((Wall) mTiles[i][j]).draw(program);
-                }
-                else if(mTiles[i][j] instanceof Floor){
-                    //((Floor) mTiles[i][j]).draw(program);
-                }
-            }
-        }
         mGiantFloor.draw(program);
+        mGiantWall.draw(program);
     }
 }
