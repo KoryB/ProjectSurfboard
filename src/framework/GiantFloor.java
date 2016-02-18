@@ -8,6 +8,7 @@ import framework.math3d.vec3;
 import framework.math3d.vec4;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 
 import static JGL.JGL.*;
@@ -97,6 +98,7 @@ public class GiantFloor {
 
     public byte[] floatArray2ByteArray(Float[] floats){
         ByteBuffer buffer = ByteBuffer.allocate(4 * floats.length);
+        buffer.order(ByteOrder.nativeOrder());
 
         for (float value : floats){
             buffer.putFloat(value);
@@ -107,6 +109,7 @@ public class GiantFloor {
 
     public byte[] integerArray2ByteArray(Integer[] nums){
         ByteBuffer buffer = ByteBuffer.allocate(4 * nums.length);
+        buffer.order(ByteOrder.nativeOrder());
 
         for (Integer value : nums){
             buffer.putInt(value.intValue());
