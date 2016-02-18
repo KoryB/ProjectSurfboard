@@ -6,6 +6,7 @@ import framework.drawing.Program;
 import framework.math3d.*;
 
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.Random;
 
 
@@ -233,7 +234,15 @@ public class Level implements Drawable{
     }
 
     public void draw(Program program){
-        mGiantFloor.draw(program);
+        this.drawFloors(program);
+        this.drawWalls(program);
+    }
+
+    public void drawWalls(Program program){
         mGiantWall.draw(program);
+    }
+
+    public void drawFloors(Program program){
+        mGiantFloor.draw(program);
     }
 }

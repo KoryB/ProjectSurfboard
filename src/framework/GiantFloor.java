@@ -39,7 +39,7 @@ public class GiantFloor {
         mIndexData = integerArray2ByteArray(mIData.toArray(new Integer[mIData.size()]));
 
         //mesh type stuff
-        mTexture = new ImageTexture("assets/checker.png");
+        mTexture = new ImageTexture("assets/globe00.png");
         floats_per_vertex = 8;
 
         int[] tmp = new int[1];

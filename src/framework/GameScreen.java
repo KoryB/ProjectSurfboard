@@ -162,32 +162,15 @@ public class GameScreen implements Screen
         //        wall3.draw(program);
         //        player.draw(program);
         //        level.draw(program);
-        for (int i = 0; i < level.mTiles.length; i++)
-        {
-            for (int j = 0; j < level.mTiles[0].length; j++)
-            {
-                if (level.mTiles[i][j] instanceof Floor)
-                {
-                    ((Floor) level.mTiles[i][j]).draw(program);
-                }
-            }
-        }
+
+        level.drawFloors(program);
 
         player.draw(program);
 
         glStencilFunc(GL_ALWAYS, 1, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-        for (int i = 0; i < level.mTiles.length; i++)
-        {
-            for (int j = 0; j < level.mTiles[0].length; j++)
-            {
-                if (level.mTiles[i][j] instanceof Wall)
-                {
-                    ((Wall) level.mTiles[i][j]).draw(program);
-                }
-            }
-        }
+        level.drawWalls(program);
 
         //        glClear(GL_DEPTH_BUFFER_BIT);
 //        DrawManager.getInstance().drawLaplacian(player, program, null); //this produces white.
