@@ -1,5 +1,6 @@
 package framework.drawing;
 
+import framework.Camera;
 import framework.Floor;
 import framework.Util;
 import framework.drawing.textures.SolidTexture;
@@ -151,6 +152,11 @@ public class DrawManager
         originalProgram.use();
 
         NEXT_AVAILABLE_FBO -= 1;
+    }
+
+    public void drawMirrorFloors(Program originalProgram, Camera camInUse){
+        int myAvailableFBO = NEXT_AVAILABLE_FBO;
+        NEXT_AVAILABLE_FBO += 1;
     }
 }
 
