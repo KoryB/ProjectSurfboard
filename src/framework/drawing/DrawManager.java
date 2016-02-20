@@ -1,13 +1,10 @@
 package framework.drawing;
 
-import framework.Camera;
-import framework.Floor;
-import framework.Util;
+import framework.*;
 import framework.drawing.textures.SolidTexture;
 import framework.drawing.textures.Texture;
 import framework.drawing.textures.Texture2D;
-import framework.math3d.vec2;
-import framework.math3d.vec4;
+import framework.math3d.*;
 
 import static JGL.JGL.*;
 
@@ -154,9 +151,62 @@ public class DrawManager
         NEXT_AVAILABLE_FBO -= 1;
     }
 
-    public void drawMirrorFloors(Program originalProgram, Camera camInUse){
+    public void drawMirrorFloors(Program originalProgram, Camera camInUse, Level level, Player player){
         int myAvailableFBO = NEXT_AVAILABLE_FBO;
         NEXT_AVAILABLE_FBO += 1;
+
+        originalProgram.use();
+        tFBOArray[myAvailableFBO].bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        mat4 flipMatrix = new mat4(new vec4(1, 0, 0, 0),
+                                   new vec4(0, -1, 0, 0),
+                                   new vec4(0, 0, 1, 0),
+                                   new vec4(0, 0, 0, 1));
+
+        //Draw reflection to FBO
+        glFrontFace(GL_CW);
+        camInUse.drawWithAdditionalMatrix(originalProgram, flipMatrix);
+        player.draw(originalProgram);
+        level.drawAllExceptFloor(originalProgram);
+        tFBOArray[myAvailableFBO].unbind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glFrontFace(GL_CCW);
+
+        //Set up stencil buffer
+        glStencilFunc(GL_ALWAYS, 1, ~0);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        glDepthMask(false);
+        glColorMask(false, false, false, false);
+
+        //Draw floor into stencil buffer
+        camInUse.draw(originalProgram);
+        level.drawFloors(originalProgram);
+
+        //Draw only where stencil value == 1
+        glColorMask(true, true, true, true);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+        glStencilFunc(GL_EQUAL, 1, ~0);
+
+        //Set matricies to identity, draw unit square with reflection texture, then reset matricies & turn depth buffer back on
+        originalProgram.setUniform("diffuse_texture", tFBOArray[myAvailableFBO].texture);
+        originalProgram.setUniform("worldMatrix", mat4.identity());
+        originalProgram.setUniform("viewMatrix", mat4.identity());
+        originalProgram.setUniform("projMatrix", mat4.identity());
+        mUnitSquare.draw(originalProgram);
+        glDepthMask(true);
+        camInUse.draw(originalProgram);
+
+        //draw the floors and everything else
+        level.drawFloors(originalProgram);
+        glStencilFunc(GL_ALWAYS, 1, ~0);
+        player.draw(originalProgram);
+        level.drawAllExceptFloor(originalProgram);
+
+        originalProgram.use();
+        glClear(GL_STENCIL_BUFFER_BIT);
+
+        NEXT_AVAILABLE_FBO -= 1;
     }
 }
 

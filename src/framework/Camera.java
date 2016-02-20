@@ -100,6 +100,15 @@ public class Camera implements Drawable
         prog.setUniform("eyePos", this.mEye.xyz());
     }
 
+    public void drawWithAdditionalMatrix(Program prog, mat4 AdditionalMatrix){
+        prog.setUniform("projMatrix", projMatrix);
+        prog.setUniform("viewMatrix", AdditionalMatrix.mul(viewMatrix));
+        prog.setUniform("cameraU", this.U.xyz());
+        prog.setUniform("cameraV", this.V.xyz());
+        prog.setUniform("cameraW", this.W.xyz());
+        prog.setUniform("eyePos", this.mEye.xyz());
+    }
+
     public void turn(float a)
     {
         mat4 M = axisRotation(V, a);

@@ -150,18 +150,9 @@ public class GameScreen implements Screen
     @Override
     public void draw(Program program)
     {
-        //        program.setUniform("diffuse_texture", ita);
-        //        program.setUniform("framenumber", framenum);
         program.setUniform("lightPos", new vec3(50, 50, 50));
+        DrawManager.getInstance().drawMirrorFloors(program, cam, level, player);
         cam.draw(program);
-        //        floor.draw(program);
-        //        wall.draw(program);
-        //        wall2.draw(program);
-        //        wall3.draw(program);
-        //        player.draw(program);
-        //        level.draw(program);
-
-        level.drawFloors(program);
 
         player.draw(program);
 
