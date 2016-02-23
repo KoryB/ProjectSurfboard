@@ -13,7 +13,7 @@ import static JGL.JGL.*;
 public class DrawManager
 {
     private static DrawManager mInstance = new DrawManager();
-    private static final float[] LAPLACIAN_WEIGHTINGS = new float[]{-1, -1, -1, -1, 8.2f, -1, -1, -1, -1};
+    private static final float[] LAPLACIAN_WEIGHTINGS = new float[]{0, -1, 0, -1, 2.0f, -1, 0, -1, 0};
 //    private static final float[] LAPLACIAN_WEIGHTINGS = new float[]{0, -1, 0, -1, 4, -1, 0, -1, 0};
     private static int NEXT_AVAILABLE_FBO = 0;
 
