@@ -238,6 +238,13 @@ public class Level implements Drawable{
         this.drawWalls(program);
     }
 
+    //I made this because i imagine that we will eventually have enemies and such, and will need to draw everything except the
+    //Mirror floor in one go when making the reflections, so making this method so i dont have to change the method for reflection
+    //- Michael
+    public void drawAllExceptFloor(Program program){
+        this.drawWalls(program);
+    }
+
     public void drawWalls(Program program){
         mGiantWall.draw(program);
     }
