@@ -3,7 +3,10 @@ package framework;
 import framework.collisions.CollisionHandler;
 import framework.collisions.CollisionObject;
 import framework.drawing.DrawManager;
+import framework.drawing.Framebuffer;
 import framework.drawing.Program;
+import framework.drawing.textures.SolidTexture;
+import framework.drawing.textures.Texture2D;
 import framework.math3d.*;
 import framework.math3d.primitives.BoundedPlane;
 import framework.math3d.primitives.IntersectionHandler;
@@ -35,7 +38,8 @@ public class GameScreen implements Screen
     Player player;
     Floor floor;
     Level level;
-
+    Framebuffer shadowFBO = new Framebuffer(512, 512);
+    private Texture2D mDummyTexture = new SolidTexture(GL_FLOAT, 0.0f, 0.0f, 0.0f, 0.0f);
     public GameScreen()
     {
         mPaused = false;
@@ -150,8 +154,17 @@ public class GameScreen implements Screen
     @Override
     public void draw(Program program)
     {
+        shadowFBO.bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        shadowFBO.unbind();
         program.setUniform("lightPos", new vec3(50, 50, 50));
         DrawManager.getInstance().drawMirrorFloors(program, cam, level, player);
+        DrawManager.getInstance().drawShadowBuffer(program, cam, shadowFBO, level, player);
+        program.setUniform("lightViewMatrix", cam.getViewMatrix());
+        program.setUniform("lightProjMatrix", cam.compute_projp_matrix());
+        program.setUniform("lightHitherYon", new vec3(cam.getHither(), cam.getYon(), cam.getYon() - cam.getHither()));
+        program.setUniform("shadow_texture", shadowFBO.texture);
+        cam.lookAtPlayer(player);
         cam.draw(program);
 
         player.draw(program);
@@ -176,6 +189,7 @@ public class GameScreen implements Screen
 
         glStencilFunc(GL_ALWAYS, 0, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+        program.setUniform("shadow_texture", mDummyTexture);
     }
 
     @Override

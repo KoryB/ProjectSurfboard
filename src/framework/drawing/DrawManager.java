@@ -15,7 +15,7 @@ public class DrawManager
 //    private static final float[] LAPLACIAN_WEIGHTINGS = new float[]{0, -1, 0, -1, 4, -1, 0, -1, 0};
     private static int NEXT_AVAILABLE_FBO = 0;
 
-    private Program mBlurProgram, mEdgeProgram;
+    private Program mBlurProgram, mEdgeProgram, mShadowProgram;
 //    private Framebuffer tFBO1, tFBO2;
     private Framebuffer[] tFBOArray;
     private UnitSquare mUnitSquare = new UnitSquare();
@@ -25,6 +25,7 @@ public class DrawManager
     {
         mBlurProgram = new Program("shaders/blurvs.txt", "shaders/blurfs.txt");
         mEdgeProgram = new Program("shaders/blurvs.txt", "shaders/edgefs.txt");
+        mShadowProgram = new Program("shaders/shadowvs.glsl", "shaders/shadowfs.glsl");
 //        tFBO1 = new Framebuffer(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
 //        tFBO2 = new Framebuffer(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
         tFBOArray = new Framebuffer[10];
@@ -149,6 +150,21 @@ public class DrawManager
         originalProgram.use();
 
         NEXT_AVAILABLE_FBO -= 1;
+    }
+
+    //Will eventually need to have a list of drawables that cast shadows.
+    public void drawShadowBuffer(Program originalProgram, Camera camInUse, Framebuffer shadowFBO, Level level, Player player)
+    {
+        camInUse.lookAt(new vec3(50, 50, 50), new vec3(0, 0, 0), new vec3(0, 1, 0));
+        mShadowProgram.use();
+        mShadowProgram.setUniform("viewMatrix", camInUse.getViewMatrix());
+        mShadowProgram.setUniform("projMatrix", camInUse.compute_projp_matrix());
+        mShadowProgram.setUniform("hitheryon", new vec3(camInUse.getHither(), camInUse.getYon(), camInUse.getYon() - camInUse.getHither()));
+        shadowFBO.bind();
+        level.drawWalls(mShadowProgram);
+        player.draw(mShadowProgram);
+        shadowFBO.unbind();
+        originalProgram.use();
     }
 
     public void drawMirrorFloors(Program originalProgram, Camera camInUse, Level level, Player player){
