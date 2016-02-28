@@ -1,19 +1,15 @@
 package framework;
 
 import framework.collisions.CollisionHandler;
-import framework.collisions.CollisionObject;
 import framework.drawing.DrawManager;
-import framework.drawing.Framebuffer;
+import framework.drawing.Framebuffer2D;
 import framework.drawing.Program;
 import framework.drawing.textures.SolidTexture;
 import framework.drawing.textures.Texture2D;
 import framework.math3d.*;
 import framework.math3d.primitives.BoundedPlane;
 import framework.math3d.primitives.IntersectionHandler;
-import framework.math3d.primitives.Plane;
 import framework.math3d.primitives.Ray;
-
-import java.util.Arrays;
 
 import static JGL.JGL.*;
 import static JSDL.JSDL.*;
@@ -38,7 +34,7 @@ public class GameScreen implements Screen
     Player player;
     Floor floor;
     Level level;
-    Framebuffer shadowFBO = new Framebuffer(512, 512);
+    Framebuffer2D shadowFBO = new Framebuffer2D(512, 512, GL_RGBA32F, GL_FLOAT);
     private Texture2D mDummyTexture = new SolidTexture(GL_FLOAT, 0.0f, 0.0f, 0.0f, 0.0f);
     public GameScreen()
     {

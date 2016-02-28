@@ -64,7 +64,7 @@ public class ImageTextureArray extends Texture2D
 
         glTexImage3D(GL_TEXTURE_2D_ARRAY,0,GL_RGBA,w,h,last,0,fmt,GL_UNSIGNED_BYTE,bpix);
         
-        if(this.isPowerOf2(w) && this.isPowerOf2(h) ){
+        if(Texture.isPowerOf2(w) && Texture.isPowerOf2(h) ){
             glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
             glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_WRAP_S,GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_WRAP_T,GL_REPEAT);
@@ -77,8 +77,5 @@ public class ImageTextureArray extends Texture2D
             glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
         }
-    }
-    boolean isPowerOf2(int x){
-        return  ((x-1)&x) == 0;
     }
 }    

@@ -2,7 +2,6 @@ package framework.drawing;
 
 import framework.*;
 import framework.drawing.textures.SolidTexture;
-import framework.drawing.textures.Texture;
 import framework.drawing.textures.Texture2D;
 import framework.math3d.*;
 
@@ -16,8 +15,8 @@ public class DrawManager
     private static int NEXT_AVAILABLE_FBO = 0;
 
     private Program mBlurProgram, mEdgeProgram, mShadowProgram;
-//    private Framebuffer tFBO1, tFBO2;
-    private Framebuffer[] tFBOArray;
+//    private Framebuffer2D tFBO1, tFBO2;
+    private Framebuffer2D[] tFBOArray;
     private UnitSquare mUnitSquare = new UnitSquare();
     private Texture2D mDummyTexture = new SolidTexture(GL_FLOAT, 0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -26,14 +25,14 @@ public class DrawManager
         mBlurProgram = new Program("shaders/blurvs.txt", "shaders/blurfs.txt");
         mEdgeProgram = new Program("shaders/blurvs.txt", "shaders/edgefs.txt");
         mShadowProgram = new Program("shaders/shadowvs.glsl", "shaders/shadowfs.glsl");
-//        tFBO1 = new Framebuffer(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
-//        tFBO2 = new Framebuffer(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
-        tFBOArray = new Framebuffer[10];
+//        tFBO1 = new Framebuffer2D(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
+//        tFBO2 = new Framebuffer2D(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
+        tFBOArray = new Framebuffer2D[10];
         for (int i = 0; i < tFBOArray.length; i++)
         {
-            tFBOArray[i] = new Framebuffer(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
+            tFBOArray[i] = new Framebuffer2D(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
         }
-//        tFBOArray = new Framebuffer[]{tFBO1, tFBO2};
+//        tFBOArray = new Framebuffer2D[]{tFBO1, tFBO2};
         
     }
 
@@ -42,7 +41,7 @@ public class DrawManager
         return mInstance;
     }
 
-    public void drawBlurScreen(Drawable toDraw, Program originalProgram, Framebuffer renderTarget, int numTimes, int size)
+    public void drawBlurScreen(Drawable toDraw, Program originalProgram, Framebuffer2D renderTarget, int numTimes, int size)
     {
         int myAvailableFBO = NEXT_AVAILABLE_FBO;
         NEXT_AVAILABLE_FBO += 2;
@@ -103,7 +102,7 @@ public class DrawManager
         NEXT_AVAILABLE_FBO -=2;
     }
 
-    public void drawLaplacian(Drawable toDraw, Program originalProgram, Framebuffer renderTarget, vec4 onColor, vec4 offColor)
+    public void drawLaplacian(Drawable toDraw, Program originalProgram, Framebuffer2D renderTarget, vec4 onColor, vec4 offColor)
     {
         int myAvailableFBO = NEXT_AVAILABLE_FBO;
         NEXT_AVAILABLE_FBO += 1;
@@ -153,7 +152,7 @@ public class DrawManager
     }
 
     //Will eventually need to have a list of drawables that cast shadows.
-    public void drawShadowBuffer(Program originalProgram, Camera camInUse, Framebuffer shadowFBO, Level level, Player player)
+    public void drawShadowBuffer(Program originalProgram, Camera camInUse, Framebuffer2D shadowFBO, Level level, Player player)
     {
         camInUse.lookAt(new vec3(50, 50, 50), new vec3(0, 0, 0), new vec3(0, 1, 0));
         mShadowProgram.use();
