@@ -16,6 +16,7 @@ public class ColorTexture extends Texture2D
     
     //fmt = GL_FLOAT or GL_UNSIGNED_BYTE
     ColorTexture(int w, int h, int fmt){
+        super(w, h);
         this.w=w;
         this.h=h;
         this.fmt=fmt;
