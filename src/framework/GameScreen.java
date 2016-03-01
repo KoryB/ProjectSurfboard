@@ -4,6 +4,7 @@ import framework.collisions.CollisionHandler;
 import framework.drawing.DrawManager;
 import framework.drawing.Framebuffer2D;
 import framework.drawing.Program;
+import framework.drawing.UnitSquare;
 import framework.drawing.textures.SolidTexture;
 import framework.drawing.textures.Texture2D;
 import framework.math3d.*;
@@ -34,8 +35,11 @@ public class GameScreen implements Screen
     Player player;
     Floor floor;
     Level level;
-    Framebuffer2D shadowFBO = new Framebuffer2D(512, 512, GL_RGBA32F, GL_FLOAT);
+    Framebuffer2D shadowFBO = new Framebuffer2D(512, 512, GL_R32F, GL_FLOAT);
     private Texture2D mDummyTexture = new SolidTexture(GL_FLOAT, 0.0f, 0.0f, 0.0f, 0.0f);
+    private UnitSquare debugSquare = new UnitSquare();
+    private Program mSquareDraw = new Program("shaders/blurvs.txt", "shaders/usquarefs.glsl");
+
     public GameScreen()
     {
         mPaused = false;
@@ -76,7 +80,7 @@ public class GameScreen implements Screen
         float now = (float) (System.nanoTime() * 1E-9);
         float elapsed = now - prev;
 
-        System.out.println(1.0/ elapsed);
+//        System.out.println(1.0/ elapsed);
 
         prev = now;
 
@@ -150,19 +154,29 @@ public class GameScreen implements Screen
     @Override
     public void draw(Program program)
     {
+        cam.draw(program);
+        program.setUniform("lightPos", new vec3(10, 10, 10));
+        DrawManager.getInstance().drawMirrorFloors(program, cam, level, player);
+        program.setUniform("shadow_texture", mDummyTexture);
         shadowFBO.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         shadowFBO.unbind();
-        program.setUniform("lightPos", new vec3(50, 50, 50));
-        DrawManager.getInstance().drawMirrorFloors(program, cam, level, player);
+        cam.lookAt(new vec3(3, 6, 3), new vec3(0, 0, 0), new vec3(0, 1, 0));
         DrawManager.getInstance().drawShadowBuffer(program, cam, shadowFBO, level, player);
         program.setUniform("lightViewMatrix", cam.getViewMatrix());
         program.setUniform("lightProjMatrix", cam.compute_projp_matrix());
-        program.setUniform("lightHitherYon", new vec3(cam.getHither(), cam.getYon(), cam.getYon() - cam.getHither()));
+        program.setUniform("lightHitherYon", new vec3(cam.hither, cam.yon, cam.yon - cam.hither));
         program.setUniform("shadow_texture", shadowFBO.texture);
+
+//        mSquareDraw.use();
+//        mSquareDraw.setUniform("toDisplay", shadowFBO.texture);
+//        debugSquare.draw(mSquareDraw);
+//        mSquareDraw.setUniform("toDisplay", mDummyTexture);
+//        program.use();
+
         cam.lookAtPlayer(player);
         cam.draw(program);
-
+//
         player.draw(program);
 
         glStencilFunc(GL_ALWAYS, 1, 0xff);
@@ -185,7 +199,6 @@ public class GameScreen implements Screen
 
         glStencilFunc(GL_ALWAYS, 0, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-        program.setUniform("shadow_texture", mDummyTexture);
     }
 
     @Override

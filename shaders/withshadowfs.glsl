@@ -32,19 +32,19 @@ void main(){
     sp = clamp(sp,0.0,1.0);
     color = vec4( ambient*tc.rgb + dp*tc.rgb + vec3(sp) ,tc.a );
 
-    vec4 pe = vec4(v_pw.xyz, 0) * lightViewMatrix;
+    vec4 pe = vec4(v_pw.xyz, 1) * lightViewMatrix;
+    pe /= pe.w;
     vec4 ps = pe * lightProjMatrix;
     ps /= ps.w;
     ps += 1;
     ps /= 2; // Map from 0..1 instead of -1..1
     float t = texture(shadow_texture, ps.xy).r;
-    color = vec4(t, t, t, 1.0);
     t *= lightHitherYon[2];
     t += lightHitherYon[0]; // remap from 0..1 to hither..yon
 
     if (-pe.z < 0 || -pe.z > t + 0.005)
     {
-        //color = color * vec4(0.5, 0.5, 0.5, 1);
+        color.rgb *= 0.4;
     }
 }
 

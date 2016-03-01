@@ -13,7 +13,7 @@ import static JSDL.JSDL.*;
 public class Game implements Drawable{
 
     public Screen mActiveScreen;
-    public Program mProgram;
+    public Program mProgram, mShadowProgram;
     public boolean mRunning;
     private long mWindow;
 
@@ -37,7 +37,7 @@ public class Game implements Drawable{
                     @Override
                     public void debugCallback(int source, int type, int id, int severity, String message, Object obj)
                     {
-                        System.out.println("GL message: " + message);
+//                        System.out.println("GL message: " + message);
                         if (severity == GL_DEBUG_SEVERITY_HIGH)
                             System.exit(1);
                     }
@@ -51,6 +51,7 @@ public class Game implements Drawable{
 
         //Starting with a game screen for now until we have the main menu implemented
         mProgram = new Program("shaders/vs.txt","shaders/fs.txt");
+        mShadowProgram = new Program("shaders/withshadowvs.glsl","shaders/withshadowfs.glsl");
         mActiveScreen = new GameScreen();
         mRunning = true;
     }
@@ -61,7 +62,7 @@ public class Game implements Drawable{
 
     public void draw(Program program){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        mProgram.use();
+        program.use();
 //        DrawManager.getInstance().drawBlurScreen(mActiveScreen, program, null, 1, 2);
         mActiveScreen.draw(program);
 //        DrawManager.getInstance().drawLaplacian(mActiveScreen, program, null);
@@ -71,7 +72,7 @@ public class Game implements Drawable{
     public void run(){
         while (mRunning) {
             update();
-            draw(mProgram);
+            draw(mShadowProgram);
         }
     }
 

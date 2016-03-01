@@ -14,7 +14,7 @@ public class DrawManager
 //    private static final float[] LAPLACIAN_WEIGHTINGS = new float[]{0, -1, 0, -1, 4, -1, 0, -1, 0};
     private static int NEXT_AVAILABLE_FBO = 0;
 
-    private Program mBlurProgram, mEdgeProgram, mShadowProgram;
+    private Program mBlurProgram, mEdgeProgram, mShadowProgram, mNonShadowProgram;
 //    private Framebuffer2D tFBO1, tFBO2;
     private Framebuffer2D[] tFBOArray;
     private UnitSquare mUnitSquare = new UnitSquare();
@@ -25,6 +25,7 @@ public class DrawManager
         mBlurProgram = new Program("shaders/blurvs.txt", "shaders/blurfs.txt");
         mEdgeProgram = new Program("shaders/blurvs.txt", "shaders/edgefs.txt");
         mShadowProgram = new Program("shaders/shadowvs.glsl", "shaders/shadowfs.glsl");
+        mNonShadowProgram = new Program("shaders/vs.txt", "shaders/fs.txt");
 //        tFBO1 = new Framebuffer2D(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
 //        tFBO2 = new Framebuffer2D(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
         tFBOArray = new Framebuffer2D[10];
@@ -154,13 +155,14 @@ public class DrawManager
     //Will eventually need to have a list of drawables that cast shadows.
     public void drawShadowBuffer(Program originalProgram, Camera camInUse, Framebuffer2D shadowFBO, Level level, Player player)
     {
-        camInUse.lookAt(new vec3(50, 50, 50), new vec3(0, 0, 0), new vec3(0, 1, 0));
+//        camInUse.lookAt(new vec3(50, 50, 50), new vec3(0, 0, 0), new vec3(0, 1, 0));
         mShadowProgram.use();
         mShadowProgram.setUniform("viewMatrix", camInUse.getViewMatrix());
         mShadowProgram.setUniform("projMatrix", camInUse.compute_projp_matrix());
-        mShadowProgram.setUniform("hitheryon", new vec3(camInUse.getHither(), camInUse.getYon(), camInUse.getYon() - camInUse.getHither()));
+        mShadowProgram.setUniform("hitheryon", new vec3(camInUse.hither, camInUse.yon, camInUse.yon - camInUse.hither));
         shadowFBO.bind();
         level.drawWalls(mShadowProgram);
+        level.drawFloors(mShadowProgram);
         player.draw(mShadowProgram);
         shadowFBO.unbind();
         originalProgram.use();
@@ -170,7 +172,7 @@ public class DrawManager
         int myAvailableFBO = NEXT_AVAILABLE_FBO;
         NEXT_AVAILABLE_FBO += 1;
 
-        originalProgram.use();
+        mNonShadowProgram.use();
         tFBOArray[myAvailableFBO].bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -181,9 +183,9 @@ public class DrawManager
 
         //Draw reflection to FBO
         glFrontFace(GL_CW);
-        camInUse.drawWithAdditionalMatrix(originalProgram, flipMatrix);
-        player.draw(originalProgram);
-        level.drawAllExceptFloor(originalProgram);
+        camInUse.drawWithAdditionalMatrix(mNonShadowProgram, flipMatrix);
+        player.draw(mNonShadowProgram);
+        level.drawAllExceptFloor(mNonShadowProgram);
         tFBOArray[myAvailableFBO].unbind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glFrontFace(GL_CCW);
@@ -195,8 +197,8 @@ public class DrawManager
         glColorMask(false, false, false, false);
 
         //Draw floor into stencil buffer
-        camInUse.draw(originalProgram);
-        level.drawFloors(originalProgram);
+        camInUse.draw(mNonShadowProgram);
+        level.drawFloors(mNonShadowProgram);
 
         //Draw only where stencil value == 1
         glColorMask(true, true, true, true);
@@ -204,19 +206,21 @@ public class DrawManager
         glStencilFunc(GL_EQUAL, 1, ~0);
 
         //Set matricies to identity, draw unit square with reflection texture, then reset matricies & turn depth buffer back on
-        originalProgram.setUniform("diffuse_texture", tFBOArray[myAvailableFBO].texture);
-        originalProgram.setUniform("worldMatrix", mat4.identity());
-        originalProgram.setUniform("viewMatrix", mat4.identity());
-        originalProgram.setUniform("projMatrix", mat4.identity());
-        mUnitSquare.draw(originalProgram);
+        mNonShadowProgram.setUniform("diffuse_texture", tFBOArray[myAvailableFBO].texture);
+        mNonShadowProgram.setUniform("worldMatrix", mat4.identity());
+        mNonShadowProgram.setUniform("viewMatrix", mat4.identity());
+        mNonShadowProgram.setUniform("projMatrix", mat4.identity());
+        mUnitSquare.draw(mNonShadowProgram);
         glDepthMask(true);
+
+        originalProgram.use();
         camInUse.draw(originalProgram);
 
         //draw the floors and everything else
         level.drawFloors(originalProgram);
         glStencilFunc(GL_ALWAYS, 1, ~0);
-        player.draw(originalProgram);
-        level.drawAllExceptFloor(originalProgram);
+//        player.draw(originalProgram);
+//        level.drawAllExceptFloor(originalProgram);
 
         originalProgram.use();
         glClear(GL_STENCIL_BUFFER_BIT);
