@@ -37,7 +37,7 @@ public class Game implements Drawable{
                     @Override
                     public void debugCallback(int source, int type, int id, int severity, String message, Object obj)
                     {
-//                        System.out.println("GL message: " + message);
+                        System.out.println("GL message: " + message);
                         if (severity == GL_DEBUG_SEVERITY_HIGH)
                             System.exit(1);
                     }

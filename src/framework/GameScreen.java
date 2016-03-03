@@ -25,6 +25,7 @@ public class GameScreen implements Screen
     //Player mPlayer;
     public static InputHandler mInput = new InputHandler("config/cfg.properties");
     ;
+    public static float SCALE = 5.0f;
     private boolean mPaused;
     Camera cam;
     Program blurprog;
@@ -35,7 +36,7 @@ public class GameScreen implements Screen
     Player player;
     Floor floor;
     Level level;
-    Framebuffer2D shadowFBO = new Framebuffer2D(512, 512, GL_R32F, GL_FLOAT);
+    Framebuffer2D shadowFBO = new Framebuffer2D(1024, 1024, GL_R32F, GL_FLOAT);
     private Texture2D mDummyTexture = new SolidTexture(GL_FLOAT, 0.0f, 0.0f, 0.0f, 0.0f);
     private UnitSquare debugSquare = new UnitSquare();
     private Program mSquareDraw = new Program("shaders/blurvs.txt", "shaders/usquarefs.glsl");
@@ -155,17 +156,17 @@ public class GameScreen implements Screen
     public void draw(Program program)
     {
         cam.draw(program);
-        program.setUniform("lightPos", new vec3(10, 10, 10));
+        program.setUniform("lightPos", new vec3(3, 4, 3));
         DrawManager.getInstance().drawMirrorFloors(program, cam, level, player);
         program.setUniform("shadow_texture", mDummyTexture);
         shadowFBO.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         shadowFBO.unbind();
-        cam.lookAt(new vec3(3, 6, 3), new vec3(0, 0, 0), new vec3(0, 1, 0));
+        cam.lookAt(new vec3(3, 4, 3), new vec3(0, 0, 0), new vec3(0, 1, 0));
         DrawManager.getInstance().drawShadowBuffer(program, cam, shadowFBO, level, player);
         program.setUniform("lightViewMatrix", cam.getViewMatrix());
         program.setUniform("lightProjMatrix", cam.compute_projp_matrix());
-        program.setUniform("lightHitherYon", new vec3(cam.hither, cam.yon, cam.yon - cam.hither));
+        program.setUniform("lightHitherYon", new vec4(cam.hither, cam.yon, cam.yon - cam.hither, GameScreen.SCALE));
         program.setUniform("shadow_texture", shadowFBO.texture);
 
 //        mSquareDraw.use();

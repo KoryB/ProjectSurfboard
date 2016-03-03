@@ -1,8 +1,9 @@
 #version 150
+#define EXPONENTIAL_CONSTANT 15.0
 
 uniform mat4 lightViewMatrix;
 uniform mat4 lightProjMatrix;
-uniform vec3 lightHitherYon;
+uniform vec4 lightHitherYon;
 uniform sampler2D shadow_texture;
 
 uniform vec3 lightPos;
@@ -38,13 +39,37 @@ void main(){
     ps /= ps.w;
     ps += 1;
     ps /= 2; // Map from 0..1 instead of -1..1
-    float t = texture(shadow_texture, ps.xy).r;
-    t *= lightHitherYon[2];
-    t += lightHitherYon[0]; // remap from 0..1 to hither..yon
+    float z2 = texture(shadow_texture, ps.xy).r;
 
-    if (-pe.z < 0 || -pe.z > t + 0.005)
+    float z1 = -pe.z;
+    z1 = (z1-lightHitherYon[0]) / lightHitherYon[2];
+    z1 *= lightHitherYon[3];
+
+    //the receiver
+    /*vec4 tmp = v_worldPos * light_viewMatrix;
+    float z1 = tmp.z;
+    z1 = -z1;
+    z1 = (z1-light_hitheryon[0]) / light_hitheryon[2];
+    z1 *= scale_factor;*/
+
+    /*tmp = tmp * light_projMatrix;
+    tmp.xy /= tmp.w;
+    tmp.xy = 0.5*(tmp.xy + vec2(1.0));*/
+
+    //the occluder
+    /*float z2 = texture2D( shadowbuffer , tmp.xy ).r;
+    z2 = abs(z2);*/
+
+    float litpct;
+    litpct = exp(EXPONENTIAL_CONSTANT*(z2-z1));
+    //litpct = z2 / exp(c*z1);
+    litpct = clamp(litpct,0.0,1.0);
+
+    color.rgb *= litpct;
+
+    /*if (-pe.z < 0 || -pe.z > t + 0.005)
     {
         color.rgb *= 0.4;
-    }
+    }*/
 }
 

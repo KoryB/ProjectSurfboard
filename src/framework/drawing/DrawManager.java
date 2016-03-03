@@ -155,17 +155,66 @@ public class DrawManager
     //Will eventually need to have a list of drawables that cast shadows.
     public void drawShadowBuffer(Program originalProgram, Camera camInUse, Framebuffer2D shadowFBO, Level level, Player player)
     {
+        int myAvailableFBO = NEXT_AVAILABLE_FBO;
+        NEXT_AVAILABLE_FBO += 2;
+        final int BLUR_TIMES = 3;
+
 //        camInUse.lookAt(new vec3(50, 50, 50), new vec3(0, 0, 0), new vec3(0, 1, 0));
         mShadowProgram.use();
         mShadowProgram.setUniform("viewMatrix", camInUse.getViewMatrix());
         mShadowProgram.setUniform("projMatrix", camInUse.compute_projp_matrix());
-        mShadowProgram.setUniform("hitheryon", new vec3(camInUse.hither, camInUse.yon, camInUse.yon - camInUse.hither));
-        shadowFBO.bind();
+        mShadowProgram.setUniform("hitheryon", new vec4(camInUse.hither, camInUse.yon, camInUse.yon - camInUse.hither, GameScreen.SCALE));
+
+        tFBOArray[myAvailableFBO].bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         level.drawWalls(mShadowProgram);
         level.drawFloors(mShadowProgram);
         player.draw(mShadowProgram);
-        shadowFBO.unbind();
+        tFBOArray[myAvailableFBO].unbind();
+
+        mBlurProgram.use();
+        mBlurProgram.setUniform("boxWidth", 3);
+        mBlurProgram.setUniform("depth_texture", tFBOArray[myAvailableFBO].depthtexture);
+
+        tFBOArray[myAvailableFBO+1].bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        tFBOArray[myAvailableFBO+1].unbind();
+
+        for (int i = 0; i < BLUR_TIMES; i++)
+        {
+            tFBOArray[myAvailableFBO+1].bind();
+
+            mBlurProgram.setUniform("toBlur", tFBOArray[myAvailableFBO].texture);
+            mBlurProgram.setUniform("depth_texture", tFBOArray[myAvailableFBO].depthtexture);
+            mBlurProgram.setUniform("blurDelta", new vec2(0.0, 1.0));
+            mUnitSquare.draw(mBlurProgram);
+
+            tFBOArray[myAvailableFBO+1].unbind();
+            mBlurProgram.setUniform("toBlur", tFBOArray[myAvailableFBO+1].texture);
+            mBlurProgram.setUniform("depth_texture", tFBOArray[myAvailableFBO+1].depthtexture);
+            if (i != BLUR_TIMES - 1)
+            {
+                tFBOArray[myAvailableFBO].bind();
+            } else
+            {
+                shadowFBO.bind();
+            }
+            mBlurProgram.setUniform("blurDelta", new vec2(1.0, 0.0));
+            mUnitSquare.draw(mBlurProgram);
+
+            if (i != BLUR_TIMES - 1)
+            {
+                tFBOArray[myAvailableFBO].unbind();
+            } else
+            {
+                shadowFBO.unbind();
+            }
+            mBlurProgram.setUniform("toBlur", mDummyTexture);
+            mBlurProgram.setUniform("depth_texture", mDummyTexture);
+        }
         originalProgram.use();
+
+        NEXT_AVAILABLE_FBO -=2;
     }
 
     public void drawMirrorFloors(Program originalProgram, Camera camInUse, Level level, Player player){
