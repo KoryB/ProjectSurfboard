@@ -18,7 +18,7 @@ public class Camera implements Drawable
     public vec4 mUP = new vec4(1.0, 0.0, -1.0, 0.0);
     float fov_v = 45;
     public float hither = 0.1f;
-    public float yon = 30.1f;
+    public float yon = 75.0f;
     float fov_h = fov_v * Util.WINDOW_ASPECT_RATIO;
     mat4 projMatrix;
     mat4 viewMatrix;

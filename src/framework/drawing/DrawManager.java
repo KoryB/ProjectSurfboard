@@ -221,7 +221,7 @@ public class DrawManager
         int myAvailableFBO = NEXT_AVAILABLE_FBO;
         NEXT_AVAILABLE_FBO += 1;
 
-        mNonShadowProgram.use();
+        originalProgram.use();
         tFBOArray[myAvailableFBO].bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
@@ -232,9 +232,9 @@ public class DrawManager
 
         //Draw reflection to FBO
         glFrontFace(GL_CW);
-        camInUse.drawWithAdditionalMatrix(mNonShadowProgram, flipMatrix);
-        player.draw(mNonShadowProgram);
-        level.drawAllExceptFloor(mNonShadowProgram);
+        camInUse.drawWithAdditionalMatrix(originalProgram, flipMatrix);
+        player.draw(originalProgram);
+        level.drawAllExceptFloor(originalProgram);
         tFBOArray[myAvailableFBO].unbind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glFrontFace(GL_CCW);
@@ -245,6 +245,7 @@ public class DrawManager
         glDepthMask(false);
         glColorMask(false, false, false, false);
 
+        mNonShadowProgram.use();
         //Draw floor into stencil buffer
         camInUse.draw(mNonShadowProgram);
         level.drawFloors(mNonShadowProgram);
