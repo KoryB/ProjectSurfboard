@@ -200,8 +200,6 @@ public class DrawManager
         //draw the floors and everything else
         level.drawFloors(originalProgram);
         glStencilFunc(GL_ALWAYS, 1, ~0);
-        player.draw(originalProgram);
-        level.drawAllExceptFloor(originalProgram);
 
         originalProgram.use();
         glClear(GL_STENCIL_BUFFER_BIT);
