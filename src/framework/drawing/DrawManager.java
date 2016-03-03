@@ -1,24 +1,22 @@
 package framework.drawing;
 
-import framework.Floor;
-import framework.Util;
+import framework.*;
 import framework.drawing.textures.SolidTexture;
 import framework.drawing.textures.Texture;
 import framework.drawing.textures.Texture2D;
-import framework.math3d.vec2;
-
-import java.awt.*;
+import framework.math3d.*;
 
 import static JGL.JGL.*;
 
-/**
- * Created by kory on 2/2/16.
- */
 public class DrawManager
 {
     private static DrawManager mInstance = new DrawManager();
-    private Program mBlurProgram;
-    private Framebuffer tFBO1, tFBO2;
+    private static final float[] LAPLACIAN_WEIGHTINGS = new float[]{-1, -1, -1, -1, 8.2f, -1, -1, -1, -1};
+//    private static final float[] LAPLACIAN_WEIGHTINGS = new float[]{0, -1, 0, -1, 4, -1, 0, -1, 0};
+    private static int NEXT_AVAILABLE_FBO = 0;
+
+    private Program mBlurProgram, mEdgeProgram;
+//    private Framebuffer tFBO1, tFBO2;
     private Framebuffer[] tFBOArray;
     private UnitSquare mUnitSquare = new UnitSquare();
     private Texture2D mDummyTexture = new SolidTexture(GL_FLOAT, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -26,9 +24,16 @@ public class DrawManager
     private DrawManager()
     {
         mBlurProgram = new Program("shaders/blurvs.txt", "shaders/blurfs.txt");
-        tFBO1 = new Framebuffer(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
-        tFBO2 = new Framebuffer(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
-        tFBOArray = new Framebuffer[]{tFBO1, tFBO2};
+        mEdgeProgram = new Program("shaders/blurvs.txt", "shaders/edgefs.txt");
+//        tFBO1 = new Framebuffer(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
+//        tFBO2 = new Framebuffer(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
+        tFBOArray = new Framebuffer[10];
+        for (int i = 0; i < tFBOArray.length; i++)
+        {
+            tFBOArray[i] = new Framebuffer(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
+        }
+//        tFBOArray = new Framebuffer[]{tFBO1, tFBO2};
+        
     }
 
     public static DrawManager getInstance()
@@ -38,31 +43,37 @@ public class DrawManager
 
     public void drawBlurScreen(Drawable toDraw, Program originalProgram, Framebuffer renderTarget, int numTimes, int size)
     {
+        int myAvailableFBO = NEXT_AVAILABLE_FBO;
+        NEXT_AVAILABLE_FBO += 2;
+
         originalProgram.use();
-        tFBO1.bind();
+        tFBOArray[myAvailableFBO].bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         toDraw.draw(originalProgram);
-        tFBO1.unbind();
+        tFBOArray[myAvailableFBO].unbind();
         mBlurProgram.use();
         mBlurProgram.setUniform("boxWidth", size);
+        mBlurProgram.setUniform("depth_texture", tFBOArray[myAvailableFBO].depthtexture);
 
-        tFBO2.bind();
+        tFBOArray[myAvailableFBO+1].bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        tFBO2.unbind();
+        tFBOArray[myAvailableFBO+1].unbind();
 
         for (int i = 0; i < numTimes; i++)
         {
-            tFBO2.bind();
+            tFBOArray[myAvailableFBO+1].bind();
 
-            mBlurProgram.setUniform("toBlur", tFBO1.texture);
+            mBlurProgram.setUniform("toBlur", tFBOArray[myAvailableFBO].texture);
+            mBlurProgram.setUniform("depth_texture", tFBOArray[myAvailableFBO].depthtexture);
             mBlurProgram.setUniform("blurDelta", new vec2(0.0, 1.0));
             mUnitSquare.draw(mBlurProgram);
 
-            tFBO2.unbind();
-            mBlurProgram.setUniform("toBlur", tFBO2.texture);
+            tFBOArray[myAvailableFBO+1].unbind();
+            mBlurProgram.setUniform("toBlur", tFBOArray[myAvailableFBO+1].texture);
+            mBlurProgram.setUniform("depth_texture", tFBOArray[myAvailableFBO+1].depthtexture);
             if (i != numTimes - 1)
             {
-                tFBO1.bind();
+                tFBOArray[myAvailableFBO].bind();
             } else
             {
                 if (renderTarget != null)
@@ -75,7 +86,7 @@ public class DrawManager
 
             if (i != numTimes - 1)
             {
-                tFBO1.unbind();
+                tFBOArray[myAvailableFBO].unbind();
             } else
             {
                 if (renderTarget != null)
@@ -84,8 +95,116 @@ public class DrawManager
                 }
             }
             mBlurProgram.setUniform("toBlur", mDummyTexture);
+            mBlurProgram.setUniform("depth_texture", mDummyTexture);
         }
         originalProgram.use();
+
+        NEXT_AVAILABLE_FBO -=2;
+    }
+
+    public void drawLaplacian(Drawable toDraw, Program originalProgram, Framebuffer renderTarget, vec4 onColor, vec4 offColor)
+    {
+        int myAvailableFBO = NEXT_AVAILABLE_FBO;
+        NEXT_AVAILABLE_FBO += 1;
+
+        /*TODO: The problem is that the depth buffer in the FBO is all 0's, but the current reference value is 2. 2<=0 is false!
+        **TODO: glGetIntegerV(GL_STENCIL_OP, byte[])
+        **TODO: int val = b[0] + b[1]*256 + b[2]*65536 + b[3]*16777216
+        **TODO: this will get the current stencil func, etc. Could be used. might not be worth so just leaving it here.
+        */
+
+        originalProgram.use();
+        tFBOArray[myAvailableFBO].bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glStencilFunc(GL_ALWAYS, 0, 0xff);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+        toDraw.draw(originalProgram);
+        tFBOArray[myAvailableFBO].unbind();
+
+        if (renderTarget != null)
+        {
+            renderTarget.bind();
+        }
+
+        mEdgeProgram.use();
+        mEdgeProgram.setUniform("onColor", onColor);
+        mEdgeProgram.setUniform("offColor", offColor);
+        mEdgeProgram.setUniform("weightings[0]", LAPLACIAN_WEIGHTINGS);
+        mEdgeProgram.setUniform("toEdge", tFBOArray[myAvailableFBO].texture);
+        mEdgeProgram.setUniform("depth_texture", tFBOArray[myAvailableFBO].depthtexture);
+
+        glStencilFunc(GL_LEQUAL, 2, 0xff);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+        mUnitSquare.draw(mEdgeProgram);
+
+        if (renderTarget != null)
+        {
+            renderTarget.unbind();
+        }
+
+        mEdgeProgram.setUniform("toEdge", mDummyTexture);
+        mEdgeProgram.setUniform("depth_texture", mDummyTexture);
+
+        originalProgram.use();
+
+        NEXT_AVAILABLE_FBO -= 1;
+    }
+
+    public void drawMirrorFloors(Program originalProgram, Camera camInUse, Level level, Player player){
+        int myAvailableFBO = NEXT_AVAILABLE_FBO;
+        NEXT_AVAILABLE_FBO += 1;
+
+        originalProgram.use();
+        tFBOArray[myAvailableFBO].bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+        mat4 flipMatrix = new mat4(new vec4(1, 0, 0, 0),
+                                   new vec4(0, -1, 0, 0),
+                                   new vec4(0, 0, 1, 0),
+                                   new vec4(0, 0, 0, 1));
+
+        //Draw reflection to FBO
+        glFrontFace(GL_CW);
+        camInUse.drawWithAdditionalMatrix(originalProgram, flipMatrix);
+        player.draw(originalProgram);
+        level.drawAllExceptFloor(originalProgram);
+        tFBOArray[myAvailableFBO].unbind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glFrontFace(GL_CCW);
+
+        //Set up stencil buffer
+        glStencilFunc(GL_ALWAYS, 1, ~0);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        glDepthMask(false);
+        glColorMask(false, false, false, false);
+
+        //Draw floor into stencil buffer
+        camInUse.draw(originalProgram);
+        level.drawFloors(originalProgram);
+
+        //Draw only where stencil value == 1
+        glColorMask(true, true, true, true);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+        glStencilFunc(GL_EQUAL, 1, ~0);
+
+        //Set matricies to identity, draw unit square with reflection texture, then reset matricies & turn depth buffer back on
+        originalProgram.setUniform("diffuse_texture", tFBOArray[myAvailableFBO].texture);
+        originalProgram.setUniform("worldMatrix", mat4.identity());
+        originalProgram.setUniform("viewMatrix", mat4.identity());
+        originalProgram.setUniform("projMatrix", mat4.identity());
+        mUnitSquare.draw(originalProgram);
+        glDepthMask(true);
+        camInUse.draw(originalProgram);
+
+        //draw the floors and everything else
+        level.drawFloors(originalProgram);
+        glStencilFunc(GL_ALWAYS, 1, ~0);
+
+        originalProgram.use();
+        glClear(GL_STENCIL_BUFFER_BIT);
+
+        NEXT_AVAILABLE_FBO -= 1;
     }
 }
 

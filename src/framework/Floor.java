@@ -5,6 +5,8 @@ import framework.collisions.CollisionType;
 import framework.drawing.Drawable;
 import framework.drawing.Mesh;
 import framework.drawing.Program;
+import framework.drawing.textures.ImageTexture;
+import framework.drawing.textures.Texture2D;
 import framework.math3d.math3d;
 import framework.math3d.primitives.BoundedPlane;
 import framework.math3d.vec2;
@@ -34,6 +36,7 @@ public class Floor extends CollisionObject implements Drawable
         if (MESH == null)
         {
             MESH = new Mesh("assets/floor.obj.mesh");
+            MESH.texture = new ImageTexture("assets/globe00.png");
         }
     }
 
@@ -47,5 +50,20 @@ public class Floor extends CollisionObject implements Drawable
         // For now just draw a test wall below the actual tile
         program.setUniform("worldMatrix", math3d.scaling(mSize.x, 1.0f, mSize.y).mul(math3d.translation(mPosition)));
         MESH.draw(program);
+    }
+
+    public Float[] getVData(){
+        Float[] data = {-0.5f + mPosition.x, mPosition.y, -0.5f + mPosition.z, 0f, 0f, 0f, 0f, 1f,
+                         0.5f + mPosition.x, mPosition.y, -0.5f + mPosition.z, 1f, 0f, 0f, 0f, 1f,
+                         0.5f + mPosition.x, mPosition.y,  0.5f + mPosition.z, 1f, 1f, 0f, 0f, 1f,
+                        -0.5f + mPosition.x, mPosition.y,  0.5f + mPosition.z, 0f, 1f, 0f, 0f, 1f};
+
+        return data;
+    }
+
+    public int[] getIData(){
+        int[] data = {2, 1, 0, 3, 2, 0};
+
+        return data;
     }
 }

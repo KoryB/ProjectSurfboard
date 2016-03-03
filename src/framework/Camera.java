@@ -16,17 +16,17 @@ public class Camera implements Drawable
     public vec4 mPlayerOffset = new vec4(-3.6622553, 10.00666, 3.4322047, 0.0);
     public vec4 mCOIOffset = new vec4(1.0, -3.0, -1.0, 0.0);
     public vec4 mUP = new vec4(1.0, 0.0, -1.0, 0.0);
-    float fov_h = 45;
+    float fov_v = 45;
     float hither = 0.1f;
     float yon = 1000;
     float aspect_ratio = 1.0f;
-    float fov_v = fov_h * aspect_ratio;
+    float fov_h = fov_v * Util.WINDOW_ASPECT_RATIO;
     mat4 projMatrix;
     mat4 viewMatrix;
 
-    float mRight = 2.0f;
     //    float mLeft = -1.0f;
     float mTop = 2.0f;
+    float mRight = mTop * Util.WINDOW_ASPECT_RATIO;
     //    float mBottom = -1.0f;
     float mNear = 0.1f;
     float mFar = 30.1f;
@@ -94,6 +94,15 @@ public class Camera implements Drawable
     {
         prog.setUniform("projMatrix", projMatrix);
         prog.setUniform("viewMatrix", viewMatrix);
+        prog.setUniform("cameraU", this.U.xyz());
+        prog.setUniform("cameraV", this.V.xyz());
+        prog.setUniform("cameraW", this.W.xyz());
+        prog.setUniform("eyePos", this.mEye.xyz());
+    }
+
+    public void drawWithAdditionalMatrix(Program prog, mat4 AdditionalMatrix){
+        prog.setUniform("projMatrix", projMatrix);
+        prog.setUniform("viewMatrix", AdditionalMatrix.mul(viewMatrix));
         prog.setUniform("cameraU", this.U.xyz());
         prog.setUniform("cameraV", this.V.xyz());
         prog.setUniform("cameraW", this.W.xyz());

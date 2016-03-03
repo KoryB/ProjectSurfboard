@@ -12,6 +12,7 @@ out vec4 color;
 
 void main(){
     vec4 tc = texture(diffuse_texture,v_texcoord);
+    vec3 ambient = vec3(0.05, 0.05, 0.05);
     vec3 N = normalize(v_normal);
     vec3 V = normalize(eyePos - v_pw);
     vec3 L = (lightPos - v_pw);
@@ -24,6 +25,6 @@ void main(){
     sp *= sign(dp);
     sp = pow(sp,32.0); 
     sp = clamp(sp,0.0,1.0);
-    color = vec4( dp*tc.rgb + vec3(sp)  ,tc.a );
+    color = vec4( ambient*tc.rgb + dp*tc.rgb + vec3(sp) ,tc.a );
 }
 
