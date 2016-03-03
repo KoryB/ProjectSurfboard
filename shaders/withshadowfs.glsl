@@ -63,7 +63,7 @@ void main(){
     float litpct;
     litpct = exp(EXPONENTIAL_CONSTANT*(z2-z1));
     //litpct = z2 / exp(c*z1);
-    litpct = clamp(litpct,0.0,1.0);
+    litpct = clamp(litpct,0.3,1.0);
 
     color.rgb *= litpct;
 
