@@ -76,8 +76,6 @@ public class GameScreen implements Screen
         float now = (float) (System.nanoTime() * 1E-9);
         float elapsed = now - prev;
 
-        System.out.println(1.0/ elapsed);
-
         prev = now;
 
         if (mInput.keyDown("CAMERA_MOVE_FORWARD"))
@@ -107,7 +105,7 @@ public class GameScreen implements Screen
             cam.strafe(new vec3(0, 0.4f * elapsed, 0));
 
         cam.lookAtPlayer(player);
-        
+
         if (mInput.mouseDown(1))
         {
             Ray camRay = cam.getRay(mInput.getMousePos());
