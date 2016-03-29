@@ -1,0 +1,414 @@
+Created by PLY version 3.4 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> S
+Rule 1     epsilon -> <empty>
+Rule 2     S -> DefList
+Rule 3     DefList -> Definition DefList
+Rule 4     DefList -> epsilon
+Rule 5     Definition -> id COLON OptionalThings OptionalBraceBlock
+Rule 6     Definition -> BIGLIST
+Rule 7     OptionalThings -> string OptionalThings2
+Rule 8     OptionalThings -> num OptionalThings2
+Rule 9     OptionalThings -> specialkeyword
+Rule 10    OptionalThings -> epsilon
+Rule 11    OptionalThings2 -> COMMA string OptionalThings2
+Rule 12    OptionalThings2 -> COMMA num OptionalThings2
+Rule 13    OptionalThings2 -> COMMA specialkeyword OptionalThings2
+Rule 14    OptionalThings2 -> epsilon
+Rule 15    OptionalBraceBlock -> LBRACE DefList RBRACE
+Rule 16    OptionalBraceBlock -> epsilon
+
+Terminals, with rules where they appear
+
+BIGLIST              : 6
+COLON                : 5
+COMMA                : 11 12 13
+LBRACE               : 15
+RBRACE               : 15
+error                : 
+id                   : 5
+num                  : 8 12
+specialkeyword       : 9 13
+string               : 7 11
+
+Nonterminals, with rules where they appear
+
+DefList              : 2 3 15
+Definition           : 3
+OptionalBraceBlock   : 5
+OptionalThings       : 5
+OptionalThings2      : 7 8 11 12 13
+S                    : 0
+epsilon              : 4 10 14 16
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . S
+    (2) S -> . DefList
+    (3) DefList -> . Definition DefList
+    (4) DefList -> . epsilon
+    (5) Definition -> . id COLON OptionalThings OptionalBraceBlock
+    (6) Definition -> . BIGLIST
+    (1) epsilon -> .
+
+    id              shift and go to state 4
+    BIGLIST         shift and go to state 3
+    $end            reduce using rule 1 (epsilon -> .)
+
+    Definition                     shift and go to state 1
+    S                              shift and go to state 2
+    epsilon                        shift and go to state 5
+    DefList                        shift and go to state 6
+
+state 1
+
+    (3) DefList -> Definition . DefList
+    (3) DefList -> . Definition DefList
+    (4) DefList -> . epsilon
+    (5) Definition -> . id COLON OptionalThings OptionalBraceBlock
+    (6) Definition -> . BIGLIST
+    (1) epsilon -> .
+
+    id              shift and go to state 4
+    BIGLIST         shift and go to state 3
+    $end            reduce using rule 1 (epsilon -> .)
+    RBRACE          reduce using rule 1 (epsilon -> .)
+
+    Definition                     shift and go to state 1
+    epsilon                        shift and go to state 5
+    DefList                        shift and go to state 7
+
+state 2
+
+    (0) S' -> S .
+
+
+
+state 3
+
+    (6) Definition -> BIGLIST .
+
+    id              reduce using rule 6 (Definition -> BIGLIST .)
+    BIGLIST         reduce using rule 6 (Definition -> BIGLIST .)
+    $end            reduce using rule 6 (Definition -> BIGLIST .)
+    RBRACE          reduce using rule 6 (Definition -> BIGLIST .)
+
+
+state 4
+
+    (5) Definition -> id . COLON OptionalThings OptionalBraceBlock
+
+    COLON           shift and go to state 8
+
+
+state 5
+
+    (4) DefList -> epsilon .
+
+    $end            reduce using rule 4 (DefList -> epsilon .)
+    RBRACE          reduce using rule 4 (DefList -> epsilon .)
+
+
+state 6
+
+    (2) S -> DefList .
+
+    $end            reduce using rule 2 (S -> DefList .)
+
+
+state 7
+
+    (3) DefList -> Definition DefList .
+
+    $end            reduce using rule 3 (DefList -> Definition DefList .)
+    RBRACE          reduce using rule 3 (DefList -> Definition DefList .)
+
+
+state 8
+
+    (5) Definition -> id COLON . OptionalThings OptionalBraceBlock
+    (7) OptionalThings -> . string OptionalThings2
+    (8) OptionalThings -> . num OptionalThings2
+    (9) OptionalThings -> . specialkeyword
+    (10) OptionalThings -> . epsilon
+    (1) epsilon -> .
+
+    string          shift and go to state 10
+    num             shift and go to state 9
+    specialkeyword  shift and go to state 11
+    LBRACE          reduce using rule 1 (epsilon -> .)
+    id              reduce using rule 1 (epsilon -> .)
+    BIGLIST         reduce using rule 1 (epsilon -> .)
+    $end            reduce using rule 1 (epsilon -> .)
+    RBRACE          reduce using rule 1 (epsilon -> .)
+
+    epsilon                        shift and go to state 12
+    OptionalThings                 shift and go to state 13
+
+state 9
+
+    (8) OptionalThings -> num . OptionalThings2
+    (11) OptionalThings2 -> . COMMA string OptionalThings2
+    (12) OptionalThings2 -> . COMMA num OptionalThings2
+    (13) OptionalThings2 -> . COMMA specialkeyword OptionalThings2
+    (14) OptionalThings2 -> . epsilon
+    (1) epsilon -> .
+
+    COMMA           shift and go to state 14
+    LBRACE          reduce using rule 1 (epsilon -> .)
+    id              reduce using rule 1 (epsilon -> .)
+    BIGLIST         reduce using rule 1 (epsilon -> .)
+    $end            reduce using rule 1 (epsilon -> .)
+    RBRACE          reduce using rule 1 (epsilon -> .)
+
+    epsilon                        shift and go to state 15
+    OptionalThings2                shift and go to state 16
+
+state 10
+
+    (7) OptionalThings -> string . OptionalThings2
+    (11) OptionalThings2 -> . COMMA string OptionalThings2
+    (12) OptionalThings2 -> . COMMA num OptionalThings2
+    (13) OptionalThings2 -> . COMMA specialkeyword OptionalThings2
+    (14) OptionalThings2 -> . epsilon
+    (1) epsilon -> .
+
+    COMMA           shift and go to state 14
+    LBRACE          reduce using rule 1 (epsilon -> .)
+    id              reduce using rule 1 (epsilon -> .)
+    BIGLIST         reduce using rule 1 (epsilon -> .)
+    $end            reduce using rule 1 (epsilon -> .)
+    RBRACE          reduce using rule 1 (epsilon -> .)
+
+    epsilon                        shift and go to state 15
+    OptionalThings2                shift and go to state 17
+
+state 11
+
+    (9) OptionalThings -> specialkeyword .
+
+    LBRACE          reduce using rule 9 (OptionalThings -> specialkeyword .)
+    id              reduce using rule 9 (OptionalThings -> specialkeyword .)
+    BIGLIST         reduce using rule 9 (OptionalThings -> specialkeyword .)
+    $end            reduce using rule 9 (OptionalThings -> specialkeyword .)
+    RBRACE          reduce using rule 9 (OptionalThings -> specialkeyword .)
+
+
+state 12
+
+    (10) OptionalThings -> epsilon .
+
+    LBRACE          reduce using rule 10 (OptionalThings -> epsilon .)
+    id              reduce using rule 10 (OptionalThings -> epsilon .)
+    BIGLIST         reduce using rule 10 (OptionalThings -> epsilon .)
+    $end            reduce using rule 10 (OptionalThings -> epsilon .)
+    RBRACE          reduce using rule 10 (OptionalThings -> epsilon .)
+
+
+state 13
+
+    (5) Definition -> id COLON OptionalThings . OptionalBraceBlock
+    (15) OptionalBraceBlock -> . LBRACE DefList RBRACE
+    (16) OptionalBraceBlock -> . epsilon
+    (1) epsilon -> .
+
+    LBRACE          shift and go to state 19
+    id              reduce using rule 1 (epsilon -> .)
+    BIGLIST         reduce using rule 1 (epsilon -> .)
+    $end            reduce using rule 1 (epsilon -> .)
+    RBRACE          reduce using rule 1 (epsilon -> .)
+
+    epsilon                        shift and go to state 20
+    OptionalBraceBlock             shift and go to state 18
+
+state 14
+
+    (11) OptionalThings2 -> COMMA . string OptionalThings2
+    (12) OptionalThings2 -> COMMA . num OptionalThings2
+    (13) OptionalThings2 -> COMMA . specialkeyword OptionalThings2
+
+    string          shift and go to state 22
+    num             shift and go to state 21
+    specialkeyword  shift and go to state 23
+
+
+state 15
+
+    (14) OptionalThings2 -> epsilon .
+
+    LBRACE          reduce using rule 14 (OptionalThings2 -> epsilon .)
+    id              reduce using rule 14 (OptionalThings2 -> epsilon .)
+    BIGLIST         reduce using rule 14 (OptionalThings2 -> epsilon .)
+    $end            reduce using rule 14 (OptionalThings2 -> epsilon .)
+    RBRACE          reduce using rule 14 (OptionalThings2 -> epsilon .)
+
+
+state 16
+
+    (8) OptionalThings -> num OptionalThings2 .
+
+    LBRACE          reduce using rule 8 (OptionalThings -> num OptionalThings2 .)
+    id              reduce using rule 8 (OptionalThings -> num OptionalThings2 .)
+    BIGLIST         reduce using rule 8 (OptionalThings -> num OptionalThings2 .)
+    $end            reduce using rule 8 (OptionalThings -> num OptionalThings2 .)
+    RBRACE          reduce using rule 8 (OptionalThings -> num OptionalThings2 .)
+
+
+state 17
+
+    (7) OptionalThings -> string OptionalThings2 .
+
+    LBRACE          reduce using rule 7 (OptionalThings -> string OptionalThings2 .)
+    id              reduce using rule 7 (OptionalThings -> string OptionalThings2 .)
+    BIGLIST         reduce using rule 7 (OptionalThings -> string OptionalThings2 .)
+    $end            reduce using rule 7 (OptionalThings -> string OptionalThings2 .)
+    RBRACE          reduce using rule 7 (OptionalThings -> string OptionalThings2 .)
+
+
+state 18
+
+    (5) Definition -> id COLON OptionalThings OptionalBraceBlock .
+
+    id              reduce using rule 5 (Definition -> id COLON OptionalThings OptionalBraceBlock .)
+    BIGLIST         reduce using rule 5 (Definition -> id COLON OptionalThings OptionalBraceBlock .)
+    $end            reduce using rule 5 (Definition -> id COLON OptionalThings OptionalBraceBlock .)
+    RBRACE          reduce using rule 5 (Definition -> id COLON OptionalThings OptionalBraceBlock .)
+
+
+state 19
+
+    (15) OptionalBraceBlock -> LBRACE . DefList RBRACE
+    (3) DefList -> . Definition DefList
+    (4) DefList -> . epsilon
+    (5) Definition -> . id COLON OptionalThings OptionalBraceBlock
+    (6) Definition -> . BIGLIST
+    (1) epsilon -> .
+
+    id              shift and go to state 4
+    BIGLIST         shift and go to state 3
+    RBRACE          reduce using rule 1 (epsilon -> .)
+
+    Definition                     shift and go to state 1
+    epsilon                        shift and go to state 5
+    DefList                        shift and go to state 24
+
+state 20
+
+    (16) OptionalBraceBlock -> epsilon .
+
+    id              reduce using rule 16 (OptionalBraceBlock -> epsilon .)
+    BIGLIST         reduce using rule 16 (OptionalBraceBlock -> epsilon .)
+    $end            reduce using rule 16 (OptionalBraceBlock -> epsilon .)
+    RBRACE          reduce using rule 16 (OptionalBraceBlock -> epsilon .)
+
+
+state 21
+
+    (12) OptionalThings2 -> COMMA num . OptionalThings2
+    (11) OptionalThings2 -> . COMMA string OptionalThings2
+    (12) OptionalThings2 -> . COMMA num OptionalThings2
+    (13) OptionalThings2 -> . COMMA specialkeyword OptionalThings2
+    (14) OptionalThings2 -> . epsilon
+    (1) epsilon -> .
+
+    COMMA           shift and go to state 14
+    LBRACE          reduce using rule 1 (epsilon -> .)
+    id              reduce using rule 1 (epsilon -> .)
+    BIGLIST         reduce using rule 1 (epsilon -> .)
+    $end            reduce using rule 1 (epsilon -> .)
+    RBRACE          reduce using rule 1 (epsilon -> .)
+
+    epsilon                        shift and go to state 15
+    OptionalThings2                shift and go to state 25
+
+state 22
+
+    (11) OptionalThings2 -> COMMA string . OptionalThings2
+    (11) OptionalThings2 -> . COMMA string OptionalThings2
+    (12) OptionalThings2 -> . COMMA num OptionalThings2
+    (13) OptionalThings2 -> . COMMA specialkeyword OptionalThings2
+    (14) OptionalThings2 -> . epsilon
+    (1) epsilon -> .
+
+    COMMA           shift and go to state 14
+    LBRACE          reduce using rule 1 (epsilon -> .)
+    id              reduce using rule 1 (epsilon -> .)
+    BIGLIST         reduce using rule 1 (epsilon -> .)
+    $end            reduce using rule 1 (epsilon -> .)
+    RBRACE          reduce using rule 1 (epsilon -> .)
+
+    epsilon                        shift and go to state 15
+    OptionalThings2                shift and go to state 26
+
+state 23
+
+    (13) OptionalThings2 -> COMMA specialkeyword . OptionalThings2
+    (11) OptionalThings2 -> . COMMA string OptionalThings2
+    (12) OptionalThings2 -> . COMMA num OptionalThings2
+    (13) OptionalThings2 -> . COMMA specialkeyword OptionalThings2
+    (14) OptionalThings2 -> . epsilon
+    (1) epsilon -> .
+
+    COMMA           shift and go to state 14
+    LBRACE          reduce using rule 1 (epsilon -> .)
+    id              reduce using rule 1 (epsilon -> .)
+    BIGLIST         reduce using rule 1 (epsilon -> .)
+    $end            reduce using rule 1 (epsilon -> .)
+    RBRACE          reduce using rule 1 (epsilon -> .)
+
+    epsilon                        shift and go to state 15
+    OptionalThings2                shift and go to state 27
+
+state 24
+
+    (15) OptionalBraceBlock -> LBRACE DefList . RBRACE
+
+    RBRACE          shift and go to state 28
+
+
+state 25
+
+    (12) OptionalThings2 -> COMMA num OptionalThings2 .
+
+    LBRACE          reduce using rule 12 (OptionalThings2 -> COMMA num OptionalThings2 .)
+    id              reduce using rule 12 (OptionalThings2 -> COMMA num OptionalThings2 .)
+    BIGLIST         reduce using rule 12 (OptionalThings2 -> COMMA num OptionalThings2 .)
+    $end            reduce using rule 12 (OptionalThings2 -> COMMA num OptionalThings2 .)
+    RBRACE          reduce using rule 12 (OptionalThings2 -> COMMA num OptionalThings2 .)
+
+
+state 26
+
+    (11) OptionalThings2 -> COMMA string OptionalThings2 .
+
+    LBRACE          reduce using rule 11 (OptionalThings2 -> COMMA string OptionalThings2 .)
+    id              reduce using rule 11 (OptionalThings2 -> COMMA string OptionalThings2 .)
+    BIGLIST         reduce using rule 11 (OptionalThings2 -> COMMA string OptionalThings2 .)
+    $end            reduce using rule 11 (OptionalThings2 -> COMMA string OptionalThings2 .)
+    RBRACE          reduce using rule 11 (OptionalThings2 -> COMMA string OptionalThings2 .)
+
+
+state 27
+
+    (13) OptionalThings2 -> COMMA specialkeyword OptionalThings2 .
+
+    LBRACE          reduce using rule 13 (OptionalThings2 -> COMMA specialkeyword OptionalThings2 .)
+    id              reduce using rule 13 (OptionalThings2 -> COMMA specialkeyword OptionalThings2 .)
+    BIGLIST         reduce using rule 13 (OptionalThings2 -> COMMA specialkeyword OptionalThings2 .)
+    $end            reduce using rule 13 (OptionalThings2 -> COMMA specialkeyword OptionalThings2 .)
+    RBRACE          reduce using rule 13 (OptionalThings2 -> COMMA specialkeyword OptionalThings2 .)
+
+
+state 28
+
+    (15) OptionalBraceBlock -> LBRACE DefList RBRACE .
+
+    id              reduce using rule 15 (OptionalBraceBlock -> LBRACE DefList RBRACE .)
+    BIGLIST         reduce using rule 15 (OptionalBraceBlock -> LBRACE DefList RBRACE .)
+    $end            reduce using rule 15 (OptionalBraceBlock -> LBRACE DefList RBRACE .)
+    RBRACE          reduce using rule 15 (OptionalBraceBlock -> LBRACE DefList RBRACE .)
+
