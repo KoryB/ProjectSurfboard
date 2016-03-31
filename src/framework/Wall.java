@@ -28,7 +28,7 @@ public class Wall extends CollisionObject implements Drawable
 
         if (MESH == null)
         {
-            MESH = new Mesh("assets/testWall.obj.mesh");
+            MESH = new Mesh("assets/finished_meshes/testWall.obj.mesh");
         }
     }
 

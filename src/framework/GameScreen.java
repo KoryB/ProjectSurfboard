@@ -76,7 +76,7 @@ public class GameScreen implements Screen
         float now = (float) (System.nanoTime() * 1E-9);
         float elapsed = now - prev;
 
-        System.out.println(1.0/ elapsed);
+        //System.out.println(1.0/ elapsed);
 
         prev = now;
 

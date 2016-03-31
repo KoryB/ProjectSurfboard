@@ -183,6 +183,8 @@ public class Program{
                 setter = new Vec2Setter(nm_,uloc);
             else if(ty[0] == GL_FLOAT && sz[0] == 1 )
                 setter = new FloatSetter(nm_,uloc);
+            else if(ty[0] == GL_FLOAT && sz[0] > 1 )
+                setter = new FloatArraySetter(nm_,uloc, sz[0]);
             else if(ty[0] == GL_UNSIGNED_INT && sz[0] == 1 )
                 setter = new UintSetter(nm_,uloc);
             else if(ty[0] == GL_INT && sz[0] == 1 )
@@ -360,6 +362,25 @@ public class Program{
                 throw new RuntimeException("Not a float/double/int/other number");
             Number n = (Number) o;
             glUniform1f( i, n.floatValue() );
+        }
+    }
+
+    class FloatArraySetter extends UniformSetter{
+        protected int size;
+        public FloatArraySetter(String name,int idx, int size)
+        {
+            super(name,idx);
+            this.size = size;
+        }
+        @Override
+        public void set(Object o){
+            if( ! (o instanceof float[] && ((float[])o).length == size))
+                throw new RuntimeException("Not a float[], and/or size doesn't match");
+            float[] n = (float[]) o;
+            glUniform1fv(i, size, n);
+        }
+        protected Object makecopy(Object o){
+            return o;
         }
     }
     class UintSetter extends UniformSetter{

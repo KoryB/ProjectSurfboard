@@ -35,7 +35,7 @@ public class Floor extends CollisionObject implements Drawable
 
         if (MESH == null)
         {
-            MESH = new Mesh("assets/floor.obj.mesh");
+            MESH = new Mesh("assets/finished_meshes/floor.obj.mesh");
             MESH.texture = new ImageTexture("assets/globe00.png");
         }
     }

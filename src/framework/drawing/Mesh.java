@@ -92,7 +92,7 @@ public class Mesh {
         glVertexAttribPointer(attribidx, count, GL_FLOAT, false, count*4,0);
     }
 
-    public  Mesh(String filename){
+    public Mesh(String filename){
         
         texture=null;
         this.filename = filename;
@@ -172,9 +172,9 @@ public class Mesh {
             else if( lst[0].equals("quaternions"))
                 quaternions = readbytes(din,lst);
             else if( lst[0].equals("with_adjacency")){
-                if(lst[1].equals("True"))
+                if(lst[1].equals("1"))
                     with_adjacency=true;
-                else if( lst[1].equals("False"))
+                else if( lst[1].equals("0"))
                     with_adjacency=false;
                 else
                     throw new RuntimeException("?");
