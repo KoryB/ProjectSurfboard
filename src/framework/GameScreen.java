@@ -22,13 +22,13 @@ import static framework.math3d.math3d.normalize;
 public class GameScreen implements Screen
 {
 
-    //Player mPlayer;
+    Player mPlayer;
     public static InputHandler mInput = new InputHandler("config/cfg.properties");
-    ;
+
     private boolean mPaused;
     Camera cam;
     Program blurprog;
-    float prev, framenum;
+    float elapsed, framenum;
     //    UnitSquare usq;
     //    ImageTextureArray ita;
     Wall wall, wall2, wall3;
@@ -63,22 +63,15 @@ public class GameScreen implements Screen
         //        cam.lookAtPlayer(player);
         //        cam.lookAt(new vec3(0, 4, 0), new vec3(), normalize(new vec3(0, 0, -1)));
 
-        prev = (float) (System.nanoTime() * 1E-9);
-
         framenum = 0.0f;
     }
 
     @Override
-    public void update()
+    public void update(long dtime)
     {
         mInput.poll();
 
-        float now = (float) (System.nanoTime() * 1E-9);
-        float elapsed = now - prev;
-
-        //System.out.println(1.0/ elapsed);
-
-        prev = now;
+        elapsed = ((float) dtime) / 1000;
 
         if (mInput.keyDown("CAMERA_MOVE_FORWARD"))
             cam.walk(2.0f * elapsed);
@@ -105,8 +98,6 @@ public class GameScreen implements Screen
             cam.strafe(new vec3(0, -0.4f * elapsed, 0));
         if (mInput.keyDown(SDLK_e))
             cam.strafe(new vec3(0, 0.4f * elapsed, 0));
-
-        cam.lookAtPlayer(player);
 
         //        TODO: make mouse buttons constants
         if (mInput.mouseDown(1))
@@ -144,6 +135,8 @@ public class GameScreen implements Screen
         }
 
         player.update(elapsed);
+
+        cam.lookAtPlayer(player);
 
     }
 
