@@ -78,4 +78,12 @@ public class vec2{
     public vec2 neg(){
         return mul(-1.0f);
     }
+    
+    
+    public vec2 xx(){ return new vec2(x, x); }
+    public vec2 xy(){ return new vec2(x, y); }
+    public vec2 yx(){ return new vec2(y, x); }
+    public vec2 yy(){ return new vec2(y, y); }
+    
+    
 }

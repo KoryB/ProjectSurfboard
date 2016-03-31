@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package framework;
+package framework.drawing.textures;
 
 import static JGL.JGL.GL_CLAMP_TO_EDGE;
 import static JGL.JGL.GL_FLOAT;
@@ -25,12 +25,12 @@ import java.nio.FloatBuffer;
  
 
 public class DataTexture extends Texture2D{
-    DataTexture(int w, int h, float[] data){
+    public DataTexture(int w, int h, float[] data){
         super(w,h);
         init();
         update(data);
     }
-    DataTexture(int w, int h, byte[] data){
+    public DataTexture(int w, int h, byte[] data){
         super(w,h);
         init();
         update(data);

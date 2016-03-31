@@ -73,16 +73,16 @@ translation 2 2 0 0 0 0
 translation 2 3 0 0 0 0 
 translation 2 4 0 0 0 0 
 translation 2 5 0 0 0 0 
-# converted from Z:/School/fbx2obj/newPlayer2.fbx
-mtllib Z:/School/fbx2obj/newPlayer2.mtl
+# converted from C:/Users/Kory Byrne/School/Programming/ETGG_2802/ProjectSurfboard/new_mesh_building/fbx2obj/newPlayer2.fbx
+mtllib ./newPlayer2.mtl
 #bone bone_name bone_index
-bone Armature 6
-bone Bone_006 5
 bone Bone_002 2
-bone Bone_001 1
-bone Bone 0
 bone Bone_003 3
+bone Bone_001 1
 bone Bone_004 4
+bone Bone 0
+bone Bone_006 5
+bone Armature 6
 o Cylinder
 usemtl Material__cannon_png_cannon_png
 #vertex data: x y z, then four weights, then four bone indices

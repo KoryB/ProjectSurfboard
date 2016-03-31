@@ -1,4 +1,4 @@
-package framework;
+package framework.drawing;
 
 import static JGL.JGL.GL_SHADER_STORAGE_BUFFER;
 import static JGL.JGL.GL_STREAM_DRAW;
