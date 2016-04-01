@@ -15,6 +15,8 @@ public class Player extends CollisionObject implements Drawable
 {
     private static Mesh MESH;
     private vec4 mGotoPoint;
+    private float mCurrentFrame = 0.0f;
+    private float mMaxFrames = 2.0f;
 
     public Player(vec4 position)
     {
@@ -25,7 +27,8 @@ public class Player extends CollisionObject implements Drawable
 
         if (MESH == null)
         {
-            MESH = new Mesh("assets/finished_meshes/newPlayer2.obj.mesh");
+            System.out.println("Player:");
+            MESH = new Mesh("assets/finished_meshes/newPlayer.obj.mesh");
             MESH.texture = new ImageTexture("assets/checker.png");
         }
     }
@@ -78,12 +81,19 @@ public class Player extends CollisionObject implements Drawable
                 mGotoPoint = null;
             }
         }
+
+        mCurrentFrame += elapsed;
+        if (mCurrentFrame >= mMaxFrames)
+        {
+            mCurrentFrame = 0.0f;
+        }
     }
 
     public void draw(Program program)
     {
         //TODO: Fix floating
         program.setUniform("worldMatrix", math3d.scaling(.5f, 1f, .5f).mul(math3d.translation(mPosition)));
+        program.setUniform("curframe", mCurrentFrame);
         MESH.draw(program);
     }
 }

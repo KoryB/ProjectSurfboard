@@ -1,4 +1,4 @@
-package framework.drawing;
+package framework;
 
 import static JGL.JGL.*;
 import java.io.DataInputStream;
@@ -9,15 +9,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.Arrays;
-
 import static framework.math3d.math3d.add;
 import static framework.math3d.math3d.mul;
-
-import framework.drawing.textures.DataTexture;
-import framework.drawing.textures.ImageTexture;
-import framework.drawing.textures.Texture;
-import framework.math3d.vec2;
 import framework.math3d.vec3;
 import static framework.math3d.math3d.add;
 import static framework.math3d.math3d.mul;
@@ -29,26 +22,24 @@ import static framework.math3d.math3d.mul;
 
 
 
-public class Mesh {
-    public Texture texture;
-    public Texture bonetex;
-    //public Texture mattex;
-    public Texture quattex;
-    public vec2 bonetex_size, quattex_size;
-    public Texture spec_texture;
-    public Texture emit_texture;
-    public Texture bump_texture;
-    public String filename="(none)";
-    public int numvertices;
+class Mesh {
+    Texture texture;
+    Texture bonetex;
+    Texture mattex;
+    Texture spec_texture;
+    Texture emit_texture;
+    Texture bump_texture;
+    String filename="(none)";
+    int numvertices;
     //int floats_per_vertex;
-    public int numindices;
-    public int bits_per_index;
+    int numindices;
+    int bits_per_index;
     //int vbuff,ibuff;
-    public int itype;
-    public int vao;
-    public int numbones;
-    public int numframes=0;
-    public int maxdepth=0;
+    int itype;
+    int vao;
+    int numbones;
+    int numframes=0;
+    int maxdepth=0;
     
     vec3 specular = new vec3(1,1,1);
     //vec3 bbmin,bbmax;
@@ -97,7 +88,7 @@ public class Mesh {
         glVertexAttribPointer(attribidx, count, GL_FLOAT, false, count*4,0);
     }
 
-    public Mesh(String filename){
+    public  Mesh(String filename){
         
         texture=null;
         this.filename = filename;
@@ -177,9 +168,9 @@ public class Mesh {
             else if( lst[0].equals("quaternions"))
                 quaternions = readbytes(din,lst);
             else if( lst[0].equals("with_adjacency")){
-                if(lst[1].equals("1"))
+                if(lst[1].equals("True"))
                     with_adjacency=true;
-                else if( lst[1].equals("0"))
+                else if( lst[1].equals("False"))
                     with_adjacency=false;
                 else
                     throw new RuntimeException("?");
@@ -241,10 +232,8 @@ public class Mesh {
         this.vao = tmp[0];
         glBindVertexArray(vao);      //do it here so it captures the bindbuffer's below
         
-        if( vdata != null ) {
-            System.out.println("vdata");
-            makebuffer(Program.POSITION_INDEX, 3, vdata);
-        }
+        if( vdata != null )
+            makebuffer(Program.POSITION_INDEX,3,vdata);
         if( ndata != null )
             makebuffer(Program.NORMAL_INDEX,3,ndata);
         if( tcdata != null )
@@ -253,19 +242,8 @@ public class Mesh {
             makebuffer( Program.TANGENT_INDEX,3,tdata);
         if( wdata != null )
             makebuffer( Program.WEIGHT_INDEX,4,wdata);
-        if( infdata != null ) {
-
-            ByteBuffer bb = ByteBuffer.wrap(infdata);
-            bb.order(ByteOrder.nativeOrder());
-            FloatBuffer fb = bb.asFloatBuffer();
-            float[] x = new float[infdata.length/4];
-            fb.get(x);
-
-            System.out.println("Inf: Floats: " + Arrays.toString(x));
-            System.out.println("Size: " + x.length);
-
-            makebuffer(Program.INFLUENCE_INDEX, 4, infdata);
-        }
+        if( infdata != null )
+            makebuffer( Program.INFLUENCE_INDEX,4,infdata);
         
         glGenBuffers(1,tmp);
         int ibuff = tmp[0];
@@ -281,26 +259,15 @@ public class Mesh {
             tmpx.put(boneheads);
             float[] F = new float[boneheads.length/4];
             tmpf.get(F);*/
-            System.out.print("Bones: ");
             bonetex = new DataTexture(numbones,1,boneheads);
-            bonetex_size = new vec2(1.0f / (float) numbones, 1.0f);
         }
         
-//        if( matrices != null )
-//            mattex = new DataTexture( numbones*4, numframes, matrices );
-
-        if( quaternions != null )
-        {
-            System.out.print("Quats: ");
-            quattex = new DataTexture(numbones, numframes, quaternions);
-            System.out.println("Num Bones: " + numbones + ", Num Frames: " + numframes);
-            quattex_size = new vec2(1.0f / (float) numbones, 1.0f / (float) numframes);
-            System.out.println(quattex_size);
-        }
+        if( matrices != null )
+            mattex = new DataTexture( numbones*4, numframes, matrices );
         
     }
     
-    public void draw(Program prog){
+    void draw(Program prog){
         if(this.texture != null )
             prog.setUniform("diffuse_texture",this.texture);
         //if(this.emit_texture != null )
@@ -309,18 +276,12 @@ public class Mesh {
         //    prog.setUniform("spec_texture",this.texture);
         if( this.bump_texture != null )
             prog.setUniform("bump_texture",this.bump_texture);
-        if( bonetex != null ) {
-            prog.setUniform("bonetex", this.bonetex);
-            prog.setUniform("bonetex_size", this.bonetex_size);
-        }
-        if (quattex != null) {
-            prog.setUniform("quattex", this.quattex);
-            prog.setUniform("quattex_size", this.quattex_size);
-        }
-//        if( mattex != null )
-//            prog.setUniform("mattex", this.mattex );
+        if( bonetex != null )
+            prog.setUniform("bonetex",this.bonetex);
+        if( mattex != null )
+            prog.setUniform("mattex", this.mattex );
         
-//        prog.setUniform("specular",specular);
+        prog.setUniform("specular",specular);
         
         glBindVertexArray(vao);
         if(with_adjacency)

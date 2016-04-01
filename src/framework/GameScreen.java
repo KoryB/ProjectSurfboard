@@ -27,7 +27,7 @@ public class GameScreen implements Screen
 
     private boolean mPaused;
     Camera cam;
-    Program blurprog;
+    Program blurprog, kinematicsprog;
     float elapsed, framenum;
     //    UnitSquare usq;
     //    ImageTextureArray ita;
@@ -64,6 +64,8 @@ public class GameScreen implements Screen
         //        cam.lookAt(new vec3(0, 4, 0), new vec3(), normalize(new vec3(0, 0, -1)));
 
         framenum = 0.0f;
+
+        kinematicsprog = new Program("shaders/kinematicsvs.glsl", "shaders/fs.txt");
     }
 
     @Override
@@ -147,7 +149,11 @@ public class GameScreen implements Screen
         DrawManager.getInstance().drawMirrorFloors(program, cam, level, player);
         cam.draw(program);
 
-        player.draw(program);
+        kinematicsprog.use();
+        kinematicsprog.setUniform("lightPos", new vec3(50, 50, 50));
+        cam.draw(kinematicsprog);
+        player.draw(kinematicsprog);
+        program.use();
 
         glStencilFunc(GL_ALWAYS, 1, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -156,19 +162,22 @@ public class GameScreen implements Screen
 
         //        glClear(GL_DEPTH_BUFFER_BIT);
 //        DrawManager.getInstance().drawLaplacian(player, program, null); //this produces white.
+        kinematicsprog.use();
         glStencilFunc(GL_EQUAL, 1, 0xff);
         glStencilOp(GL_KEEP, GL_INCR, GL_KEEP);
-        player.draw(program);
+        player.draw(kinematicsprog);
 //        DrawManager.getInstance().drawBlurScreen(player, program, null, 10, 10);
 
         glStencilFunc(GL_LEQUAL, 2, 0xff); // Reference less than or equal to buffer. 2 <= 2 so works! 2 <= 3 works!
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        DrawManager.getInstance().drawLaplacian(player, program, null, new vec4(0.5, 1.0, 0.5, 0.5), new vec4(0.5, 0.1, 0.1, 0.5));
+        DrawManager.getInstance().drawLaplacian(player, kinematicsprog, null, new vec4(0.5, 1.0, 0.5, 0.5), new vec4(0.5, 0.1, 0.1, 0.5));
 
         glStencilFunc(GL_ALWAYS, 0, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+        program.use();
     }
 
     @Override

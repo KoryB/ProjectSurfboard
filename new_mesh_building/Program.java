@@ -1,6 +1,5 @@
-package framework.drawing;
+package framework;
 
-import framework.drawing.textures.Texture2D;
 import framework.math3d.*;
 import java.util.*;
 import java.io.*;
@@ -183,8 +182,6 @@ public class Program{
                 setter = new Vec2Setter(nm_,uloc);
             else if(ty[0] == GL_FLOAT && sz[0] == 1 )
                 setter = new FloatSetter(nm_,uloc);
-            else if(ty[0] == GL_FLOAT && sz[0] > 1 )
-                setter = new FloatArraySetter(nm_,uloc, sz[0]);
             else if(ty[0] == GL_UNSIGNED_INT && sz[0] == 1 )
                 setter = new UintSetter(nm_,uloc);
             else if(ty[0] == GL_INT && sz[0] == 1 )
@@ -193,6 +190,8 @@ public class Program{
                 setter = new BooleanSetter(nm_,uloc);
             else if( ty[0] == GL_SAMPLER_2D && sz[0] == 1 )
                 setter = new Sampler2DSetter(nm_,uloc,texcount++);
+            else if( ty[0] == GL_SAMPLER_CUBE && sz[0] == 1 )
+                setter = new SamplerCubeSetter(nm_,uloc,texcount++);
             else
                 throw new RuntimeException("Don't know about type for uniform "+nm_+": "+ty[0]);
 
@@ -203,7 +202,7 @@ public class Program{
        
     }
         
-    public void use(){
+    void use(){
         glUseProgram(prog);
         active=this;
     }
@@ -216,7 +215,7 @@ public class Program{
     }
 
     
-    public void setUniform(String name, Object value){
+    void setUniform(String name, Object value){
         //System.out.println("Set "+name+" to\n"+value);
         if(active != this)
             throw new RuntimeException("This program is not active");
@@ -226,15 +225,13 @@ public class Program{
             if( !warned_nonexistent.contains(name)){
                 System.out.println("Warning: In "+fnames+": No such uniform "+name);
                 warned_nonexistent.add(name);
-//                if (name.equals("bonetex"))
-//                    throw new RuntimeException();
             }
         }
         unset_uniforms.remove(name);
     }
 
     
-    public int make_shader(String filename, int shadertype){
+    int make_shader(String filename, int shadertype){
         String sdata = read_file(filename);
         int s = glCreateShader(shadertype);
         glShaderSource( 
@@ -366,25 +363,6 @@ public class Program{
             glUniform1f( i, n.floatValue() );
         }
     }
-
-    class FloatArraySetter extends UniformSetter{
-        protected int size;
-        public FloatArraySetter(String name,int idx, int size)
-        {
-            super(name,idx);
-            this.size = size;
-        }
-        @Override
-        public void set(Object o){
-            if( ! (o instanceof float[] && ((float[])o).length == size))
-                throw new RuntimeException("Not a float[], and/or size doesn't match");
-            float[] n = (float[]) o;
-            glUniform1fv(i, size, n);
-        }
-        protected Object makecopy(Object o){
-            return o;
-        }
-    }
     class UintSetter extends UniformSetter{
         public UintSetter(String name,int idx){
             super(name,idx);
@@ -420,6 +398,21 @@ public class Program{
                 throw new RuntimeException("Not a boolean");
             Boolean n = (Boolean) o;
             glUniform1i( i, n ? 1:0);
+        }
+    }
+    class SamplerCubeSetter extends UniformSetter{
+        int unit;
+        public SamplerCubeSetter(String name, int idx, int unit){
+            super(name,idx);
+            this.unit=unit;
+        }
+        @Override
+        public void set(Object o){
+            if( ! (o instanceof CubeTexture) )
+                throw new RuntimeException("Not a CubeTexture");
+            CubeTexture v =  (CubeTexture) o;
+            v.bind(unit);
+            glUniform1i(i,unit);
         }
     }
     

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package framework.drawing.textures;
+package framework;
 
 import static JGL.JGL.GL_CLAMP_TO_EDGE;
 import static JGL.JGL.GL_FLOAT;
@@ -22,16 +22,15 @@ import static JGL.JGL.glTexSubImage2D;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.util.Arrays;
-
+ 
 
 public class DataTexture extends Texture2D{
-    public DataTexture(int w, int h, float[] data){
+    DataTexture(int w, int h, float[] data){
         super(w,h);
         init();
         update(data);
     }
-    public DataTexture(int w, int h, byte[] data){
+    DataTexture(int w, int h, byte[] data){
         super(w,h);
         init();
         update(data);
@@ -73,7 +72,6 @@ public class DataTexture extends Texture2D{
         FloatBuffer fb = bb.asFloatBuffer();
         float[] x = new float[b.length/4];
         fb.get(x);
-        System.out.println("Floats: " + Arrays.toString(x));
         
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0,0, w,h, GL_RGBA,GL_FLOAT,b);
     }
