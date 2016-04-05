@@ -225,10 +225,6 @@ public class Program{
             uniforms.get(name).set(value);
         else{
             if( !warned_nonexistent.contains(name)){
-                if (fnames == null)
-                {
-                    throw new RuntimeException();
-                }
                 System.out.println("Warning: In "+fnames+": No such uniform "+name);
                 warned_nonexistent.add(name);
 //                if (name.equals("bonetex"))

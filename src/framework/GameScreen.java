@@ -71,7 +71,7 @@ public class GameScreen implements Screen
 
         framenum = 0.0f;
 
-        kinematicsprog = new Program("shaders/kinematicsvs.glsl", "shaders/fs.txt");
+        kinematicsprog = new Program("shaders/withshadowvs.glsl", "shaders/withshadowfs.glsl");
     }
 
     @Override
@@ -154,17 +154,18 @@ public class GameScreen implements Screen
         kinematicsprog.use();
         kinematicsprog.setUniform("lightPos", new vec3(3, 6, 3));
         program.use();
-        //DrawManager.getInstance().drawMirrorFloors(program, kinematicsprog, cam, level, player);
+        DrawManager.getInstance().drawMirrorFloors(program, kinematicsprog, cam, level, player);
 
         drawShadows(program);
 
-        mSquareDraw.use();
-        mSquareDraw.setUniform("toDisplay", shadowFBO.texture);
-        debugSquare.draw(mSquareDraw);
-        mSquareDraw.setUniform("toDisplay", mDummyTexture);
-        program.use();
+//        mSquareDraw.use();
+//        mSquareDraw.setUniform("toDisplay", shadowFBO.texture);
+//        debugSquare.draw(mSquareDraw);
+//        mSquareDraw.setUniform("toDisplay", mDummyTexture);
+//        program.use();
 
-        /*
+
+        cam.lookAtPlayer(player);
         cam.draw(program);
         kinematicsprog.use();
         cam.draw(kinematicsprog);
@@ -176,6 +177,7 @@ public class GameScreen implements Screen
 
         level.drawWalls(program);
 
+        /*
         //        glClear(GL_DEPTH_BUFFER_BIT);
 //        DrawManager.getInstance().drawLaplacian(player, program, null); //this produces white.
         kinematicsprog.use();
@@ -193,8 +195,11 @@ public class GameScreen implements Screen
         glStencilFunc(GL_ALWAYS, 0, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
-        program.use();
         */
+        kinematicsprog.use();
+        kinematicsprog.setUniform("shadow_texture", mDummyTexture);
+        program.use();
+
     }
 
     public void drawShadows(Program program)
@@ -209,6 +214,14 @@ public class GameScreen implements Screen
         program.setUniform("lightProjMatrix", cam.compute_projp_matrix());
         program.setUniform("lightHitherYon", new vec4(cam.hither, cam.yon, cam.yon - cam.hither, GameScreen.SCALE));
         program.setUniform("shadow_texture", shadowFBO.texture);
+
+        kinematicsprog.use();
+        kinematicsprog.setUniform("lightViewMatrix", cam.getViewMatrix());
+        kinematicsprog.setUniform("lightProjMatrix", cam.compute_projp_matrix());
+        kinematicsprog.setUniform("lightHitherYon", new vec4(cam.hither, cam.yon, cam.yon - cam.hither, GameScreen.SCALE));
+        kinematicsprog.setUniform("shadow_texture", shadowFBO.texture);
+
+        program.use();
     }
 
     @Override
