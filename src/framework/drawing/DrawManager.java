@@ -14,7 +14,7 @@ public class DrawManager
 //    private static final float[] LAPLACIAN_WEIGHTINGS = new float[]{0, -1, 0, -1, 4, -1, 0, -1, 0};
     private static int NEXT_AVAILABLE_FBO = 0;
 
-    private Program mBlurProgram, mEdgeProgram, mShadowProgram, mNonShadowProgram;
+    private Program mBlurProgram, mEdgeProgram, mShadowProgram, mNonShadowProgram, mPlayerShadowProgram;
 //    private Framebuffer2D tFBO1, tFBO2;
     private Framebuffer2D[] tFBOArray;
     private UnitSquare mUnitSquare = new UnitSquare();
@@ -25,6 +25,7 @@ public class DrawManager
         mBlurProgram = new Program("shaders/blurvs.txt", "shaders/blurfs.txt");
         mEdgeProgram = new Program("shaders/blurvs.txt", "shaders/edgefs.txt");
         mShadowProgram = new Program("shaders/shadowvs.glsl", "shaders/shadowfs.glsl");
+        mPlayerShadowProgram = new Program("shaders/kinematicshadowvs.glsl", "shaders/shadowfs.glsl");
         mNonShadowProgram = new Program("shaders/vs.txt", "shaders/fs.txt");
 //        tFBO1 = new Framebuffer2D(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
 //        tFBO2 = new Framebuffer2D(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
@@ -169,7 +170,12 @@ public class DrawManager
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         level.drawWalls(mShadowProgram);
         level.drawFloors(mShadowProgram);
-        player.draw(mShadowProgram);
+
+        mPlayerShadowProgram.use();
+        mPlayerShadowProgram.setUniform("viewMatrix", camInUse.getViewMatrix());
+        mPlayerShadowProgram.setUniform("projMatrix", camInUse.compute_projp_matrix());
+        mPlayerShadowProgram.setUniform("hitheryon", new vec4(camInUse.hither, camInUse.yon, camInUse.yon - camInUse.hither, GameScreen.SCALE));
+        player.draw(mPlayerShadowProgram);
         tFBOArray[myAvailableFBO].unbind();
 
         mBlurProgram.use();

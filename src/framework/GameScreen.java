@@ -150,14 +150,21 @@ public class GameScreen implements Screen
     @Override
     public void draw(Program program)
     {
-        program.setUniform("lightPos", new vec3(50, 50, 50));
+        program.setUniform("lightPos", new vec3(3, 6, 3));
         kinematicsprog.use();
-        kinematicsprog.setUniform("lightPos", new vec3(50, 50, 50));
+        kinematicsprog.setUniform("lightPos", new vec3(3, 6, 3));
         program.use();
-        DrawManager.getInstance().drawMirrorFloors(program, kinematicsprog, cam, level, player);
+        //DrawManager.getInstance().drawMirrorFloors(program, kinematicsprog, cam, level, player);
 
-        //drawShadows(program);
+        drawShadows(program);
 
+        mSquareDraw.use();
+        mSquareDraw.setUniform("toDisplay", shadowFBO.texture);
+        debugSquare.draw(mSquareDraw);
+        mSquareDraw.setUniform("toDisplay", mDummyTexture);
+        program.use();
+
+        /*
         cam.draw(program);
         kinematicsprog.use();
         cam.draw(kinematicsprog);
@@ -187,6 +194,7 @@ public class GameScreen implements Screen
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
         program.use();
+        */
     }
 
     public void drawShadows(Program program)
