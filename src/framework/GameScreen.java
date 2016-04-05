@@ -177,7 +177,7 @@ public class GameScreen implements Screen
 
         level.drawWalls(program);
 
-        /*
+
         //        glClear(GL_DEPTH_BUFFER_BIT);
 //        DrawManager.getInstance().drawLaplacian(player, program, null); //this produces white.
         kinematicsprog.use();
@@ -195,7 +195,7 @@ public class GameScreen implements Screen
         glStencilFunc(GL_ALWAYS, 0, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
-        */
+
         kinematicsprog.use();
         kinematicsprog.setUniform("shadow_texture", mDummyTexture);
         program.use();
