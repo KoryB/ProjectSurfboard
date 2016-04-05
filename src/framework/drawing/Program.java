@@ -14,9 +14,9 @@ public class Program{
     public static final int POSITION_INDEX = 0;
     public static final int TEXCOORD_INDEX = 1;
     public static final int NORMAL_INDEX = 2;
-    public static final int TANGENT_INDEX = 3;
+    public static final int TANGENT_INDEX = 5;
     public static final int WEIGHT_INDEX = 4;
-    public static final int INFLUENCE_INDEX = 5;
+    public static final int INFLUENCE_INDEX = 3;
     
     private String fnames;
     

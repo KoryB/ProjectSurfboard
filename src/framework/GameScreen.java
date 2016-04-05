@@ -146,11 +146,12 @@ public class GameScreen implements Screen
     public void draw(Program program)
     {
         program.setUniform("lightPos", new vec3(50, 50, 50));
-        DrawManager.getInstance().drawMirrorFloors(program, cam, level, player);
-        cam.draw(program);
-
         kinematicsprog.use();
         kinematicsprog.setUniform("lightPos", new vec3(50, 50, 50));
+        program.use();
+        DrawManager.getInstance().drawMirrorFloors(program, kinematicsprog, cam, level, player);
+        cam.draw(program);
+        kinematicsprog.use();
         cam.draw(kinematicsprog);
         player.draw(kinematicsprog);
         program.use();
