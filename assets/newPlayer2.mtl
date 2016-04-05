@@ -1,0 +1,6 @@
+newmtl Material__cannon_png_cannon_png
+Ka 1.0 1.0 1.0
+Kd 0.6400000000000001 0.6400000000000001 0.6400000000000001
+Ks 0.5 0.5 0.5
+d 1.0
+map_Kd checker.png

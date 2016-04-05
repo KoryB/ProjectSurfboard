@@ -7,7 +7,7 @@ import framework.drawing.Drawable;
  */
 public interface Screen extends Drawable{
 
-    public void update();
+    public void update(long dtime); // dtime is the amount of ms passed since last update
 
     public void show();
 

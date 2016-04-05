@@ -17,6 +17,8 @@ public class Game implements Drawable{
     public boolean mRunning;
     private long mWindow;
 
+    long now, elapsed, prev, elapsedMax, elapsedCompensation;
+
     public Game(){
         SDL_Init(SDL_INIT_VIDEO);
 //        SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
@@ -37,7 +39,7 @@ public class Game implements Drawable{
                     @Override
                     public void debugCallback(int source, int type, int id, int severity, String message, Object obj)
                     {
-                        System.out.println("GL message: " + message);
+                        //System.out.println("GL message: " + message);
                         if (severity == GL_DEBUG_SEVERITY_HIGH)
                             System.exit(1);
                     }
@@ -54,18 +56,25 @@ public class Game implements Drawable{
         mShadowProgram = new Program("shaders/withshadowvs.glsl","shaders/withshadowfs.glsl");
         mActiveScreen = new GameScreen();
         mRunning = true;
+        elapsed = elapsedCompensation = now = prev = 0; // Each in ms
+        elapsedMax = 200;
     }
 
     public void update(){
-        mActiveScreen.update();
+        now = (System.currentTimeMillis());
+        elapsed = now - prev;
+        prev = now;
+
+        mActiveScreen.update(elapsed);
     }
 
-    public void draw(Program program){
+    public void draw(Program program) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         program.use();
 //        DrawManager.getInstance().drawBlurScreen(mActiveScreen, program, null, 1, 2);
         mActiveScreen.draw(program);
 //        DrawManager.getInstance().drawLaplacian(mActiveScreen, program, null);
+
         SDL_GL_SwapWindow(mWindow);
     }
 

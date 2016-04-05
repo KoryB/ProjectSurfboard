@@ -3,7 +3,9 @@
 package framework.drawing.textures;
 
 import framework.drawing.Framebuffer2D;
+//import framework.drawing.Framebuffer;
 
+import java.util.ArrayList;
 import java.util.TreeSet;
 import static JGL.JGL.*;
 

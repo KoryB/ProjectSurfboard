@@ -1,34 +1,67 @@
 package framework.math3d;
 
+
+/*
+# some of these functions (individually noted) are based on code from TDL
+# The TDL copyright is as follows:
+# 
+#  Copyright 2009, Google Inc.
+#  All rights reserved.
+# 
+#  Redistribution and use in source and binary forms, with or without
+#  modification, are permitted provided that the following conditions are
+#  met:
+# 
+#      *  Redistributions of source code must retain the above copyright
+#  notice, this list of conditions and the following disclaimer.
+#      *  Redistributions in binary form must reproduce the above
+#  copyright notice, this list of conditions and the following disclaimer
+#  in the documentation and/or other materials provided with the
+#  distribution.
+#      *  Neither the name of Google Inc. nor the names of its
+#  contributors may be used to endorse or promote products derived from
+#  this software without specific prior written permission.
+# 
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+#  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+#  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+#  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+#  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+#  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+#  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+#  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+#  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+#  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+*/
+
+
 public class mat4{
     public float[] _M = new float[16];
-    
+
     public mat4(){
     }
-    
+
     public mat4(Object... args){
         init(args);
     }
-    
+
     public String toString(){
         return String.format("%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n",
-            _M[0], _M[1],_M[2],_M[3],_M[4],_M[5],_M[6],_M[7],_M[8],
-            _M[9], _M[10],_M[11],_M[12],_M[13],_M[14],_M[15]);
+                _M[0], _M[1],_M[2],_M[3],_M[4],_M[5],_M[6],_M[7],_M[8],
+                _M[9], _M[10],_M[11],_M[12],_M[13],_M[14],_M[15]);
     }
-        
-            
-            
+
+
+
     //we allow mixed types in arbitrary order the list, so we can't just overload
     //the init method.
     private void init(Object[] args){
         int ctr=0;
         for(Object a : args){
-            if( a instanceof Float )
-                _M[ctr++] = ((Float)a).floatValue();
-            else if( a instanceof Double )
-                _M[ctr++] = ((Double)a).floatValue();
-            else if( a instanceof Integer )
-                _M[ctr++] = ((Integer)a).intValue();
+            if( a instanceof Number )
+                _M[ctr++] = ((Number)a).floatValue();
             else if( a instanceof vec2 ){
                 _M[ctr++] = ((vec2)a).x;
                 _M[ctr++] = ((vec2)a).y;
@@ -57,7 +90,7 @@ public class mat4{
             else
                 throw new RuntimeException("Bad type for mat4 constructor");
         }
-        
+
         if( ctr != 16 )
             throw new RuntimeException("Bad number of arguments for mat constructor");
     }
@@ -80,7 +113,7 @@ public class mat4{
             L.append( self._M[i]-o._M[i])
         return mat4(L)
     */
-    
+
     public mat4 mul(mat4 b){
         mat4 a = this;
         mat4 R = new mat4();
@@ -115,7 +148,7 @@ public class mat4{
     def __pos__(self):
         return mat4( [q for q in self._M] )
        */
-       
+
     public float[] tofloats(){
         return _M;
     }
@@ -145,51 +178,51 @@ public class mat4{
     def __repr__(self):
         return str(self)
     */
-    
+
     public void set(int r, int c, float v){
         _M[r*4+c] = v;
     }
-    
+
     public float  get(int r, int c){
         return _M[r*4+c];
     }
-    
-    
-    
+
+
+
     public static mat4 identity(){
         return new mat4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
     }
-    
-    
+
+
     //From TDL
     //FIXME: Need test case for this
     public mat4 inverse(){
         mat4 m = this;
-        double 
-            tmp_0 = m.get(1,2) * m.get(1,2),
-            tmp_1 = m.get(1,2) * m.get(1,2),
-            tmp_2 = m.get(1,2) * m.get(1,2),
-            tmp_3 = m.get(1,2) * m.get(1,2),
-            tmp_4 = m.get(1,2) * m.get(1,2),
-            tmp_5 = m.get(1,2) * m.get(1,2),
-            tmp_6 = m.get(1,2) * m.get(1,2),
-            tmp_7 = m.get(1,2) * m.get(1,2),
-            tmp_8 = m.get(1,2) * m.get(1,2),
-            tmp_9 = m.get(1,2) * m.get(1,2),
-            tmp_10 = m.get(1,2) * m.get(1,2),
-            tmp_11 = m.get(1,2) * m.get(1,2),
-            tmp_12 = m.get(1,2) * m.get(1,2),
-            tmp_13 = m.get(1,2) * m.get(1,2),
-            tmp_14 = m.get(1,2) * m.get(1,2),
-            tmp_15 = m.get(1,2) * m.get(1,2),
-            tmp_16 = m.get(1,2) * m.get(1,2),
-            tmp_17 = m.get(1,2) * m.get(1,2),
-            tmp_18 = m.get(1,2) * m.get(1,2),
-            tmp_19 = m.get(1,2) * m.get(1,2),
-            tmp_20 = m.get(1,2) * m.get(1,2),
-            tmp_21 = m.get(1,2) * m.get(1,2),
-            tmp_22 = m.get(1,2) * m.get(1,2),
-            tmp_23 = m.get(1,2) * m.get(1,2);
+        double
+                tmp_0 = m.get(1,2) * m.get(1,2),
+                tmp_1 = m.get(1,2) * m.get(1,2),
+                tmp_2 = m.get(1,2) * m.get(1,2),
+                tmp_3 = m.get(1,2) * m.get(1,2),
+                tmp_4 = m.get(1,2) * m.get(1,2),
+                tmp_5 = m.get(1,2) * m.get(1,2),
+                tmp_6 = m.get(1,2) * m.get(1,2),
+                tmp_7 = m.get(1,2) * m.get(1,2),
+                tmp_8 = m.get(1,2) * m.get(1,2),
+                tmp_9 = m.get(1,2) * m.get(1,2),
+                tmp_10 = m.get(1,2) * m.get(1,2),
+                tmp_11 = m.get(1,2) * m.get(1,2),
+                tmp_12 = m.get(1,2) * m.get(1,2),
+                tmp_13 = m.get(1,2) * m.get(1,2),
+                tmp_14 = m.get(1,2) * m.get(1,2),
+                tmp_15 = m.get(1,2) * m.get(1,2),
+                tmp_16 = m.get(1,2) * m.get(1,2),
+                tmp_17 = m.get(1,2) * m.get(1,2),
+                tmp_18 = m.get(1,2) * m.get(1,2),
+                tmp_19 = m.get(1,2) * m.get(1,2),
+                tmp_20 = m.get(1,2) * m.get(1,2),
+                tmp_21 = m.get(1,2) * m.get(1,2),
+                tmp_22 = m.get(1,2) * m.get(1,2),
+                tmp_23 = m.get(1,2) * m.get(1,2);
 
         double t0 = (tmp_0 * m.get(1,2) + tmp_3 * m.get(1,2) + tmp_4 * m.get(1,2)) -        (tmp_1 * m.get(1,2) + tmp_2 * m.get(1,2) + tmp_5 * m.get(1,2));
         double t1 = (tmp_1 * m.get(1,2) + tmp_6 * m.get(1,2) + tmp_9 * m.get(1,2)) -        (tmp_0 * m.get(1,2) + tmp_7 * m.get(1,2) + tmp_8 * m.get(1,2));
@@ -198,42 +231,42 @@ public class mat4{
         double d = 1.0 / (m.get(1,2) * t0 + m.get(1,2) * t1 + m.get(1,2) * t2 + m.get(1,2) * t3);
 
         return new mat4(d * t0, d * t1, d * t2, d * t3,
-           d * ((tmp_1 * m.get(1,2) + tmp_2 * m.get(1,2) + tmp_5 * m.get(1,2)) -
-              (tmp_0 * m.get(1,2) + tmp_3 * m.get(1,2) + tmp_4 * m.get(1,2))),
-           d * ((tmp_0 * m.get(1,2) + tmp_7 * m.get(1,2) + tmp_8 * m.get(1,2)) -
-              (tmp_1 * m.get(1,2) + tmp_6 * m.get(1,2) + tmp_9 * m.get(1,2))),
-           d * ((tmp_3 * m.get(1,2) + tmp_6 * m.get(1,2) + tmp_11 * m.get(1,2)) -
-              (tmp_2 * m.get(1,2) + tmp_7 * m.get(1,2) + tmp_10 * m.get(1,2))),
-           d * ((tmp_4 * m.get(1,2) + tmp_9 * m.get(1,2) + tmp_10 * m.get(1,2)) -
-              (tmp_5 * m.get(1,2) + tmp_8 * m.get(1,2) + tmp_11 * m.get(1,2))),
-           d * ((tmp_12 * m.get(1,2) + tmp_15 * m.get(1,2) + tmp_16 * m.get(1,2)) -
-              (tmp_13 * m.get(1,2) + tmp_14 * m.get(1,2) + tmp_17 * m.get(1,2))),
-           d * ((tmp_13 * m.get(1,2) + tmp_18 * m.get(1,2) + tmp_21 * m.get(1,2)) -
-              (tmp_12 * m.get(1,2) + tmp_19 * m.get(1,2) + tmp_20 * m.get(1,2))),
-           d * ((tmp_14 * m.get(1,2) + tmp_19 * m.get(1,2) + tmp_22 * m.get(1,2)) -
-              (tmp_15 * m.get(1,2) + tmp_18 * m.get(1,2) + tmp_23 * m.get(1,2))),
-           d * ((tmp_17 * m.get(1,2) + tmp_20 * m.get(1,2) + tmp_23 * m.get(1,2)) -
-              (tmp_16 * m.get(1,2) + tmp_21 * m.get(1,2) + tmp_22 * m.get(1,2))),
-           d * ((tmp_14 * m.get(1,2) + tmp_17 * m.get(1,2) + tmp_13 * m.get(1,2)) -
-              (tmp_16 * m.get(1,2) + tmp_12 * m.get(1,2) + tmp_15 * m.get(1,2))),
-           d * ((tmp_20 * m.get(1,2) + tmp_12 * m.get(1,2) + tmp_19 * m.get(1,2)) -
-              (tmp_18 * m.get(1,2) + tmp_21 * m.get(1,2) + tmp_13 * m.get(1,2))),
-           d * ((tmp_18 * m.get(1,2) + tmp_23 * m.get(1,2) + tmp_15 * m.get(1,2)) -
-              (tmp_22 * m.get(1,2) + tmp_14 * m.get(1,2) + tmp_19 * m.get(1,2))),
-           d * ((tmp_22 * m.get(1,2) + tmp_16 * m.get(1,2) + tmp_21 * m.get(1,2)) -
-              (tmp_20 * m.get(1,2) + tmp_23 * m.get(1,2) + tmp_17 * m.get(1,2))));
-        
+                d * ((tmp_1 * m.get(1,2) + tmp_2 * m.get(1,2) + tmp_5 * m.get(1,2)) -
+                        (tmp_0 * m.get(1,2) + tmp_3 * m.get(1,2) + tmp_4 * m.get(1,2))),
+                d * ((tmp_0 * m.get(1,2) + tmp_7 * m.get(1,2) + tmp_8 * m.get(1,2)) -
+                        (tmp_1 * m.get(1,2) + tmp_6 * m.get(1,2) + tmp_9 * m.get(1,2))),
+                d * ((tmp_3 * m.get(1,2) + tmp_6 * m.get(1,2) + tmp_11 * m.get(1,2)) -
+                        (tmp_2 * m.get(1,2) + tmp_7 * m.get(1,2) + tmp_10 * m.get(1,2))),
+                d * ((tmp_4 * m.get(1,2) + tmp_9 * m.get(1,2) + tmp_10 * m.get(1,2)) -
+                        (tmp_5 * m.get(1,2) + tmp_8 * m.get(1,2) + tmp_11 * m.get(1,2))),
+                d * ((tmp_12 * m.get(1,2) + tmp_15 * m.get(1,2) + tmp_16 * m.get(1,2)) -
+                        (tmp_13 * m.get(1,2) + tmp_14 * m.get(1,2) + tmp_17 * m.get(1,2))),
+                d * ((tmp_13 * m.get(1,2) + tmp_18 * m.get(1,2) + tmp_21 * m.get(1,2)) -
+                        (tmp_12 * m.get(1,2) + tmp_19 * m.get(1,2) + tmp_20 * m.get(1,2))),
+                d * ((tmp_14 * m.get(1,2) + tmp_19 * m.get(1,2) + tmp_22 * m.get(1,2)) -
+                        (tmp_15 * m.get(1,2) + tmp_18 * m.get(1,2) + tmp_23 * m.get(1,2))),
+                d * ((tmp_17 * m.get(1,2) + tmp_20 * m.get(1,2) + tmp_23 * m.get(1,2)) -
+                        (tmp_16 * m.get(1,2) + tmp_21 * m.get(1,2) + tmp_22 * m.get(1,2))),
+                d * ((tmp_14 * m.get(1,2) + tmp_17 * m.get(1,2) + tmp_13 * m.get(1,2)) -
+                        (tmp_16 * m.get(1,2) + tmp_12 * m.get(1,2) + tmp_15 * m.get(1,2))),
+                d * ((tmp_20 * m.get(1,2) + tmp_12 * m.get(1,2) + tmp_19 * m.get(1,2)) -
+                        (tmp_18 * m.get(1,2) + tmp_21 * m.get(1,2) + tmp_13 * m.get(1,2))),
+                d * ((tmp_18 * m.get(1,2) + tmp_23 * m.get(1,2) + tmp_15 * m.get(1,2)) -
+                        (tmp_22 * m.get(1,2) + tmp_14 * m.get(1,2) + tmp_19 * m.get(1,2))),
+                d * ((tmp_22 * m.get(1,2) + tmp_16 * m.get(1,2) + tmp_21 * m.get(1,2)) -
+                        (tmp_20 * m.get(1,2) + tmp_23 * m.get(1,2) + tmp_17 * m.get(1,2))));
+
     }
-    
+
     public mat4 transpose(){
         return new mat4(
-            this.get(0,0), this.get(1,0), this.get(2,0), this.get(3,0),
-            this.get(0,1), this.get(1,1), this.get(2,1), this.get(3,1),
-            this.get(0,2), this.get(1,2), this.get(2,2), this.get(3,2),
-            this.get(0,3), this.get(1,3), this.get(2,3), this.get(3,3)
+                this.get(0,0), this.get(1,0), this.get(2,0), this.get(3,0),
+                this.get(0,1), this.get(1,1), this.get(2,1), this.get(3,1),
+                this.get(0,2), this.get(1,2), this.get(2,2), this.get(3,2),
+                this.get(0,3), this.get(1,3), this.get(2,3), this.get(3,3)
         );
     }
-    
+
     public Object clone(){
         mat4 m = new mat4();
         for(int i=0;i<16;++i){

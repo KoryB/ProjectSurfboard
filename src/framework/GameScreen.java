@@ -22,14 +22,15 @@ import static framework.math3d.math3d.normalize;
 public class GameScreen implements Screen
 {
 
-    //Player mPlayer;
+    Player mPlayer;
     public static InputHandler mInput = new InputHandler("config/cfg.properties");
-    ;
+
     public static float SCALE = 5.0f;
+
     private boolean mPaused;
     Camera cam;
-    Program blurprog;
-    float prev, framenum;
+    Program blurprog, kinematicsprog;
+    float elapsed, framenum;
     //    UnitSquare usq;
     //    ImageTextureArray ita;
     Wall wall, wall2, wall3;
@@ -68,22 +69,16 @@ public class GameScreen implements Screen
         //        cam.lookAtPlayer(player);
         //        cam.lookAt(new vec3(0, 4, 0), new vec3(), normalize(new vec3(0, 0, -1)));
 
-        prev = (float) (System.nanoTime() * 1E-9);
-
         framenum = 0.0f;
+
+        kinematicsprog = new Program("shaders/kinematicsvs.glsl", "shaders/fs.txt");
     }
 
     @Override
-    public void update()
+    public void update(long dtime)
     {
         mInput.poll();
-
-        float now = (float) (System.nanoTime() * 1E-9);
-        float elapsed = now - prev;
-
-//        System.out.println(1.0/ elapsed);
-
-        prev = now;
+        elapsed = ((float) dtime) / 1000;
 
         if (mInput.keyDown("CAMERA_MOVE_FORWARD"))
             cam.walk(2.0f * elapsed);
@@ -110,8 +105,6 @@ public class GameScreen implements Screen
             cam.strafe(new vec3(0, -0.4f * elapsed, 0));
         if (mInput.keyDown(SDLK_e))
             cam.strafe(new vec3(0, 0.4f * elapsed, 0));
-
-        cam.lookAtPlayer(player);
 
         //        TODO: make mouse buttons constants
         if (mInput.mouseDown(1))
@@ -150,14 +143,18 @@ public class GameScreen implements Screen
 
         player.update(elapsed);
 
+        cam.lookAtPlayer(player);
+
     }
 
     @Override
     public void draw(Program program)
     {
-        cam.draw(program);
-        program.setUniform("lightPos", new vec3(3, 6, 3));
-        DrawManager.getInstance().drawMirrorFloors(program, cam, level, player);
+        program.setUniform("lightPos", new vec3(50, 50, 50));
+        kinematicsprog.use();
+        kinematicsprog.setUniform("lightPos", new vec3(50, 50, 50));
+        program.use();
+        DrawManager.getInstance().drawMirrorFloors(program, kinematicsprog, cam, level, player);
         program.setUniform("shadow_texture", mDummyTexture);
         shadowFBO.bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
@@ -168,17 +165,11 @@ public class GameScreen implements Screen
         program.setUniform("lightProjMatrix", cam.compute_projp_matrix());
         program.setUniform("lightHitherYon", new vec4(cam.hither, cam.yon, cam.yon - cam.hither, GameScreen.SCALE));
         program.setUniform("shadow_texture", shadowFBO.texture);
-
-//        mSquareDraw.use();
-//        mSquareDraw.setUniform("toDisplay", shadowFBO.texture);
-//        debugSquare.draw(mSquareDraw);
-//        mSquareDraw.setUniform("toDisplay", mDummyTexture);
-//        program.use();
-
-        cam.lookAtPlayer(player);
         cam.draw(program);
-//
-        player.draw(program);
+        kinematicsprog.use();
+        cam.draw(kinematicsprog);
+        player.draw(kinematicsprog);
+        program.use();
 
         glStencilFunc(GL_ALWAYS, 1, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -187,19 +178,22 @@ public class GameScreen implements Screen
 
         //        glClear(GL_DEPTH_BUFFER_BIT);
 //        DrawManager.getInstance().drawLaplacian(player, program, null); //this produces white.
+        kinematicsprog.use();
         glStencilFunc(GL_EQUAL, 1, 0xff);
         glStencilOp(GL_KEEP, GL_INCR, GL_KEEP);
-        player.draw(program);
+        player.draw(kinematicsprog);
 //        DrawManager.getInstance().drawBlurScreen(player, program, null, 10, 10);
 
         glStencilFunc(GL_LEQUAL, 2, 0xff); // Reference less than or equal to buffer. 2 <= 2 so works! 2 <= 3 works!
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        DrawManager.getInstance().drawLaplacian(player, program, null, new vec4(0.5, 1.0, 0.5, 0.5), new vec4(0.5, 0.1, 0.1, 0.5));
+        DrawManager.getInstance().drawLaplacian(player, kinematicsprog, null, new vec4(0.5, 1.0, 0.5, 0.5), new vec4(0.5, 0.1, 0.1, 0.5));
 
         glStencilFunc(GL_ALWAYS, 0, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+        program.use();
     }
 
     @Override

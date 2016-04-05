@@ -216,8 +216,7 @@ public class DrawManager
 
         NEXT_AVAILABLE_FBO -=2;
     }
-
-    public void drawMirrorFloors(Program originalProgram, Camera camInUse, Level level, Player player){
+    public void drawMirrorFloors(Program originalProgram, Program playerProgram, Camera camInUse, Level level, Player player){
         int myAvailableFBO = NEXT_AVAILABLE_FBO;
         NEXT_AVAILABLE_FBO += 1;
 
@@ -232,8 +231,11 @@ public class DrawManager
 
         //Draw reflection to FBO
         glFrontFace(GL_CW);
+        playerProgram.use();
+        camInUse.drawWithAdditionalMatrix(playerProgram, flipMatrix);
+        player.draw(playerProgram);
+        originalProgram.use();
         camInUse.drawWithAdditionalMatrix(originalProgram, flipMatrix);
-        player.draw(originalProgram);
         level.drawAllExceptFloor(originalProgram);
         tFBOArray[myAvailableFBO].unbind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

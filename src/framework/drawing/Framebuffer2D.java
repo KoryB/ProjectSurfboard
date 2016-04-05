@@ -13,9 +13,10 @@ import static JGL.JGL.*;
  */
 public class Framebuffer2D extends FramebufferObject {
     int width,height;       //size of FBO
+    public Texture2D[] textures;   //all the textures for the fbo
+    Texture2D texture;      //alias for textures[0]
+    Texture2D depthtexture;         //depth texture (z buffer) + stencil
     int fbo;                //GL identifier
-    public Texture texture;      //alias for textures[0]
-    public Texture2D depthtexture;         //depth texture (z buffer) + stencil
     
     public Framebuffer2D(int width, int height){
         init(width,height,GL_RGBA,GL_UNSIGNED_BYTE,1);
@@ -46,7 +47,7 @@ public class Framebuffer2D extends FramebufferObject {
             textures[i].unbind();
         }
         texture = textures[0];
-        depthtexture = new Texture2D(width,height);
+        depthtexture = new Texture2D(width, height);
         depthtexture.bind(0);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, width,height,0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, null );
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

@@ -7,16 +7,12 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import static JGL.JGL.*;
-
-
-/**
- *
- * @author jhudson
- */
-public class ImageTexture  extends Texture2D{
+public class ImageTexture extends Texture2D
+{
+    int w,h;
     
     public ImageTexture(String filename){
-        super(0,0);
+        super(0, 0);
         byte[] pix;
         try {
             BufferedImage img = ImageIO.read(new File(filename));
@@ -61,6 +57,5 @@ public class ImageTexture  extends Texture2D{
             glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
         }
     }
-   
 }
         
