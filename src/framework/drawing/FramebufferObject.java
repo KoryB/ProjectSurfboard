@@ -4,6 +4,7 @@ package framework.drawing;
 //generic base for framebuffers
 
 import framework.drawing.textures.Texture;
+import framework.drawing.textures.Texture2D;
 
 import static JGL.JGL.GL_FRAMEBUFFER;
 import static JGL.JGL.glBindFramebuffer;
@@ -12,7 +13,7 @@ import static JGL.JGL.glViewport;
 public class FramebufferObject {
     public static FramebufferObject active_fbo;  //tells which FBO is currently active, or null if none
     public static int[] viewport = new int[4];     //viewport that was active before
-    public Texture[] textures; //initialized by subclass
+    public Texture2D[] textures; //initialized by subclass
 
     protected void checkOkToBind(){
         if( active_fbo != null )

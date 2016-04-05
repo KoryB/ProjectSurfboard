@@ -155,16 +155,9 @@ public class GameScreen implements Screen
         kinematicsprog.setUniform("lightPos", new vec3(50, 50, 50));
         program.use();
         DrawManager.getInstance().drawMirrorFloors(program, kinematicsprog, cam, level, player);
-        program.setUniform("shadow_texture", mDummyTexture);
-        shadowFBO.bind();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        shadowFBO.unbind();
-        cam.lookAt(new vec3(3, 6, 3), new vec3(0, 0, 0), new vec3(0, 1, 0));
-        DrawManager.getInstance().drawShadowBuffer(program, cam, shadowFBO, level, player);
-        program.setUniform("lightViewMatrix", cam.getViewMatrix());
-        program.setUniform("lightProjMatrix", cam.compute_projp_matrix());
-        program.setUniform("lightHitherYon", new vec4(cam.hither, cam.yon, cam.yon - cam.hither, GameScreen.SCALE));
-        program.setUniform("shadow_texture", shadowFBO.texture);
+
+        //drawShadows(program);
+
         cam.draw(program);
         kinematicsprog.use();
         cam.draw(kinematicsprog);
@@ -194,6 +187,20 @@ public class GameScreen implements Screen
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
         program.use();
+    }
+
+    public void drawShadows(Program program)
+    {
+        program.setUniform("shadow_texture", mDummyTexture);
+        shadowFBO.bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        shadowFBO.unbind();
+        cam.lookAt(new vec3(3, 6, 3), new vec3(0, 0, 0), new vec3(0, 1, 0));
+        DrawManager.getInstance().drawShadowBuffer(program, cam, shadowFBO, level, player);
+        program.setUniform("lightViewMatrix", cam.getViewMatrix());
+        program.setUniform("lightProjMatrix", cam.compute_projp_matrix());
+        program.setUniform("lightHitherYon", new vec4(cam.hither, cam.yon, cam.yon - cam.hither, GameScreen.SCALE));
+        program.setUniform("shadow_texture", shadowFBO.texture);
     }
 
     @Override

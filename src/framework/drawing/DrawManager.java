@@ -221,6 +221,7 @@ public class DrawManager
         NEXT_AVAILABLE_FBO += 1;
 
         originalProgram.use();
+
         tFBOArray[myAvailableFBO].bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 

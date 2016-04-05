@@ -33,49 +33,31 @@ public class Program{
     //the currently active program
     private static Program active;
 
-    public Program(String vsfname, String fsfname ){
-        init(vsfname,null,null,null,fsfname,null);
-    }
-    public Program(String vsfname,String gsfname, String fsfname){
-        init(vsfname,null,null,gsfname,fsfname,null);
-    }
-    public Program(String vsfname, String tcsfname, String tesfname, String gsfname, String fsfname){
-        init(vsfname,tcsfname, tesfname, gsfname,fsfname,null);
-    }
-    
-    private void init(String vsfname, String tcsfname, String tesfname, String gsfname, String fsfname, String csfname) {
-
-        int vs = 0, tcs = 0, tes = 0, gs = 0, fs = 0, cs = 0;
-        if (vsfname != null)
-            vs = make_shader(vsfname, GL_VERTEX_SHADER);
-        if (tcsfname != null)
-            tcs = make_shader(tcsfname, GL_TESS_CONTROL_SHADER);
-        if (tesfname != null)
-            tes = make_shader(tesfname, GL_TESS_EVALUATION_SHADER);
-        if (gsfname != null)
-            gs = make_shader(vsfname, GL_GEOMETRY_SHADER);
-        if (fsfname != null)
-            fs = make_shader(fsfname, GL_FRAGMENT_SHADER);
-        if (csfname != null)
-            cs = make_shader(csfname, GL_COMPUTE_SHADER);
-    }
     public Program(String csfname ){
         init(null,null,null,null,null,csfname,new String[0]);
     }
-    
+
     public Program(String vsfname, String fsfname, String[] outputs){
         init(vsfname,null,null,null,fsfname,null,outputs);
     }
-
+    public Program(String vsfname, String fsfname ){
+        init(vsfname,null,null,null,fsfname,null, new String[]{"color"} );
+    }
+    public Program(String vsfname,String gsfname, String fsfname){
+        init(vsfname,null,null,gsfname,fsfname,null,new String[]{"color"});
+    }
+    public Program(String vsfname, String tcsfname, String tesfname, String gsfname, String fsfname){
+        init(vsfname,tcsfname, tesfname, gsfname,fsfname,null,new String[]{"color"});
+    }
     public Program(String vsfname, String tcsfname, String tesfname, String gsfname, String fsfname,String[] outputs){
         init(vsfname,tcsfname,tesfname,gsfname,fsfname,null,outputs);
     }
-    
+
     private void init(String vsfname, String tcsfname, String tesfname, String gsfname,
-            String fsfname, String csfname, String[] outputs){
-        
+                      String fsfname, String csfname, String[] outputs){
+
         ArrayList<String> fn = new ArrayList<>();
-        
+
         int vs=0,tcs=0,tes=0,gs=0,fs=0,cs=0;
         if(vsfname!=null){
             vs = make_shader(vsfname,GL_VERTEX_SHADER);
@@ -101,10 +83,10 @@ public class Program{
             cs = make_shader(csfname,GL_COMPUTE_SHADER);
             fn.add(csfname);
         }
-        
+
         String[] fna = fn.toArray(new String[0]);
         fnames = String.join("+",fna);
-        
+
         prog = glCreateProgram();
         if( vs != 0 )
             glAttachShader(prog,vs);
@@ -118,21 +100,20 @@ public class Program{
             glAttachShader(prog,fs);
         if( cs != 0 )
             glAttachShader(prog,cs);
-        
+
         //set attribute locations
         glBindAttribLocation(prog,POSITION_INDEX,"a_position");
         glBindAttribLocation(prog,TEXCOORD_INDEX,"a_texcoord");
         glBindAttribLocation(prog,NORMAL_INDEX,"a_normal");
-
         glBindAttribLocation(prog,TANGENT_INDEX,"a_tangent");
         glBindAttribLocation(prog,WEIGHT_INDEX,"a_weight");
         glBindAttribLocation(prog,INFLUENCE_INDEX,"a_influence");
 
         for(int i=0;i<outputs.length;++i)
             glBindFragDataLocation(prog,i,outputs[i]);
-         
+
         glLinkProgram(prog);
-        
+
         int[] tmp = new int[1];
         glGetProgramiv(prog,GL_INFO_LOG_LENGTH,tmp);
         if( tmp[0] > 0 ){
@@ -157,42 +138,42 @@ public class Program{
         if( tmp[0] == 0 ){
             throw new RuntimeException("Could not link shaders");
         }
-        
+
         for(String x : outputs ){
             int loc = glGetFragDataLocation(prog,x);
             if( loc == -1 )
                 throw new RuntimeException("Shader "+fsfname+" does not have output "+x);
         }
-        
+
         glGetProgramiv( prog, GL_ACTIVE_UNIFORMS, tmp );
         int numuniforms = tmp[0];
         int texcount=0;
-        
+
         for(int i=0;i<numuniforms;++i){
             int[] ty = new int[1];
             int[] sz = new int[1];
             int[] idx = new int[1];
-            
-            glGetActiveUniformsiv(prog,1,new int[]{i}, 
-                    GL_UNIFORM_TYPE, 
+
+            glGetActiveUniformsiv(prog,1,new int[]{i},
+                    GL_UNIFORM_TYPE,
                     ty );
-                    
+
             glGetActiveUniformsiv(prog,1,new int[]{i},
                     GL_UNIFORM_SIZE, sz );
-            
+
             byte[] nm = new byte[128];
             int[] le = new int[1];
             glGetActiveUniformName( prog, i, nm.length,
-                le, nm );
+                    le, nm );
             String nm_ = new  String(nm,0,le[0]);
-            
+
             UniformSetter setter = null;
-            
+
             int uloc = glGetUniformLocation(prog,nm_);
-            
-            
+
+
             //System.out.println(fnames+": "+nm_+" "+uloc);
-            
+
             if(ty[0] == GL_FLOAT_MAT4 && sz[0] == 1 )
                 setter = new Mat4Setter(nm_,uloc);
             else if(ty[0] == GL_FLOAT_VEC4 && sz[0] == 1 )
@@ -213,19 +194,14 @@ public class Program{
                 setter = new BooleanSetter(nm_,uloc);
             else if( ty[0] == GL_SAMPLER_2D && sz[0] == 1 )
                 setter = new Sampler2DSetter(nm_,uloc,texcount++);
-            else if( ty[0] == GL_SAMPLER_CUBE && sz[0] == 1 )
-                setter = new SamplerCubeSetter(nm_,uloc,texcount++);
             else
                 throw new RuntimeException("Don't know about type for uniform "+nm_+": "+ty[0]);
 
             uniforms.put(nm_,setter);
             unset_uniforms.add(nm_);
         }
-        
-        glBindFragDataLocation(prog,0,"color");
-        for(int i=0;i<8;++i){
-            glBindFragDataLocation(prog,i,"color"+i);
-        }
+
+
     }
        
     public void use(){
@@ -249,6 +225,10 @@ public class Program{
             uniforms.get(name).set(value);
         else{
             if( !warned_nonexistent.contains(name)){
+                if (fnames == null)
+                {
+                    throw new RuntimeException();
+                }
                 System.out.println("Warning: In "+fnames+": No such uniform "+name);
                 warned_nonexistent.add(name);
 //                if (name.equals("bonetex"))

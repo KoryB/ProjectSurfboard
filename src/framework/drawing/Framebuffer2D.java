@@ -13,8 +13,7 @@ import static JGL.JGL.*;
  */
 public class Framebuffer2D extends FramebufferObject {
     int width,height;       //size of FBO
-    public Texture2D[] textures;   //all the textures for the fbo
-    Texture2D texture;      //alias for textures[0]
+    public Texture2D texture;      //alias for textures[0]
     Texture2D depthtexture;         //depth texture (z buffer) + stencil
     int fbo;                //GL identifier
     
