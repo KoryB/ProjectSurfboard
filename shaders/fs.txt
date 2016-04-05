@@ -1,5 +1,10 @@
 #version 150
 
+uniform mat4 lightViewMatrix;
+uniform mat4 lightProjMatrix;
+uniform vec3 lightHitherYon;
+uniform sampler2D shadow_texture;
+
 uniform vec3 lightPos;
 uniform vec3 eyePos;
 uniform sampler2D diffuse_texture;

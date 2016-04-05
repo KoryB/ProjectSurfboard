@@ -1,6 +1,6 @@
 package framework;
 
-import framework.drawing.Framebuffer;
+import framework.drawing.Framebuffer2D;
 import framework.drawing.Program;
 import framework.drawing.UnitSquare;
 import framework.drawing.textures.SolidTexture;
@@ -66,14 +66,14 @@ public class Main2
         Program blurprog;
         float prev;
         UnitSquare usq;
-        Framebuffer fbo1;
-        Framebuffer fbo2;
+        Framebuffer2D fbo1;
+        Framebuffer2D fbo2;
         Texture2D dummytex = new SolidTexture(GL_UNSIGNED_BYTE, 0, 0, 0, 0);
         Player player = new Player(new vec4(-2.0, 1, -.5, 1));
         usq = new UnitSquare();
 
-        fbo1 = new Framebuffer(512, 512);
-        fbo2 = new Framebuffer(512, 512);
+        fbo1 = new Framebuffer2D(512, 512);
+        fbo2 = new Framebuffer2D(512, 512);
 
         prog = new Program("vs.txt", "fs.txt");
         blurprog = new Program("blurvs.txt", "blurfs.txt");

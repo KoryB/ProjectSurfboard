@@ -17,9 +17,8 @@ public class Camera implements Drawable
     public vec4 mCOIOffset = new vec4(1.0, -3.0, -1.0, 0.0);
     public vec4 mUP = new vec4(1.0, 0.0, -1.0, 0.0);
     float fov_v = 45;
-    float hither = 0.1f;
-    float yon = 1000;
-    float aspect_ratio = 1.0f;
+    public float hither = 0.1f;
+    public float yon = 75.0f;
     float fov_h = fov_v * Util.WINDOW_ASPECT_RATIO;
     mat4 projMatrix;
     mat4 viewMatrix;
@@ -28,8 +27,8 @@ public class Camera implements Drawable
     float mTop = 2.0f;
     float mRight = mTop * Util.WINDOW_ASPECT_RATIO;
     //    float mBottom = -1.0f;
-    float mNear = 0.1f;
-    float mFar = 30.1f;
+    public float mNear = 0.1f;
+    public float mFar = 30.1f;
 
     vec4 mEye;
 
@@ -52,9 +51,9 @@ public class Camera implements Drawable
         compute_view_matrix();
     }
 
-    public void compute_projp_matrix()
+    public mat4 compute_projp_matrix()
     {
-        projMatrix = new mat4(
+        return new mat4(
                 1 / tan(toRadians(fov_h)), 0, 0, 0,
                 0, 1 / tan(toRadians(fov_v)), 0, 0,
                 0, 0, 1 + 2.0 * yon / (hither - yon), -1,
@@ -89,6 +88,18 @@ public class Camera implements Drawable
         mViewOrigin = add(mEye, W.mul(-mNear), V.mul(mHalfViewHeight), U.mul(-mHalfViewWidth));
     }
 
+    public mat4 getViewMatrix()
+    {
+        return viewMatrix;
+    }
+
+    public float getHither() {
+        return hither;
+    }
+
+    public float getYon() {
+        return yon;
+    }
 
     public void draw(Program prog)
     {
@@ -191,6 +202,10 @@ public class Camera implements Drawable
     public Ray getRay(vec2 screenCoord)
     {
         return new Ray(calculatePixelPosition(screenCoord), W.neg());
+    }
+
+    public mat4 getProjMatrix() {
+        return projMatrix;
     }
 }
     

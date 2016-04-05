@@ -1,5 +1,6 @@
 package framework.drawing;
 
+import framework.drawing.textures.CubeTexture;
 import framework.drawing.textures.Texture2D;
 import framework.math3d.vec2;
 import framework.math3d.vec3;
@@ -30,19 +31,51 @@ public class Program{
     //the currently active program
     private static Program active;
     
-    public Program(String vsfname, String fsfname ){
+     public Program(String vsfname, String fsfname ){
+        init(vsfname,null,null,null,fsfname,null);
+    }
+    public Program(String vsfname,String gsfname, String fsfname){
+        init(vsfname,null,null,gsfname,fsfname,null);
+    }
+    public Program(String vsfname, String tcsfname, String tesfname, String gsfname, String fsfname){
+        init(vsfname,tcsfname, tesfname, gsfname,fsfname,null);
+    }
+    
+    private void init(String vsfname, String tcsfname, String tesfname, String gsfname, String fsfname, String csfname){
         
-        int vs = make_shader(vsfname, GL_VERTEX_SHADER);
-        int fs = make_shader(fsfname, GL_FRAGMENT_SHADER);
+        int vs=0,tcs=0,tes=0,gs=0,fs=0,cs=0;
+        if(vsfname!=null)
+            vs = make_shader(vsfname,GL_VERTEX_SHADER);
+        if(tcsfname!=null)
+            tcs = make_shader(tcsfname,GL_TESS_CONTROL_SHADER);
+        if(tesfname!=null)
+            tes = make_shader(tesfname,GL_TESS_EVALUATION_SHADER);
+        if(gsfname!=null)
+            gs = make_shader(vsfname,GL_GEOMETRY_SHADER);
+        if(fsfname!=null)
+            fs = make_shader(fsfname, GL_FRAGMENT_SHADER);
+        if(csfname!=null)
+            cs = make_shader(csfname,GL_COMPUTE_SHADER);
         
         prog = glCreateProgram();
-        glAttachShader(prog,vs);
-        glAttachShader(prog,fs);
+        if( vs != 0 )
+            glAttachShader(prog,vs);
+        if( tcs != 0 )
+            glAttachShader(prog,tcs);
+        if( tes != 0 )
+            glAttachShader(prog,tes);
+        if( gs != 0 )
+            glAttachShader(prog,gs);
+        if( fs != 0 )
+            glAttachShader(prog,fs);
+        if( cs != 0 )
+            glAttachShader(prog,cs);
         
         //set attribute locations
         glBindAttribLocation(prog,POSITION_INDEX,"a_position");
         glBindAttribLocation(prog,TEXCOORD_INDEX,"a_texcoord");
         glBindAttribLocation(prog,NORMAL_INDEX,"a_normal");
+//        glBindAttribLocation(prog,TANGENT_INDEX,"a_tangent");
         
         glLinkProgram(prog);
         
@@ -100,28 +133,24 @@ public class Program{
                 setter = new FloatSetter(nm_,uloc);
             else if(ty[0] == GL_FLOAT && sz[0] > 1 )
                 setter = new FloatArraySetter(nm_,uloc, sz[0]);
-            else if( ty[0] == GL_SAMPLER_2D && sz[0] == 1 ){
-                setter = new Sampler2DSetter(nm_,uloc,texcount);
-                texcount++;
-            }
-            else if( ty[0] == GL_SAMPLER_2D_ARRAY && sz[0] == 1 ){
-                setter = new Sampler2DSetter(nm_,uloc,texcount);
-                texcount++;
-            }
+            else if(ty[0] == GL_BOOL && sz[0] == 1 )
+                setter = new BooleanSetter(nm_,uloc);
+            else if( ty[0] == GL_SAMPLER_2D && sz[0] == 1 )
+                setter = new Sampler2DSetter(nm_,uloc,texcount++);
+            else if( ty[0] == GL_SAMPLER_CUBE && sz[0] == 1 )
+                setter = new SamplerCubeSetter(nm_,uloc,texcount++);
             else
                 throw new RuntimeException("Don't know about type for uniform "+nm_);
 
-            System.out.println(nm_);
             uniforms.put(nm_,setter);
         }
-
         
         glBindFragDataLocation(prog,0,"color");
         for(int i=0;i<8;++i){
             glBindFragDataLocation(prog,i,"color"+i);
         }
     }
-        
+       
     public void use(){
         glUseProgram(prog);
         active=this;
@@ -313,6 +342,39 @@ public class Program{
                 throw new RuntimeException("Not a float[], and/or size doesn't match");
             float[] n = (float[]) o;
             glUniform1fv(i, size, n);
+        }
+        protected Object makecopy(Object o){
+            return o;
+        }
+    }
+	class BooleanSetter extends UniformSetter{
+        public BooleanSetter(String name,int idx){
+            super(name,idx);
+        }
+        @Override
+        public void do_set(Object o){
+            if( ! (o instanceof Boolean) )
+                throw new RuntimeException("Not a boolean");
+            Boolean n = (Boolean) o;
+            glUniform1i( i, n ? 1:0);
+        }
+        protected Object makecopy(Object o){
+            return o;
+        }
+    }
+    class SamplerCubeSetter extends UniformSetter{
+        int unit;
+        public SamplerCubeSetter(String name, int idx, int unit){
+            super(name,idx);
+            this.unit=unit;
+        }
+        @Override
+        public void do_set(Object o){
+            if( ! (o instanceof CubeTexture) )
+                throw new RuntimeException("Not a CubeTexture");
+            CubeTexture v =  (CubeTexture) o;
+            v.bind(unit);
+            glUniform1i(i,unit);
         }
         protected Object makecopy(Object o){
             return o;

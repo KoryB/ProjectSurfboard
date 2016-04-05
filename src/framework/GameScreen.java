@@ -1,16 +1,16 @@
 package framework;
 
 import framework.collisions.CollisionHandler;
-import framework.collisions.CollisionObject;
 import framework.drawing.DrawManager;
+import framework.drawing.Framebuffer2D;
 import framework.drawing.Program;
+import framework.drawing.UnitSquare;
+import framework.drawing.textures.SolidTexture;
+import framework.drawing.textures.Texture2D;
 import framework.math3d.*;
 import framework.math3d.primitives.BoundedPlane;
 import framework.math3d.primitives.IntersectionHandler;
-import framework.math3d.primitives.Plane;
 import framework.math3d.primitives.Ray;
-
-import java.util.Arrays;
 
 import static JGL.JGL.*;
 import static JSDL.JSDL.*;
@@ -25,6 +25,7 @@ public class GameScreen implements Screen
     //Player mPlayer;
     public static InputHandler mInput = new InputHandler("config/cfg.properties");
     ;
+    public static float SCALE = 5.0f;
     private boolean mPaused;
     Camera cam;
     Program blurprog;
@@ -35,11 +36,15 @@ public class GameScreen implements Screen
     Player player;
     Floor floor;
     Level level;
+    Framebuffer2D shadowFBO = new Framebuffer2D(1024, 1024, GL_R32F, GL_FLOAT);
+    private Texture2D mDummyTexture = new SolidTexture(GL_FLOAT, 0.0f, 0.0f, 0.0f, 0.0f);
+    private UnitSquare debugSquare = new UnitSquare();
+    private Program mSquareDraw = new Program("shaders/blurvs.txt", "shaders/usquarefs.glsl");
 
     public GameScreen()
     {
         mPaused = false;
-        level = new Level(new vec2(50, 50), .12f);
+        level = new Level(new vec2(50, 50), .35f);
 
         int[] tmp = new int[1];
         glGenVertexArrays(1, tmp);
@@ -76,7 +81,7 @@ public class GameScreen implements Screen
         float now = (float) (System.nanoTime() * 1E-9);
         float elapsed = now - prev;
 
-        System.out.println(1.0/ elapsed);
+//        System.out.println(1.0/ elapsed);
 
         prev = now;
 
@@ -150,10 +155,29 @@ public class GameScreen implements Screen
     @Override
     public void draw(Program program)
     {
-        program.setUniform("lightPos", new vec3(50, 50, 50));
-        DrawManager.getInstance().drawMirrorFloors(program, cam, level, player);
         cam.draw(program);
+        program.setUniform("lightPos", new vec3(3, 6, 3));
+        DrawManager.getInstance().drawMirrorFloors(program, cam, level, player);
+        program.setUniform("shadow_texture", mDummyTexture);
+        shadowFBO.bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        shadowFBO.unbind();
+        cam.lookAt(new vec3(3, 6, 3), new vec3(0, 0, 0), new vec3(0, 1, 0));
+        DrawManager.getInstance().drawShadowBuffer(program, cam, shadowFBO, level, player);
+        program.setUniform("lightViewMatrix", cam.getViewMatrix());
+        program.setUniform("lightProjMatrix", cam.compute_projp_matrix());
+        program.setUniform("lightHitherYon", new vec4(cam.hither, cam.yon, cam.yon - cam.hither, GameScreen.SCALE));
+        program.setUniform("shadow_texture", shadowFBO.texture);
 
+//        mSquareDraw.use();
+//        mSquareDraw.setUniform("toDisplay", shadowFBO.texture);
+//        debugSquare.draw(mSquareDraw);
+//        mSquareDraw.setUniform("toDisplay", mDummyTexture);
+//        program.use();
+
+        cam.lookAtPlayer(player);
+        cam.draw(program);
+//
         player.draw(program);
 
         glStencilFunc(GL_ALWAYS, 1, 0xff);
