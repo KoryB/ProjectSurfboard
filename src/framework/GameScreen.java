@@ -154,38 +154,43 @@ public class GameScreen implements Screen
         kinematicsprog.use();
         kinematicsprog.setUniform("lightPos", new vec3(3, 6, 3));
         program.use();
-//        DrawManager.getInstance().drawMirrorFloors(program, kinematicsprog, cam, level, player);
 
         drawShadows(program);
 
-        mSquareDraw.use();
-        mSquareDraw.setUniform("toDisplay", shadowFBO.texture);
-        debugSquare.draw(mSquareDraw);
-        mSquareDraw.setUniform("toDisplay", mDummyTexture);
-        program.use();
+//        mSquareDraw.use();
+//        mSquareDraw.setUniform("toDisplay", shadowFBO.texture);
+//        debugSquare.draw(mSquareDraw);
+//        mSquareDraw.setUniform("toDisplay", mDummyTexture);
+//        program.use();
 
-        /*
 
         cam.lookAtPlayer(player);
+
+        DrawManager.getInstance().drawMirrorFloors(program, kinematicsprog, cam, level, player);
         cam.draw(program);
         kinematicsprog.use();
         cam.draw(kinematicsprog);
         player.draw(kinematicsprog);
         program.use();
 
+        drawLaplacian(program);
+
+        kinematicsprog.use();
+        kinematicsprog.setUniform("shadow_texture", mDummyTexture);
+        program.use();
+    }
+
+    public void drawLaplacian(Program program)
+    {
         glStencilFunc(GL_ALWAYS, 1, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-//        level.drawWalls(program);
+        level.drawWalls(program);
 
-
-        //        glClear(GL_DEPTH_BUFFER_BIT);
-//        DrawManager.getInstance().drawLaplacian(player, program, null); //this produces white.
         kinematicsprog.use();
         glStencilFunc(GL_EQUAL, 1, 0xff);
         glStencilOp(GL_KEEP, GL_INCR, GL_KEEP);
-//        player.draw(kinematicsprog);
-//        DrawManager.getInstance().drawBlurScreen(player, program, null, 10, 10);
+        player.draw(kinematicsprog);
 
         glStencilFunc(GL_LEQUAL, 2, 0xff); // Reference less than or equal to buffer. 2 <= 2 so works! 2 <= 3 works!
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
@@ -195,20 +200,11 @@ public class GameScreen implements Screen
 
         glStencilFunc(GL_ALWAYS, 0, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-        */
-
-        kinematicsprog.use();
-        kinematicsprog.setUniform("shadow_texture", mDummyTexture);
-        program.use();
-
     }
 
     public void drawShadows(Program program)
     {
         program.setUniform("shadow_texture", mDummyTexture);
-        shadowFBO.bind();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        shadowFBO.unbind();
         cam.lookAt(new vec3(3, 6, 3), new vec3(0, 0, 0), new vec3(0, 1, 0));
         DrawManager.getInstance().drawShadowBuffer(program, cam, shadowFBO, level, player);
         program.setUniform("lightViewMatrix", cam.getViewMatrix());

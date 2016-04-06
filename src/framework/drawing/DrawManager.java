@@ -156,6 +156,10 @@ public class DrawManager
     //Will eventually need to have a list of drawables that cast shadows.
     public void drawShadowBuffer(Program originalProgram, Camera camInUse, Framebuffer2D shadowFBO, Level level, Player player)
     {
+        shadowFBO.bind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        shadowFBO.unbind();
+
         int myAvailableFBO = NEXT_AVAILABLE_FBO;
         NEXT_AVAILABLE_FBO += 2;
         final int BLUR_TIMES = 3;
@@ -167,15 +171,17 @@ public class DrawManager
         mShadowProgram.setUniform("hitheryon", new vec4(camInUse.hither, camInUse.yon, camInUse.yon - camInUse.hither, GameScreen.SCALE));
 
         tFBOArray[myAvailableFBO].bind();
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//        level.drawWalls(mShadowProgram);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        level.drawWalls(mShadowProgram);
         //level.drawFloors(mShadowProgram);
 
         mPlayerShadowProgram.use();
         mPlayerShadowProgram.setUniform("viewMatrix", camInUse.getViewMatrix());
         mPlayerShadowProgram.setUniform("projMatrix", camInUse.compute_projp_matrix());
         mPlayerShadowProgram.setUniform("hitheryon", new vec4(camInUse.hither, camInUse.yon, camInUse.yon - camInUse.hither, GameScreen.SCALE));
-//        player.draw(mPlayerShadowProgram);
+        player.draw(mPlayerShadowProgram);
         tFBOArray[myAvailableFBO].unbind();
 
         mBlurProgram.use();
