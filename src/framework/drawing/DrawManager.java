@@ -168,14 +168,14 @@ public class DrawManager
 
         tFBOArray[myAvailableFBO].bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        level.drawWalls(mShadowProgram);
+//        level.drawWalls(mShadowProgram);
         //level.drawFloors(mShadowProgram);
 
         mPlayerShadowProgram.use();
         mPlayerShadowProgram.setUniform("viewMatrix", camInUse.getViewMatrix());
         mPlayerShadowProgram.setUniform("projMatrix", camInUse.compute_projp_matrix());
         mPlayerShadowProgram.setUniform("hitheryon", new vec4(camInUse.hither, camInUse.yon, camInUse.yon - camInUse.hither, GameScreen.SCALE));
-        player.draw(mPlayerShadowProgram);
+//        player.draw(mPlayerShadowProgram);
         tFBOArray[myAvailableFBO].unbind();
 
         mBlurProgram.use();
@@ -240,10 +240,10 @@ public class DrawManager
         glFrontFace(GL_CW);
         playerProgram.use();
         camInUse.drawWithAdditionalMatrix(playerProgram, flipMatrix);
-        //player.draw(playerProgram);
+        player.draw(playerProgram);
         originalProgram.use();
         camInUse.drawWithAdditionalMatrix(originalProgram, flipMatrix);
-        //level.drawAllExceptFloor(originalProgram);
+        level.drawAllExceptFloor(originalProgram);
         tFBOArray[myAvailableFBO].unbind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
         glFrontFace(GL_CCW);

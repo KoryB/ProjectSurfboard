@@ -67,9 +67,9 @@ void main(){
 
     color.rgb *= litpct;
 
-    /*if (-pe.z < 0 || -pe.z > t + 0.005)
+    if (litpct == .3)
     {
-        color.rgb *= 0.4;
-    }*/
+       // color.rgb *= 100000000;
+    }
 }
 
