@@ -1,5 +1,5 @@
 #version 150
-#define EXPONENTIAL_CONSTANT 3.0
+#define EXPONENTIAL_CONSTANT 15.0
 
 uniform mat4 lightViewMatrix;
 uniform mat4 lightProjMatrix;

@@ -228,7 +228,7 @@ public class DrawManager
 
         NEXT_AVAILABLE_FBO -=2;
     }
-    public void drawMirrorFloors(Program originalProgram, Program playerProgram, Camera camInUse, Level level, Player player){
+    public void drawMirrorFloors(Program originalProgram, Program playerProgram, Camera camInUse, Level level, Player player, Framebuffer2D shadowFBO){
         int myAvailableFBO = NEXT_AVAILABLE_FBO;
         NEXT_AVAILABLE_FBO += 1;
 
@@ -248,6 +248,7 @@ public class DrawManager
         camInUse.drawWithAdditionalMatrix(playerProgram, flipMatrix);
         player.draw(playerProgram);
         originalProgram.use();
+        originalProgram.setUniform("shadow_texture", shadowFBO.texture);
         camInUse.drawWithAdditionalMatrix(originalProgram, flipMatrix);
         level.drawAllExceptFloor(originalProgram);
         tFBOArray[myAvailableFBO].unbind();

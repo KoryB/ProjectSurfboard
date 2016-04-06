@@ -71,7 +71,7 @@ public class GameScreen implements Screen
 
         framenum = 0.0f;
 
-        kinematicsprog = new Program("shaders/withshadowvs.glsl", "shaders/withshadowfs.glsl");
+        kinematicsprog = new Program("shaders/kinematicsvs.glsl", "shaders/withshadowfs.glsl");
     }
 
     @Override
@@ -157,16 +157,26 @@ public class GameScreen implements Screen
 
         drawShadows(program);
 
-//        mSquareDraw.use();
-//        mSquareDraw.setUniform("toDisplay", shadowFBO.texture);
-//        debugSquare.draw(mSquareDraw);
-//        mSquareDraw.setUniform("toDisplay", mDummyTexture);
-//        program.use();
+//        drawShadowBuffer(program);
 
+        drawItems(program);
+        program.use();
+    }
 
+    public void drawShadowBuffer(Program program)
+    {
+        mSquareDraw.use();
+        mSquareDraw.setUniform("toDisplay", shadowFBO.texture);
+        debugSquare.draw(mSquareDraw);
+        mSquareDraw.setUniform("toDisplay", mDummyTexture);
+        program.use();
+    }
+
+    public void drawItems(Program program)
+    {
         cam.lookAtPlayer(player);
 
-        DrawManager.getInstance().drawMirrorFloors(program, kinematicsprog, cam, level, player);
+        DrawManager.getInstance().drawMirrorFloors(program, kinematicsprog, cam, level, player, shadowFBO);
         cam.draw(program);
         kinematicsprog.use();
         cam.draw(kinematicsprog);
@@ -175,15 +185,13 @@ public class GameScreen implements Screen
 
         drawLaplacian(program);
 
-        kinematicsprog.use();
-        kinematicsprog.setUniform("shadow_texture", mDummyTexture);
-        program.use();
     }
 
     public void drawLaplacian(Program program)
     {
         glStencilFunc(GL_ALWAYS, 1, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        program.setUniform("shadow_texture", shadowFBO.texture);
 
         level.drawWalls(program);
 
@@ -204,6 +212,9 @@ public class GameScreen implements Screen
 
     public void drawShadows(Program program)
     {
+        kinematicsprog.use();
+        kinematicsprog.setUniform("shadow_texture", mDummyTexture);
+        program.use();
         program.setUniform("shadow_texture", mDummyTexture);
         cam.lookAt(new vec3(3, 6, 3), new vec3(0, 0, 0), new vec3(0, 1, 0));
         DrawManager.getInstance().drawShadowBuffer(program, cam, shadowFBO, level, player);
