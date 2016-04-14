@@ -16,7 +16,7 @@ public class Player extends CollisionObject implements Drawable
     private static Mesh MESH;
     private vec4 mGotoPoint;
     private float mCurrentFrame = 0.0f;
-    private float mMaxFrames = 2.0f;
+    private float mMaxFrames = 4.0f;
 
     public Player(vec4 position)
     {
@@ -92,7 +92,7 @@ public class Player extends CollisionObject implements Drawable
     public void draw(Program program)
     {
         //TODO: Fix floating
-        program.setUniform("worldMatrix", math3d.scaling(.5f, 1f, .5f).mul(math3d.translation(mPosition)));
+        program.setUniform("worldMatrix", math3d.axisRotation(0, 1, 0, 0).mul(math3d.scaling(.5f, 1f, .5f).mul(math3d.translation(mPosition)).mul(math3d.translation(0, -1, 0))));
         program.setUniform("curframe", mCurrentFrame);
         MESH.draw(program);
     }

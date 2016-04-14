@@ -101,7 +101,7 @@ void main(){
 
     vec4 p = vec4( a_position, 1.0 );
 //    p.xyz *= curframe;
-    p = interpolatePosition(p, curframe);
+    p = interpolatePosition(p, 1.0);
     p = p * worldMatrix;
     v_pw = p.xyz;
     p = p * viewMatrix;
@@ -109,6 +109,6 @@ void main(){
     gl_Position = p;
 
     vec4 n = vec4(a_normal,0.0);
-    n = interpolatePosition(n, curframe);
+    n = interpolatePosition(n, 1.0);
     v_normal = (n * worldMatrix).xyz;
 }

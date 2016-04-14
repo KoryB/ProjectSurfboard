@@ -155,12 +155,20 @@ public class GameScreen implements Screen
         kinematicsprog.setUniform("lightPos", new vec3(3, 6, 3));
         program.use();
 
-        drawShadows(program);
+//        drawShadows(program);
 
 //        drawShadowBuffer(program);
 
-        drawItems(program);
+//        drawItems(program);
+
+        drawCloud(program);
+
         program.use();
+    }
+
+    public void drawCloud(Program program)
+    {
+        return;
     }
 
     public void drawShadowBuffer(Program program)

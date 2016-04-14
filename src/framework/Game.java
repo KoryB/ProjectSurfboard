@@ -21,7 +21,6 @@ public class Game implements Drawable{
 
     public Game(){
         SDL_Init(SDL_INIT_VIDEO);
-//        SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,SDL_GL_CONTEXT_PROFILE_CORE);
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,24);
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE,8);
@@ -29,6 +28,7 @@ public class Game implements Drawable{
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,2);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
         mWindow = SDL_CreateWindow("ETGG 2802",40,60, Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT, SDL_WINDOW_OPENGL );
+//        SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
         SDL_GL_CreateContext(mWindow);
 
         glDebugMessageControl(GL_DONT_CARE,GL_DONT_CARE,GL_DONT_CARE, 0,null, true );

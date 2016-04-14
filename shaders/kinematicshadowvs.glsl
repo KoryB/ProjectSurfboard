@@ -7,11 +7,11 @@ in vec3 a_normal;
 in vec4 a_weight;
 in vec4 a_boneidx;
 
-uniform mat4 worldMatrix;
-uniform mat4 viewMatrix;
-uniform mat4 projMatrix;
-
 out float v_viewPosz;
+
+uniform mat4 projMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 worldMatrix;
 uniform float curframe;
 
 uniform sampler2D bonetex;
@@ -95,7 +95,7 @@ vec4 interpolatePosition(vec4 p, float frame)
 
 void main(){
     vec4 p = vec4(a_position.xyz, 1.0);
-    p = interpolatePosition(p, curframe);
+    p = interpolatePosition(p, 1.0);
     p = p * worldMatrix * viewMatrix;
 
     v_viewPosz = -p.z; //negate because RHS
