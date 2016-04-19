@@ -1,5 +1,6 @@
 #version 150
 #define EXPONENTIAL_CONSTANT 15.0
+#define OVERLAY_RADIUS_2 .02
 
 uniform mat4 lightViewMatrix;
 uniform mat4 lightProjMatrix;
@@ -9,6 +10,8 @@ uniform sampler2D shadow_texture;
 uniform vec3 lightPos;
 uniform vec3 eyePos;
 uniform sampler2D diffuse_texture;
+
+uniform vec4 overlayCenter;
 
 in vec2 v_texcoord;
 in vec3 v_normal;
@@ -70,6 +73,15 @@ void main(){
     if (litpct == .3)
     {
        // color.rgb *= 100000000;
+    }
+
+    if (overlayCenter.w == 1.0)
+    {
+        vec3 Q = overlayCenter.xyz - v_pw.xyz;
+        if (dot(Q, Q) <= OVERLAY_RADIUS_2)
+        {
+            color = vec4(1.0);
+        }
     }
 }
 

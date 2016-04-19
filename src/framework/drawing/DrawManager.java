@@ -263,6 +263,7 @@ public class DrawManager
 
         mNonShadowProgram.use();
         //Draw floor into stencil buffer
+
         camInUse.draw(mNonShadowProgram);
         level.drawFloors(mNonShadowProgram);
 
@@ -283,7 +284,17 @@ public class DrawManager
         camInUse.draw(originalProgram);
 
         //draw the floors and everything else
+        if (player.getGotoPoint() != null)
+        {
+            System.out.println(player.getGotoPoint());
+            originalProgram.setUniform("overlayCenter", player.getGotoPoint());
+        }
+        else
+        {
+            originalProgram.setUniform("overlayCenter", new vec4(0, 0, 0, 0));
+        }
         level.drawFloors(originalProgram);
+        originalProgram.setUniform("overlayCenter", new vec4(0, 0, 0, 0));
         glStencilFunc(GL_ALWAYS, 1, ~0);
 
         originalProgram.use();
