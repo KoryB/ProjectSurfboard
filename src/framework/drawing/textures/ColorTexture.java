@@ -9,16 +9,19 @@ import static JGL.JGL.*;
  */
 public class ColorTexture extends Texture2D {
     int fmt;
+    int channels;
 
-    //fmt = GL_FLOAT or GL_UNSIGNED_BYTE
-    ColorTexture(int w, int h, int fmt){
-        super(w, h);
-        this.fmt=fmt;
-        if(  fmt != GL_UNSIGNED_BYTE && fmt != GL_FLOAT )
+    protected ColorTexture(int w, int h, int fmt, int channels, int ifmt){
+        super(w,h);
+        if( fmt == -1 )
             throw new RuntimeException("Bad format");
+        this.fmt=fmt;
+        this.channels=channels;
 
         bind(0);
-        glTexImage2D(GL_TEXTURE_2D,0,(fmt == GL_FLOAT) ? GL_RGBA32F : GL_RGBA,
+
+        glTexImage2D(GL_TEXTURE_2D,0,
+                ifmt,
                 w,h,0,
                 GL_RGBA,
                 fmt,
@@ -30,11 +33,10 @@ public class ColorTexture extends Texture2D {
 
     }
 
-    void update(byte[] b){
-        if( b.length != w*h*4*(fmt == GL_FLOAT ? 4 : 1 ))
-            throw new RuntimeException("Bad size: Got "+b.length+" but expected "+w+"*"+h+"*4="+w*h*4);
-
+    protected void update(byte[] b){
         bind(0);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0,0, w,h, GL_RGBA,fmt,b);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0,0, w,h,
+                (channels == 4)? GL_RGBA : GL_RED,
+                fmt,b);
     }
 }

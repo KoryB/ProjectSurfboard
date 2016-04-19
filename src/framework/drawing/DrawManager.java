@@ -11,14 +11,16 @@ public class DrawManager
 {
     private static DrawManager mInstance = new DrawManager();
     private static final float[] LAPLACIAN_WEIGHTINGS = new float[]{0, -1, 0, -1, 2.0f, -1, 0, -1, 0};
-//    private static final float[] LAPLACIAN_WEIGHTINGS = new float[]{0, -1, 0, -1, 4, -1, 0, -1, 0};
+    //    private static final float[] LAPLACIAN_WEIGHTINGS = new float[]{0, -1, 0, -1, 4, -1, 0, -1, 0};
     private static int NEXT_AVAILABLE_FBO = 0;
 
     private Program mBlurProgram, mEdgeProgram, mShadowProgram, mNonShadowProgram, mPlayerShadowProgram;
-//    private Framebuffer2D tFBO1, tFBO2;
+    //    private Framebuffer2D tFBO1, tFBO2;
     private Framebuffer2D[] tFBOArray;
     private UnitSquare mUnitSquare = new UnitSquare();
     private Texture2D mDummyTexture = new SolidTexture(GL_FLOAT, 0.0f, 0.0f, 0.0f, 0.0f);
+
+    private Noise overlayNoise = new Noise();
 
     private DrawManager()
     {
@@ -27,15 +29,13 @@ public class DrawManager
         mShadowProgram = new Program("shaders/shadowvs.glsl", "shaders/shadowfs.glsl");
         mPlayerShadowProgram = new Program("shaders/kinematicshadowvs.glsl", "shaders/shadowfs.glsl");
         mNonShadowProgram = new Program("shaders/vs.txt", "shaders/fs.txt");
-//        tFBO1 = new Framebuffer2D(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
-//        tFBO2 = new Framebuffer2D(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
+
         tFBOArray = new Framebuffer2D[10];
         for (int i = 0; i < tFBOArray.length; i++)
         {
             tFBOArray[i] = new Framebuffer2D(Util.WINDOW_WIDTH, Util.WINDOW_HEIGHT);
         }
-//        tFBOArray = new Framebuffer2D[]{tFBO1, tFBO2};
-        
+
     }
 
     public static DrawManager getInstance()
@@ -238,9 +238,9 @@ public class DrawManager
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
         mat4 flipMatrix = new mat4(new vec4(1, 0, 0, 0),
-                                   new vec4(0, -1, 0, 0),
-                                   new vec4(0, 0, 1, 0),
-                                   new vec4(0, 0, 0, 1));
+                new vec4(0, -1, 0, 0),
+                new vec4(0, 0, 1, 0),
+                new vec4(0, 0, 0, 1));
 
         //Draw reflection to FBO
         glFrontFace(GL_CW);
@@ -278,6 +278,7 @@ public class DrawManager
         mNonShadowProgram.setUniform("viewMatrix", mat4.identity());
         mNonShadowProgram.setUniform("projMatrix", mat4.identity());
         mUnitSquare.draw(mNonShadowProgram);
+        mNonShadowProgram.setUniform("diffuse_texture", mDummyTexture);
         glDepthMask(true);
 
         originalProgram.use();
@@ -286,13 +287,14 @@ public class DrawManager
         //draw the floors and everything else
         if (player.getGotoPoint() != null)
         {
-            System.out.println(player.getGotoPoint());
+            overlayNoise.draw(originalProgram);
             originalProgram.setUniform("overlayCenter", player.getGotoPoint());
         }
         else
         {
             originalProgram.setUniform("overlayCenter", new vec4(0, 0, 0, 0));
         }
+//        originalProgram.setUniform("shadow_texture", shadowFBO.texture);
         level.drawFloors(originalProgram);
         originalProgram.setUniform("overlayCenter", new vec4(0, 0, 0, 0));
         glStencilFunc(GL_ALWAYS, 1, ~0);
