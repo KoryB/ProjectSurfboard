@@ -1,10 +1,7 @@
 package framework;
 
 import framework.collisions.CollisionHandler;
-import framework.drawing.DrawManager;
-import framework.drawing.Framebuffer2D;
-import framework.drawing.Program;
-import framework.drawing.UnitSquare;
+import framework.drawing.*;
 import framework.drawing.textures.SolidTexture;
 import framework.drawing.textures.Texture2D;
 import framework.math3d.*;
@@ -41,6 +38,9 @@ public class GameScreen implements Screen
     private Texture2D mDummyTexture = new SolidTexture(GL_FLOAT, 0.0f, 0.0f, 0.0f, 0.0f);
     private UnitSquare debugSquare = new UnitSquare();
     private Program mSquareDraw = new Program("shaders/blurvs.txt", "shaders/usquarefs.glsl");
+    private Program billboardProgram = new Program("shaders/billboardvs.glsl", "shaders/billboardfs.glsl");
+
+    private CloudParticles particles;
 
     public GameScreen()
     {
@@ -72,6 +72,8 @@ public class GameScreen implements Screen
         framenum = 0.0f;
 
         kinematicsprog = new Program("shaders/kinematicsvs.glsl", "shaders/withshadowfs.glsl");
+
+        particles = new CloudParticles("assets/globe00.png", 100, null, 0, mPlayer);
     }
 
     @Override
@@ -168,7 +170,10 @@ public class GameScreen implements Screen
 
     public void drawCloud(Program program)
     {
-        return;
+        billboardProgram.use();
+        cam.draw(billboardProgram);
+        particles.draw(billboardProgram);
+        program.use();
     }
 
     public void drawShadowBuffer(Program program)

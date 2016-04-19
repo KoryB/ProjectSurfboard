@@ -6,6 +6,7 @@ import framework.drawing.Drawable;
 import framework.drawing.Mesh;
 import framework.drawing.Program;
 import framework.drawing.textures.ImageTexture;
+import framework.math3d.mat4;
 import framework.math3d.math3d;
 import framework.math3d.primitives.AABB;
 import framework.math3d.primitives.AABBType;
@@ -31,6 +32,11 @@ public class Player extends CollisionObject implements Drawable
             MESH = new Mesh("assets/finished_meshes/newPlayer.obj.mesh");
             MESH.texture = new ImageTexture("assets/checker.png");
         }
+    }
+
+    public vec4 getPosition()
+    {
+        return (vec4) mPosition.clone();
     }
 
     public vec4 getGotoPoint()

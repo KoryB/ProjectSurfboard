@@ -13,8 +13,8 @@ uniform mat4 viewMatrix;
 uniform mat4 worldMatrix;
 
 
-void main(){
-
+void main()
+{
     v_texcoord = a_texcoord;
     
     vec4 p = vec4( a_position.xyz, 1.0 );

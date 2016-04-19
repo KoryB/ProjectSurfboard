@@ -246,10 +246,12 @@ public class Level implements Drawable{
     }
 
     public void drawWalls(Program program){
+        program.setUniform("mode", 0.0f);
         mGiantWall.draw(program);
     }
 
     public void drawFloors(Program program){
+        program.setUniform("mode", 0.0f);
         mGiantFloor.draw(program);
     }
 }
