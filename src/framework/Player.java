@@ -9,6 +9,7 @@ import framework.drawing.textures.ImageTexture;
 import framework.math3d.math3d;
 import framework.math3d.primitives.AABB;
 import framework.math3d.primitives.AABBType;
+import framework.math3d.vec3;
 import framework.math3d.vec4;
 
 public class Player extends CollisionObject implements Drawable
@@ -16,7 +17,7 @@ public class Player extends CollisionObject implements Drawable
     private static Mesh MESH;
     private vec4 mGotoPoint;
     private float mCurrentFrame = 0.0f;
-    private float mMaxFrames = 2.0f;
+    private float mMaxFrames = 4.0f;
 
     public Player(vec4 position)
     {
@@ -92,7 +93,7 @@ public class Player extends CollisionObject implements Drawable
     public void draw(Program program)
     {
         //TODO: Fix floating
-        program.setUniform("worldMatrix", math3d.scaling(.5f, 1f, .5f).mul(math3d.translation(mPosition)));
+        program.setUniform("worldMatrix", math3d.scaling(.5f, 1f, .5f).mul(math3d.translation(mPosition)).mul(math3d.translation(new vec3(0.1, -1.0, 0.7))));
         program.setUniform("curframe", mCurrentFrame);
         MESH.draw(program);
     }
