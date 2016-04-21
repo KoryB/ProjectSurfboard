@@ -15,3 +15,4 @@ public interface Screen extends Drawable{
 
     public void pause();
 }
+
