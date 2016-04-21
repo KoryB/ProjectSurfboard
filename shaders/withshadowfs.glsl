@@ -1,7 +1,8 @@
 #version 150
 #define EXPONENTIAL_CONSTANT 15.0
-#define OVERLAY_RADIUS_2 .2
-#define BASE_NOISESCALE 20
+#define OVERLAY_RADIUS .2
+#define BASE_NOISESCALE 3
+#define NORMALIZE_NOISE(POS) ( (getOverlayNoise(POS) + 1) / 2 )
 
 uniform mat4 lightViewMatrix;
 uniform mat4 lightProjMatrix;
@@ -159,9 +160,23 @@ float noise(vec3 p){
 }
 //END NOISE
 
-float getOverlayNoise()
+float getOverlayNoise(vec2 pos)
 {
-    return noise(BASE_NOISESCALE*v_pw.xz) + 0.5*noise(BASE_NOISESCALE*2*v_pw.xz)  + 0.25*noise(BASE_NOISESCALE*4*v_pw.xz);
+    return noise(BASE_NOISESCALE*pos) + 0.5*noise(BASE_NOISESCALE*2*pos)  + 0.25*noise(BASE_NOISESCALE*4*pos);
+}
+
+//This function from https://gist.github.com/neilmendoza/4512992
+mat4 axisRotation(vec4 axis, float angle)
+{
+    axis = normalize(axis);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+
+    return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+                oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+                oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+                0.0,                                0.0,                                0.0,                                1.0);
 }
 
 
@@ -169,6 +184,22 @@ void main(){
     vec4 tc = texture(diffuse_texture,v_texcoord);
     vec3 ambient = vec3(0.05, 0.05, 0.05);
     vec3 N = normalize(v_normal);
+
+    if (overlayCenter.w == 1.0)
+    {
+        vec3 Q = overlayCenter.xyz - v_pw.xyz;
+        float d = length(Q);
+        float val = pow((OVERLAY_RADIUS - d) / OVERLAY_RADIUS, .5);
+        if (d <= OVERLAY_RADIUS)
+        {
+            vec4 Np;
+            Np.xyz = N;
+            Np.w = 0;
+            Np = Np*axisRotation(vec4(1, 0, 0, 0), mix(-20.0, 20.0, NORMALIZE_NOISE(v_pw.xz)))*axisRotation(Np, mix(-30, 30, NORMALIZE_NOISE(v_pw.zx)));
+            N = Np.xyz;
+        }
+    }
+
     vec3 V = normalize(eyePos - v_pw);
     vec3 L = (lightPos - v_pw);
     float Ldist = length(L);
@@ -198,17 +229,6 @@ void main(){
     litpct = exp(EXPONENTIAL_CONSTANT*(z2-z1));
     //litpct = z2 / exp(c*z1);
     litpct = clamp(litpct,0.3,1.0);
-
-    if (overlayCenter.w == 1.0)
-    {
-        vec3 Q = overlayCenter.xyz - v_pw.xyz;
-        float d = length(Q);
-        float val = pow((OVERLAY_RADIUS_2 - d) / OVERLAY_RADIUS_2, .5);
-        if (d <= OVERLAY_RADIUS_2)
-        {
-            color.rgb = vec3((getOverlayNoise() + 1) / 2);
-        }
-    }
 
     color.rgb *= litpct;
 }

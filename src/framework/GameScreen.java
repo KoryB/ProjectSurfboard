@@ -45,7 +45,7 @@ public class GameScreen implements Screen
     public GameScreen()
     {
         mPaused = false;
-        level = new Level(new vec2(50, 50), .35f);
+        level = new Level(new vec2(50, 50), .55f);
 
         int[] tmp = new int[1];
         glGenVertexArrays(1, tmp);
