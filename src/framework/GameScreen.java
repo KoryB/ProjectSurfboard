@@ -1,6 +1,7 @@
 package framework;
 
 import framework.collisions.CollisionHandler;
+import framework.collisions.QuadTree;
 import framework.drawing.DrawManager;
 import framework.drawing.Framebuffer2D;
 import framework.drawing.Program;
@@ -37,6 +38,7 @@ public class GameScreen implements Screen
     Player player;
     Floor floor;
     Level level;
+    QuadTree colTree;
     Framebuffer2D shadowFBO = new Framebuffer2D(1024, 1024, GL_R32F, GL_FLOAT);
     private Texture2D mDummyTexture = new SolidTexture(GL_FLOAT, 0.0f, 0.0f, 0.0f, 0.0f);
     private UnitSquare debugSquare = new UnitSquare();
@@ -46,6 +48,10 @@ public class GameScreen implements Screen
     {
         mPaused = false;
         level = new Level(new vec2(50, 50), .55f);
+        colTree = new QuadTree(-25f, -25f, 50f);
+        for(int i = 0; i < level.mWalls.size(); i++){
+            colTree.add(level.mWalls.get(i));
+        }
 
         int[] tmp = new int[1];
         glGenVertexArrays(1, tmp);
@@ -65,6 +71,7 @@ public class GameScreen implements Screen
         //        ita = new ImageTextureArray("assets/globe%02d.png",24);
         cam = new Camera();
         player = new Player(new vec4(0, 1, 0, 1));
+        colTree.add(player);
         cam.lookAtPlayer(player);
         //        cam.lookAtPlayer(player);
         //        cam.lookAt(new vec3(0, 4, 0), new vec3(), normalize(new vec3(0, 0, -1)));
@@ -130,16 +137,18 @@ public class GameScreen implements Screen
             player.clearGotoPoint();
         }
 
-        for (int i = 0; i < level.mTiles.length; i++)
-        {
-            for (int j = 0; j < level.mTiles[i].length; j++)
-            {
-                if (level.mTiles[i][j] instanceof Wall)
-                {
-                    CollisionHandler.pushApartAABB(level.mTiles[i][j], player);
-                }
-            }
-        }
+//        for (int i = 0; i < level.mTiles.length; i++)
+//        {
+//            for (int j = 0; j < level.mTiles[i].length; j++)
+//            {
+//                if (level.mTiles[i][j] instanceof Wall)
+//                {
+//                    CollisionHandler.pushApartAABB(level.mTiles[i][j], player);
+//                }
+//            }
+//        }
+        colTree.update(player);
+        colTree.handleCollisions();
 
         player.update(elapsed);
 

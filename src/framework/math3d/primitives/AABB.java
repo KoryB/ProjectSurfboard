@@ -169,6 +169,14 @@ public class AABB implements Primitive
         return mExtents;
     }
 
+    public float getXWidth(){
+        return (this.getRight() - this.getLeft());
+    }
+
+    public float getZWidth(){
+        return (this.getFront() - this.getBack());
+    }
+
     //TODO: Add ability to print to any output stream
     public void printInfo()
     {
