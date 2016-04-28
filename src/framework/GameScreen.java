@@ -43,6 +43,7 @@ public class GameScreen implements Screen
     private Texture2D mDummyTexture = new SolidTexture(GL_FLOAT, 0.0f, 0.0f, 0.0f, 0.0f);
     private UnitSquare debugSquare = new UnitSquare();
     private Program mSquareDraw = new Program("shaders/blurvs.txt", "shaders/usquarefs.glsl");
+    private boolean mUseQuadTree = true;
 
     public GameScreen()
     {
@@ -86,6 +87,8 @@ public class GameScreen implements Screen
     {
         mInput.poll();
         elapsed = ((float) dtime) / 1000;
+        long timeBefore;
+        long timeAfter;
 
         if (mInput.keyDown("CAMERA_MOVE_FORWARD"))
             cam.walk(2.0f * elapsed);
@@ -113,6 +116,11 @@ public class GameScreen implements Screen
         if (mInput.keyDown(SDLK_e))
             cam.strafe(new vec3(0, 0.4f * elapsed, 0));
 
+        if (mInput.keyPressed(SDLK_t))
+        {
+            mUseQuadTree = !mUseQuadTree;
+        }
+
         //        TODO: make mouse buttons constants
         if (mInput.mouseDown(1))
         {
@@ -137,23 +145,42 @@ public class GameScreen implements Screen
             player.clearGotoPoint();
         }
 
-//        for (int i = 0; i < level.mTiles.length; i++)
-//        {
-//            for (int j = 0; j < level.mTiles[i].length; j++)
-//            {
-//                if (level.mTiles[i][j] instanceof Wall)
-//                {
-//                    CollisionHandler.pushApartAABB(level.mTiles[i][j], player);
-//                }
-//            }
-//        }
-        colTree.update(player);
-        colTree.handleCollisions();
+        timeBefore = System.nanoTime();
+        if (mUseQuadTree)
+        {
+            colTree.update(player);
+            colTree.handleCollisions();
+        }
+        else
+        {
+            handleCollisionsBruteForce();
+        }
+        timeAfter = System.nanoTime();
+        if (mInput.keyDown(SDLK_o))
+        {
+            if (mUseQuadTree)
+            {
+                System.out.print("QuadTreeTime: ");
+            }
+            else
+            {
+                System.out.print("BruteForceTime: ");
+            }
+            System.out.println(timeAfter - timeBefore);
+        }
 
         player.update(elapsed);
 
         cam.lookAtPlayer(player);
 
+    }
+
+    void handleCollisionsBruteForce()
+    {
+        for (Wall wall : level.mWalls)
+        {
+            CollisionHandler.pushApartAABB(wall, player);
+        }
     }
 
     @Override
