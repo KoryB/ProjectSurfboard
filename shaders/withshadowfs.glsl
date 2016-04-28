@@ -185,18 +185,22 @@ void main(){
     vec3 ambient = vec3(0.05, 0.05, 0.05);
     vec3 N = normalize(v_normal);
 
+    color.a = tc.a;
+
     if (overlayCenter.w == 1.0)
     {
         vec3 Q = overlayCenter.xyz - v_pw.xyz;
         float d = length(Q);
         float val = pow((OVERLAY_RADIUS - d) / OVERLAY_RADIUS, .5);
-        if (d <= OVERLAY_RADIUS)
+        if (d >= OVERLAY_RADIUS)
         {
             vec4 Np;
             Np.xyz = N;
             Np.w = 0;
             Np = Np*axisRotation(vec4(1, 0, 0, 0), mix(-20.0, 20.0, NORMALIZE_NOISE(v_pw.xz)))*axisRotation(Np, mix(-30, 30, NORMALIZE_NOISE(v_pw.zx)));
-            N = Np.xyz;
+            N = normalize(mix(Np.xyz, vec3(0, 1, 0), 0.4));
+            color.a = (tc.a - 0.8) * ( clamp(dot(N, vec3(0, 1, 0)), 0.0, 1.0) ) + 0.8;
+//            color.a = 1.0;
         }
     }
 
@@ -211,7 +215,7 @@ void main(){
     sp *= sign(dp);
     sp = pow(sp,32.0);
     sp = clamp(sp,0.0,1.0);
-    color = vec4( ambient*tc.rgb + dp*tc.rgb + vec3(sp) ,tc.a );
+    color.rgb = vec3( ambient*tc.rgb + dp*tc.rgb + vec3(sp));
 
     vec4 pe = vec4(v_pw.xyz, 1) * lightViewMatrix;
     pe /= pe.w;

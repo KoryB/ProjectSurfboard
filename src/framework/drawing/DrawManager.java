@@ -292,7 +292,8 @@ public class DrawManager
         }
         else
         {
-            originalProgram.setUniform("overlayCenter", new vec4(0, 0, 0, 0));
+            overlayNoise.draw(originalProgram);
+            originalProgram.setUniform("overlayCenter", new vec4(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE, 1));
         }
 //        originalProgram.setUniform("shadow_texture", shadowFBO.texture);
         level.drawFloors(originalProgram);
