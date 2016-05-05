@@ -39,7 +39,7 @@ public class GameScreen implements Screen
     Floor floor;
     Level level;
     QuadTree colTree;
-    Framebuffer2D shadowFBO = new Framebuffer2D(1024, 1024, GL_R32F, GL_FLOAT);
+    Framebuffer2D shadowFBO = new Framebuffer2D(2048, 2048, GL_R32F, GL_FLOAT);
     private Texture2D mDummyTexture = new SolidTexture(GL_FLOAT, 0.0f, 0.0f, 0.0f, 0.0f);
     private UnitSquare debugSquare = new UnitSquare();
     private Program mSquareDraw = new Program("shaders/blurvs.txt", "shaders/usquarefs.glsl");
