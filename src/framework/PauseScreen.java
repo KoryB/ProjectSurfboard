@@ -14,7 +14,7 @@ public class PauseScreen implements Screen {
     }
 
     @Override
-    public void update() {
+    public void update(long dtime) {
 
     }
 

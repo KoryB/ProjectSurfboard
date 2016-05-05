@@ -60,6 +60,14 @@ public class math3d{
         return v.mul(1.0f/le);
     }
 
+    public static float degToRad(float f){
+        return (float)(f/180.0*Math.PI);
+    }
+    
+    public static double degToRad(double f){
+        return (f/180.0*Math.PI);
+    }
+    
 /*    
 #from TDL
 def det(M):
@@ -114,14 +122,14 @@ def inverse(m):
     }
     
     //from TDL
-    public static mat4 axisRotation(float x, float y, float z, double angle){
-        float xx,yy,zz,c,s;
+    public static mat4 axisRotation(double x, double y, double z, double angle){
+        double xx,yy,zz,c,s;
         xx = x * x;
         yy = y * y;
         zz = z * z;
         c = (float)Math.cos(angle);
         s = (float)Math.sin(angle);
-        float oneMinusCosine = 1 - c;
+        double oneMinusCosine = 1 - c;
         return new mat4(
             xx + (1 - xx) * c,
             x * y * oneMinusCosine + z * s,
@@ -154,7 +162,7 @@ def inverse(m):
     }
 
     //from TDL
-    public static mat4 scaling( float x, float y, float z ){
+    public static mat4 scaling( double x, double y, double z ){
         return new mat4(
                 x,0,0,0,
                 0,y,0,0,
@@ -171,7 +179,7 @@ def inverse(m):
     }
     
     //from TDL
-    public static mat4 translation(float x, float y, float z){
+    public static mat4 translation(double x, double y, double z){
         return new mat4(
             1,0,0,0,
             0,1,0,0,
@@ -179,7 +187,30 @@ def inverse(m):
             x,y,z,1);
     }    
     
+    /** Compute reflection matrix that reflects about a plane. 
+     * @param N The plane normal (The plane equation's A,B,C)
+     * @param D The plane equation D value.
+     * @return The matrix
+     */
+    public static mat4 reflection(vec3 N, double D){
+        return new mat4(
+            -2 *N.x *N.x + 1    ,   -2 *N.x *N.y        ,    -2 *N.x *N.z       ,   0 ,
+            -2 *N.y *N.x        ,   -2 *N.y *N.y + 1    ,   -2 *N.y *N.z        ,   0, 
+            -2 *N.z* N.x        ,   -2 *N.z *N.y        ,   -2 *N.z *N.z + 1    ,   0 ,
+            -2 *D *N.x          ,   -2 *D *N.y          ,   -2 *D *N.z          ,   1 );
+    }
 
+    /** Compute reflection matrix that reflects about a plane. 
+     * @param N The plane normal (The plane equation's A,B,C)
+     * @param P A point on the plane.
+     * @return The matrix
+     */
+    public static mat4 reflection(vec3 N, vec3 P){
+        //Ax+By+Cz+D=0
+        float D = -dot(N,P);
+        return reflection(N,D);
+    }
+    
     public static vec4 add( vec4... ob ){
         vec4 res = ob[0];
         for(int i=1;i<ob.length;++i){
@@ -217,18 +248,11 @@ def inverse(m):
         return v.mul(m);
     }
     
-    public static vec4 mul(float d, vec4 v){
-        return v.mul(d);
-    }
-    public static vec4 mul(vec4 v, float d){
-        return v.mul(d);
-    }
-    
     public static vec4 mul(double d, vec4 v){
-        return v.mul((float)d);
+        return v.mul(d);
     }
     public static vec4 mul(vec4 v, double d){
-        return v.mul((float)d);
+        return v.mul(d);
     }
 
     public static vec4 mul(int d, vec4 v){

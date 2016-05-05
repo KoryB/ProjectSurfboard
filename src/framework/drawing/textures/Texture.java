@@ -2,6 +2,10 @@
  */
 package framework.drawing.textures;
 
+import framework.drawing.Framebuffer2D;
+//import framework.drawing.Framebuffer;
+
+import java.util.ArrayList;
 import java.util.TreeSet;
 import static JGL.JGL.*;
 
@@ -27,7 +31,13 @@ public class Texture {
         tex = tmp[0];
     }
         
-    public void bind(int unit){
+    final public void bind(int unit){
+        if( Framebuffer2D.active_fbo != null ){
+            for(int i = 0; i< Framebuffer2D.active_fbo.textures.length; ++i){
+                if( Framebuffer2D.active_fbo.textures[i] == this )
+                    throw new RuntimeException("This texture is part of an active FBO");
+            }
+        }
         
         glActiveTexture(GL_TEXTURE0 + unit );
         glBindTexture(gltype,tex);
@@ -52,6 +62,10 @@ public class Texture {
     //bookkeeping
     public int getId(){
         return tex;
+    }
+    
+    static boolean isPowerOf2(int x){
+        return  ((x-1)&x) == 0;
     }
     
 }

@@ -5,6 +5,7 @@ import framework.drawing.Drawable;
 import framework.drawing.Program;
 import framework.math3d.*;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Random;
@@ -57,6 +58,11 @@ public class Level implements Drawable{
 
         mGiantFloor = new GiantFloor(mFloors.toArray(new Floor[mFloors.size()]));
         mGiantWall = new GiantWall(mWalls.toArray(new Wall[mWalls.size()]));
+
+        for (int k = 0; k < 1000000; k++)
+        {
+            mWalls.add(new Wall(mStartingCorner, new vec4(1, 2, 1, 0)));
+        }
     }
 
     private void genEmptyLevel(){

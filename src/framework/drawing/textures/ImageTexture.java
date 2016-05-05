@@ -2,21 +2,17 @@
  */
 package framework.drawing.textures;
 
-import framework.drawing.textures.Texture2D;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import static JGL.JGL.*;
-
-
-public class ImageTexture  extends Texture2D
+public class ImageTexture extends Texture2D
 {
     int w,h;
     
     public ImageTexture(String filename){
-        
+        super(0, 0);
         byte[] pix;
         try {
             BufferedImage img = ImageIO.read(new File(filename));
@@ -34,8 +30,8 @@ public class ImageTexture  extends Texture2D
                     i++;
                 }
             }
-            w=img.getWidth();
-            h=img.getHeight();
+            this.w=img.getWidth();
+            this.h=img.getHeight();
         } catch (IOException ex) {
             throw new RuntimeException("Cannot read image "+filename);
         }
@@ -47,7 +43,7 @@ public class ImageTexture  extends Texture2D
         glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,w,h,0,fmt,GL_UNSIGNED_BYTE,
             pix);
         
-        if(this.isPowerOf2(w) && this.isPowerOf2(h) ){
+        if(isPowerOf2(w) && isPowerOf2(h) ){
             glGenerateMipmap(GL_TEXTURE_2D);
             glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_REPEAT);
@@ -60,9 +56,6 @@ public class ImageTexture  extends Texture2D
             glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
         }
-    }
-    boolean isPowerOf2(int x){
-        return  ((x-1)&x) == 0;
     }
 }
         

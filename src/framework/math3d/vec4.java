@@ -76,7 +76,8 @@ public class vec4{
             throw new RuntimeException("bad index");
     }    
     
-    public void set(int i, float v){
+    public void set(int i, double vv){
+        float v = (float)vv;
         if( i == 0 )
             x=v;
         else if( i == 1 )
@@ -108,7 +109,7 @@ public class vec4{
         return new vec4(x-o.x,y-o.y,z-o.z,w-o.w);
     }
         
-    public vec4 mul(float d){
+    public vec4 mul(double d){
         return new vec4(d*x,d*y,d*z,d*w);
     }
     

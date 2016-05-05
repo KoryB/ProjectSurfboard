@@ -12,7 +12,7 @@ public class UnitSquare implements Drawable
     Mesh m;
     
     public UnitSquare(){
-        m = new Mesh("assets/usq.obj.mesh");
+        m = new Mesh("assets/finished_meshes/usq.obj.mesh");
     }
     
     public void draw(Program p){

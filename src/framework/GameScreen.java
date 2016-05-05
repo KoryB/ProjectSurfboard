@@ -1,16 +1,17 @@
 package framework;
 
 import framework.collisions.CollisionHandler;
-import framework.collisions.CollisionObject;
+import framework.collisions.QuadTree;
 import framework.drawing.DrawManager;
+import framework.drawing.Framebuffer2D;
 import framework.drawing.Program;
+import framework.drawing.UnitSquare;
+import framework.drawing.textures.SolidTexture;
+import framework.drawing.textures.Texture2D;
 import framework.math3d.*;
 import framework.math3d.primitives.BoundedPlane;
 import framework.math3d.primitives.IntersectionHandler;
-import framework.math3d.primitives.Plane;
 import framework.math3d.primitives.Ray;
-
-import java.util.Arrays;
 
 import static JGL.JGL.*;
 import static JSDL.JSDL.*;
@@ -22,24 +23,36 @@ import static framework.math3d.math3d.normalize;
 public class GameScreen implements Screen
 {
 
-    //Player mPlayer;
+    Player mPlayer;
     public static InputHandler mInput = new InputHandler("config/cfg.properties");
-    ;
+
+    public static float SCALE = 5.0f;
+
     private boolean mPaused;
     Camera cam;
-    Program blurprog;
-    float prev, framenum;
+    Program blurprog, kinematicsprog;
+    float elapsed, framenum;
     //    UnitSquare usq;
     //    ImageTextureArray ita;
     Wall wall, wall2, wall3;
     Player player;
     Floor floor;
     Level level;
+    QuadTree colTree;
+    Framebuffer2D shadowFBO = new Framebuffer2D(2048, 2048, GL_R32F, GL_FLOAT);
+    private Texture2D mDummyTexture = new SolidTexture(GL_FLOAT, 0.0f, 0.0f, 0.0f, 0.0f);
+    private UnitSquare debugSquare = new UnitSquare();
+    private Program mSquareDraw = new Program("shaders/blurvs.txt", "shaders/usquarefs.glsl");
+    private boolean mUseQuadTree = true;
 
     public GameScreen()
     {
         mPaused = false;
-        level = new Level(new vec2(50, 50), 0.25f);
+        level = new Level(new vec2(50, 50), .55f);
+        colTree = new QuadTree(-25f, -25f, 50f);
+        for(int i = 0; i < level.mWalls.size(); i++){
+            colTree.add(level.mWalls.get(i));
+        }
 
         int[] tmp = new int[1];
         glGenVertexArrays(1, tmp);
@@ -59,24 +72,23 @@ public class GameScreen implements Screen
         //        ita = new ImageTextureArray("assets/globe%02d.png",24);
         cam = new Camera();
         player = new Player(new vec4(0, 1, 0, 1));
+        colTree.add(player);
         cam.lookAtPlayer(player);
         //        cam.lookAtPlayer(player);
         //        cam.lookAt(new vec3(0, 4, 0), new vec3(), normalize(new vec3(0, 0, -1)));
 
-        prev = (float) (System.nanoTime() * 1E-9);
-
         framenum = 0.0f;
+
+        kinematicsprog = new Program("shaders/kinematicsvs.glsl", "shaders/withshadowfs.glsl");
     }
 
     @Override
-    public void update()
+    public void update(long dtime)
     {
         mInput.poll();
-
-        float now = (float) (System.nanoTime() * 1E-9);
-        float elapsed = now - prev;
-
-        prev = now;
+        elapsed = ((float) dtime) / 1000;
+        long timeBefore;
+        long timeAfter;
 
         if (mInput.keyDown("CAMERA_MOVE_FORWARD"))
             cam.walk(2.0f * elapsed);
@@ -104,7 +116,10 @@ public class GameScreen implements Screen
         if (mInput.keyDown(SDLK_e))
             cam.strafe(new vec3(0, 0.4f * elapsed, 0));
 
-        cam.lookAtPlayer(player);
+        if (mInput.keyPressed(SDLK_t))
+        {
+            mUseQuadTree = !mUseQuadTree;
+        }
 
         if (mInput.mouseDown(1))
         {
@@ -129,50 +144,127 @@ public class GameScreen implements Screen
             player.clearGotoPoint();
         }
 
-        for (int i = 0; i < level.mTiles.length; i++)
+        timeBefore = System.nanoTime();
+        if (mUseQuadTree)
         {
-            for (int j = 0; j < level.mTiles[i].length; j++)
+            colTree.update(player);
+            colTree.handleCollisions();
+        }
+        else
+        {
+            handleCollisionsBruteForce();
+        }
+        timeAfter = System.nanoTime();
+        if (mInput.keyDown(SDLK_o))
+        {
+            if (mUseQuadTree)
             {
-                if (level.mTiles[i][j] instanceof Wall)
-                {
-                    CollisionHandler.pushApartAABB(level.mTiles[i][j], player);
-                }
+                System.out.print("QuadTreeTime: ");
             }
+            else
+            {
+                System.out.print("BruteForceTime: ");
+            }
+            System.out.println(timeAfter - timeBefore);
         }
 
         player.update(elapsed);
 
+        cam.lookAtPlayer(player);
+
+    }
+
+    void handleCollisionsBruteForce()
+    {
+        for (Wall wall : level.mWalls)
+        {
+            CollisionHandler.pushApartAABB(wall, player);
+        }
     }
 
     @Override
     public void draw(Program program)
     {
-        program.setUniform("lightPos", new vec3(50, 50, 50));
-        DrawManager.getInstance().drawMirrorFloors(program, cam, level, player);
+        program.setUniform("lightPos", new vec3(3, 6, 3));
+        kinematicsprog.use();
+        kinematicsprog.setUniform("lightPos", new vec3(3, 6, 3));
+        program.use();
+
+        drawShadows(program);
+
+//        drawShadowBuffer(program);
+
+        drawItems(program);
+        program.use();
+    }
+
+    public void drawShadowBuffer(Program program)
+    {
+        mSquareDraw.use();
+        mSquareDraw.setUniform("toDisplay", shadowFBO.texture);
+        debugSquare.draw(mSquareDraw);
+        mSquareDraw.setUniform("toDisplay", mDummyTexture);
+        program.use();
+    }
+
+    public void drawItems(Program program)
+    {
+        cam.lookAtPlayer(player);
+
+        DrawManager.getInstance().drawMirrorFloors(program, kinematicsprog, cam, level, player, shadowFBO);
         cam.draw(program);
+        kinematicsprog.use();
+        cam.draw(kinematicsprog);
+        player.draw(kinematicsprog);
+        program.use();
 
-        player.draw(program);
+        drawLaplacian(program);
 
+    }
+
+    public void drawLaplacian(Program program)
+    {
         glStencilFunc(GL_ALWAYS, 1, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+        program.setUniform("shadow_texture", shadowFBO.texture);
 
         level.drawWalls(program);
 
-        //        glClear(GL_DEPTH_BUFFER_BIT);
-//        DrawManager.getInstance().drawLaplacian(player, program, null); //this produces white.
+        kinematicsprog.use();
         glStencilFunc(GL_EQUAL, 1, 0xff);
         glStencilOp(GL_KEEP, GL_INCR, GL_KEEP);
-        player.draw(program);
-//        DrawManager.getInstance().drawBlurScreen(player, program, null, 10, 10);
+        player.draw(kinematicsprog);
 
         glStencilFunc(GL_LEQUAL, 2, 0xff); // Reference less than or equal to buffer. 2 <= 2 so works! 2 <= 3 works!
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        DrawManager.getInstance().drawLaplacian(player, program, null, new vec4(0.5, 1.0, 0.5, 0.5), new vec4(0.5, 0.1, 0.1, 0.5));
+        DrawManager.getInstance().drawLaplacian(player, kinematicsprog, null, new vec4(0.5, 1.0, 0.5, 0.5), new vec4(0.5, 0.1, 0.1, 0.5));
 
         glStencilFunc(GL_ALWAYS, 0, 0xff);
         glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+    }
+
+    public void drawShadows(Program program)
+    {
+        kinematicsprog.use();
+        kinematicsprog.setUniform("shadow_texture", mDummyTexture);
+        program.use();
+        program.setUniform("shadow_texture", mDummyTexture);
+        cam.lookAt(new vec3(3, 6, 3), new vec3(0, 0, 0), new vec3(0, 1, 0));
+        DrawManager.getInstance().drawShadowBuffer(program, cam, shadowFBO, level, player);
+        program.setUniform("lightViewMatrix", cam.getViewMatrix());
+        program.setUniform("lightProjMatrix", cam.compute_projp_matrix());
+        program.setUniform("lightHitherYon", new vec4(cam.hither, cam.yon, cam.yon - cam.hither, GameScreen.SCALE));
+        program.setUniform("shadow_texture", shadowFBO.texture);
+
+        kinematicsprog.use();
+        kinematicsprog.setUniform("lightViewMatrix", cam.getViewMatrix());
+        kinematicsprog.setUniform("lightProjMatrix", cam.compute_projp_matrix());
+        kinematicsprog.setUniform("lightHitherYon", new vec4(cam.hither, cam.yon, cam.yon - cam.hither, GameScreen.SCALE));
+        kinematicsprog.setUniform("shadow_texture", shadowFBO.texture);
+
+        program.use();
     }
 
     @Override

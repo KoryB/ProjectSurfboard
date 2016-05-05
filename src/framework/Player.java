@@ -9,12 +9,15 @@ import framework.drawing.textures.ImageTexture;
 import framework.math3d.math3d;
 import framework.math3d.primitives.AABB;
 import framework.math3d.primitives.AABBType;
+import framework.math3d.vec3;
 import framework.math3d.vec4;
 
 public class Player extends CollisionObject implements Drawable
 {
     private static Mesh MESH;
     private vec4 mGotoPoint;
+    private float mCurrentFrame = 0.0f;
+    private float mMaxFrames = 4.0f;
 
     public Player(vec4 position)
     {
@@ -25,7 +28,8 @@ public class Player extends CollisionObject implements Drawable
 
         if (MESH == null)
         {
-            MESH = new Mesh("assets/testPlayer.obj.mesh");
+            System.out.println("Player:");
+            MESH = new Mesh("assets/finished_meshes/newPlayer.obj.mesh");
             MESH.texture = new ImageTexture("assets/checker.png");
         }
     }
@@ -78,12 +82,19 @@ public class Player extends CollisionObject implements Drawable
                 mGotoPoint = null;
             }
         }
+
+        mCurrentFrame += elapsed;
+        if (mCurrentFrame >= mMaxFrames)
+        {
+            mCurrentFrame = 0.0f;
+        }
     }
 
     public void draw(Program program)
     {
-        program.setUniform("worldMatrix", math3d.scaling(.5f, 1.0f, .5f).mul(math3d.translation(mPosition)));
-
+        //TODO: Fix floating
+        program.setUniform("worldMatrix", math3d.scaling(.5f, 1f, .5f).mul(math3d.translation(mPosition)).mul(math3d.translation(new vec3(0.1, -1.0, 0.7))));
+        program.setUniform("curframe", mCurrentFrame);
         MESH.draw(program);
     }
 }
